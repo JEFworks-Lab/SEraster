@@ -32,7 +32,7 @@
 #' 
 rasterizeSparseMatrix <- function(data, pos, resolution = 100, fun = "mean") {
   ## create RasterLayer (simplified way, using actual operations in raster() function)
-  ext <- raster::extent(min(pos[,1]), max(pos[,1]), min(pos[,2]), max(pos[,2]))
+  ext <- raster::extent(min(pos[,1])-resolution/2, max(pos[,1])+resolution/2, min(pos[,2])-resolution/2, max(pos[,2])+resolution/2)
   r <- methods::new('RasterLayer', extent=ext)
   raster::res(r) <- resolution
   
@@ -118,66 +118,25 @@ rasterizeSparseMatrix <- function(data, pos, resolution = 100, fun = "mean") {
 #' @export
 #' 
 rasterizeGeneExpression <- function(input, resolution = 100, fun = "mean", na.rm = FALSE) {
-  ## create RasterLayer (simplified way, using actual operations in raster() function)
-  ext <- raster::extent(min(spatialCoords(input)[,1]), max(spatialCoords(input)[,1]), min(spatialCoords(input)[,2]), max(spatialCoords(input)[,2]))
-  r <- methods::new('RasterLayer', extent=ext)
-  raster::res(r) <- resolution
-  
-  ## convert RasterLayer to SpatialPoints (sp package)
-  ## might be good to use sf package since sp package is retiring soon
-  pts <- raster::rasterToPoints(r, spatial = TRUE)
-  
-  ## get x,y coordinates for each pixel
-  pos_pixel <- pts@coords
-  rownames(pos_pixel) <- paste0("pixel", 1:nrow(pos_pixel))
-  
-  ## assign pixel ID to each single cell xy coordinates
-  pixel_ids <- raster::cellFromXY(r, spatialCoords(input))
-  names(pixel_ids) <- rownames(spatialCoords(input))
-  
-  ## aggregate
-  spmat_rast <- do.call(cbind, lapply(lapply(1:nrow(pos_pixel), function(id) {
-    ## get cell IDs for a particular pixel
-    cell_ids <- names(pixel_ids[pixel_ids == id])
-    ## subset feature observation matrix
-    spmat <- assay(input)[,cell_ids, drop = FALSE]
-    ## aggregate cell counts to create pixel value
-    if (fun == "mean") {
-      pixel_val <- Matrix::rowMeans(spmat, sparseResult = TRUE) ## returns numeric if sparseResult = FALSE, dsparseVector if sparseResult = TRUE
-    } else if (fun == "sum") {
-      pixel_val <- Matrix::rowSums(spmat, sparseResult = TRUE) ## returns numeric if sparseResult = FALSE, dsparseVector if sparseResult = TRUE
-    }
-    return(pixel_val)
-  }), as, "CsparseMatrix"))
-  rownames(spmat_rast) <- rownames(assay(input))
-  colnames(spmat_rast) <- paste0("pixel", 1:nrow(pos_pixel))
-  
-  ## creata a dataframe to store cell IDs and # of cells for each pixel
-  colData_rast <- do.call(rbind, lapply(1:nrow(pos_pixel), function(id) {
-    ## get cell IDs for a particular pixel
-    cell_ids <- names(pixel_ids[pixel_ids == id])
-    out <- data.frame(num_cell = length(cell_ids))
-    out$cellID_list <- list(cell_ids)
-    return(out)
-  }))
-  rownames(colData_rast) <- paste0("pixel", 1:nrow(pos_pixel))
-  
-  ## convert NaN to NA
-  spmat_rast[is.nan(spmat_rast)] <- NA
+  ## rasterize
+  out <- rasterizeSparseMatrix(assay(input), spatialCoords(input), resolution = resolution, fun = fun)
+  data_rast <- out$data_rast
+  pos_rast <- out$pos_rast
+  meta_rast <- out$meta_rast
   
   ## remove NA based on the na.rm argument
   if (na.rm) {
-    na_cols <- colSums(is.na(spmat_rast)) != 0
-    spmat_rast <- spmat_rast[,!na_cols]
-    pos_pixel <- pos_pixel[!na_cols,]
-    colData_rast <- colData_rast[!na_cols,]
+    na_cols <- colSums(is.na(data_rast)) != 0
+    data_rast <- data_rast[,!na_cols]
+    pos_rast <- pos_rast[!na_cols,]
+    meta_rast <- meta_rast[!na_cols,]
   }
   
   ## construct a new SpatialExperiment object as output
   output <- SpatialExperiment::SpatialExperiment(
-    assays = list(pixelval = spmat_rast),
-    spatialCoords = pos_pixel,
-    colData = colData_rast
+    assays = list(pixelval = data_rast),
+    spatialCoords = pos_rast,
+    colData = meta_rast
   )
   
   return(output)
