@@ -28,6 +28,10 @@
 #' centroids as \code{matrix}, and \code{data.frame} containing cell IDs of cells 
 #' that were aggregated in each pixel.
 #' 
+#' @importFrom raster extent res rasterToPoints cellFromXY
+#' @importFrom methods new
+#' @importFrom Matrix rowMeans rowSums
+#' 
 #' @export
 #' 
 rasterizeSparseMatrix <- function(data, pos, resolution = 100, fun = "mean") {
@@ -95,6 +99,11 @@ rasterizeSparseMatrix <- function(data, pos, resolution = 100, fun = "mean") {
 #' coordinates of observations as matrix array. Further, x,y coordinates are assumed 
 #' to be stored in coloumn 1 and 2 of \code{spatialCoords}.
 #' 
+#' @param assay_name \code{character}: Name of the assay slot of the input that 
+#' you want to apply rasterization. If no argument is given, the first assay of the input 
+#' would be rasterized. This argument is useful when you have both raw and normalized 
+#' assays stored in the input, and you want to apply rasterization to the normalized assay.
+#' 
 #' @param resolution \code{integer}: Resolution or side length of each pixel. 
 #' The unit of this parameter is assumed to be the same as the unit of spatial 
 #' coordinates of the input data.
@@ -115,11 +124,19 @@ rasterizeSparseMatrix <- function(data, pos, resolution = 100, fun = "mean") {
 #' pixel centroids, and \code{colData} slot containing cell IDs of cells that 
 #' were aggregated in each pixel.
 #' 
+#' @importFrom SpatialExperiment spatialCoords SpatialExperiment
+#' @importFrom SummarizedExperiment assay
+#' 
 #' @export
 #' 
-rasterizeGeneExpression <- function(input, resolution = 100, fun = "mean", na.rm = FALSE) {
+rasterizeGeneExpression <- function(input, assay_name = NULL, resolution = 100, fun = "mean", na.rm = FALSE) {
   ## rasterize
-  out <- rasterizeSparseMatrix(assay(input), spatialCoords(input), resolution = resolution, fun = fun)
+  if (is.null(assay_name)) {
+    out <- rasterizeSparseMatrix(assay(input), spatialCoords(input), resolution = resolution, fun = fun)
+  } else {
+    stopifnot(is.character(assay_name))
+    out <- rasterizeSparseMatrix(assay(input, assay_name), spatialCoords(input), resolution = resolution, fun = fun)
+  }
   data_rast <- out$data_rast
   pos_rast <- out$pos_rast
   meta_rast <- out$meta_rast
@@ -177,6 +194,9 @@ rasterizeGeneExpression <- function(input, resolution = 100, fun = "mean", na.rm
 #' (dgCmatrix), \code{spatialCoords} slot containing spatial x,y coordinates of 
 #' pixel centroids, and \code{colData} slot containing cell IDs of cells that 
 #' were aggregated in each pixel.
+#' 
+#' @importFrom SpatialExperiment colData spatialCoords SpatialExperiment
+#' @importFrom Matrix sparse.model.matrix
 #' 
 #' @export
 #' 
