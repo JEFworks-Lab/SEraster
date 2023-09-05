@@ -195,7 +195,8 @@ rasterizeGeneExpression <- function(input, assay_name = NULL, resolution = 100, 
 #' pixel centroids, and \code{colData} slot containing cell IDs of cells that 
 #' were aggregated in each pixel.
 #' 
-#' @importFrom SpatialExperiment colData spatialCoords SpatialExperiment
+#' @importFrom SpatialExperiment spatialCoords SpatialExperiment
+#' @importFrom SummarizedExperiment colData
 #' @importFrom Matrix sparse.model.matrix
 #' 
 #' @export
