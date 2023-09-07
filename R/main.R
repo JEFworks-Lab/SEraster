@@ -8,7 +8,7 @@
 #' @param data \code{dgCmatrix}: Feature x observation matrix represented as a 
 #' \code{dgCmatrix} object. Features can be genes or cell types. In the case of 
 #' features being cell types, this matrix is assumed to be a sparse model matrix 
-#' with rows as cell types and coloumns as cell IDs.
+#' with rows as cell types and columns as cell IDs.
 #' 
 #' @param pos \code{matrix}: Spatial x,y coordinates of observations stored as a 
 #' matrix array. Further, x,y coordinates are assumed to be stored in column 1 
@@ -23,6 +23,18 @@
 #' "sum", pixel value for each pixel would be the sum of gene expression for all 
 #' cells within the pixel.
 #' 
+#' @param n_threads \code{integer}: Number of threads for parallelization. Default = 1. 
+#' Inputting this argument when the \code{BPPARAM} argument is missing would set parallel 
+#' exeuction back-end to be \code{BiocParallel::MulticoreParam(workers = n_threads)}. 
+#' We recommend setting this argument to be the number of cores available 
+#' (\code{parallel::detectCores(logical = FALSE)}). If \code{BPPARAM} argument is 
+#' not missing, the \code{BPPARAM} argument would override \code{n_threads} argument.
+#' 
+#' @param BPPARAM \code{BiocParallelParam}: Optional additional argument for parallelization. 
+#' This argument is provided for advanced users of \code{BiocParallel} for further 
+#' flexibility for setting up parallel-execution back-end. Default is NULL. If 
+#' provided, this is assumed to be an instance of \code{BiocParallelParam}.
+#' 
 #' @return The output is returned as a \code{list} containing rasterized feature 
 #' x observation matrix as \code{dgCmatrix}, spatial x,y coordinates of pixel 
 #' centroids as \code{matrix}, and \code{data.frame} containing cell IDs of cells 
@@ -30,11 +42,18 @@
 #' 
 #' @importFrom raster extent res rasterToPoints cellFromXY
 #' @importFrom methods new
+#' @importFrom BiocParallel MulticoreParam bpstart bplapply
 #' @importFrom Matrix rowMeans rowSums
 #' 
 #' @export
 #' 
-rasterizeSparseMatrix <- function(data, pos, resolution = 100, fun = "mean") {
+rasterizeSparseMatrix <- function(data, pos, resolution = 100, fun = "mean", n_threads = 1, BPPARAM = NULL) {
+  ## set up parallel execution back-end with BiocParallel
+  if (is.null(BPPARAM)) {
+    BPPARAM <- BiocParallel::MulticoreParam(workers = n_threads)
+  }
+  BiocParallel::bpstart(BPPARAM)
+  
   ## create RasterLayer (simplified way, using actual operations in raster() function)
   ext <- raster::extent(min(pos[,1])-resolution/2, max(pos[,1])+resolution/2, min(pos[,2])-resolution/2, max(pos[,2])+resolution/2)
   r <- methods::new('RasterLayer', extent=ext)
@@ -46,14 +65,14 @@ rasterizeSparseMatrix <- function(data, pos, resolution = 100, fun = "mean") {
   
   ## get x,y coordinates for each pixel
   pos_pixel <- pts@coords
-  rownames(pos_pixel) <- paste0("pixel", 1:nrow(pos_pixel))
+  rownames(pos_pixel) <- paste0("pixel", seq_along(pos_pixel[,1]))
   
   ## assign pixel ID to each single cell xy coordinates
   pixel_ids <- raster::cellFromXY(r, pos)
   names(pixel_ids) <- rownames(pos)
   
-  ## aggregate
-  spmat_rast <- do.call(cbind, lapply(lapply(1:nrow(pos_pixel), function(id) {
+  ## store aggregated subsetted sparse matrix data for each pixel into a CsparseMatrix, store cell IDs and # of cells for each pixel into a data frame
+  out <- unlist(BiocParallel::bplapply(seq_along(pos_pixel[,1]), function(id){
     ## get cell IDs for a particular pixel
     cell_ids <- names(pixel_ids[pixel_ids == id])
     ## subset feature observation matrix
@@ -64,26 +83,29 @@ rasterizeSparseMatrix <- function(data, pos, resolution = 100, fun = "mean") {
     } else if (fun == "sum") {
       pixel_val <- Matrix::rowSums(spmat, sparseResult = TRUE) ## returns numeric if sparseResult = FALSE, dsparseVector if sparseResult = TRUE
     }
-    return(pixel_val)
-  }), as, "CsparseMatrix"))
-  rownames(spmat_rast) <- rownames(data)
-  colnames(spmat_rast) <- paste0("pixel", 1:nrow(pos_pixel))
+    
+    meta_rast <- data.frame(num_cell = length(cell_ids))
+    meta_rast$cellID_list <- list(cell_ids)
+    
+    return(list(as(pixel_val, "CsparseMatrix"), meta_rast))
+  }), recursive = FALSE)
   
-  ## creata a dataframe to store cell IDs and # of cells for each pixel
-  colData_rast <- do.call(rbind, lapply(1:nrow(pos_pixel), function(id) {
-    ## get cell IDs for a particular pixel
-    cell_ids <- names(pixel_ids[pixel_ids == id])
-    out <- data.frame(num_cell = length(cell_ids))
-    out$cellID_list <- list(cell_ids)
-    return(out)
-  }))
-  rownames(colData_rast) <- paste0("pixel", 1:nrow(pos_pixel))
+  ## extract rasterized sparse matrix
+  data_rast <- do.call(cbind, out[seq(1,length(out),by=2)])
+  
+  ## extract rasterized data frame
+  meta_rast <- do.call(rbind, out[seq(1,length(out),by=2)+1])
+  
+  ## set rownames/colnames for rasterized sparse matrix and rasterized data frame
+  rownames(data_rast) <- rownames(data)
+  colnames(data_rast) <- paste0("pixel", seq_along(pos_pixel[,1]))
+  rownames(meta_rast) <- paste0("pixel", seq_along(pos_pixel[,1]))
   
   ## convert NaN to NA
-  spmat_rast[is.nan(spmat_rast)] <- NA
+  data_rast[is.nan(data_rast)] <- NA
   
   ## output
-  output <- list("data_rast" = spmat_rast, "pos_rast" = pos_pixel, "meta_rast" = colData_rast)
+  output <- list("data_rast" = data_rast, "pos_rast" = pos_pixel, "meta_rast" = meta_rast)
 }
 
 #' rasterizeGeneExpression
@@ -113,6 +135,18 @@ rasterizeSparseMatrix <- function(data, pos, resolution = 100, fun = "mean") {
 #' "sum", pixel value for each pixel would be the sum of gene expression for all 
 #' cells within the pixel.
 #' 
+#' @param n_threads \code{integer}: Number of threads for parallelization. Default = 1. 
+#' Inputting this argument when the \code{BPPARAM} argument is missing would set parallel 
+#' exeuction back-end to be \code{BiocParallel::MulticoreParam(workers = n_threads)}. 
+#' We recommend setting this argument to be the number of cores available 
+#' (\code{parallel::detectCores(logical = FALSE)}). If \code{BPPARAM} argument is 
+#' not missing, the \code{BPPARAM} argument would override \code{n_threads} argument.
+#' 
+#' @param BPPARAM \code{BiocParallelParam}: Optional additional argument for parallelization. 
+#' This argument is provided for advanced users of \code{BiocParallel} for further 
+#' flexibility for setting up parallel-execution back-end. Default is NULL. If 
+#' provided, this is assumed to be an instance of \code{BiocParallelParam}.
+#' 
 #' @param na.rm \code{logical}: If TRUE, NA values in the output 
 #' rasterized feature (genes) x observation (pixels) matrix (dgCmatrix) and 
 #' spatial coordinates matrix (matrix array) are removed. This corresponds to 
@@ -129,13 +163,13 @@ rasterizeSparseMatrix <- function(data, pos, resolution = 100, fun = "mean") {
 #' 
 #' @export
 #' 
-rasterizeGeneExpression <- function(input, assay_name = NULL, resolution = 100, fun = "mean", na.rm = FALSE) {
+rasterizeGeneExpression <- function(input, assay_name = NULL, resolution = 100, fun = "mean", n_threads = 1, BPPARAM = NULL, na.rm = FALSE) {
   ## rasterize
   if (is.null(assay_name)) {
-    out <- rasterizeSparseMatrix(assay(input), spatialCoords(input), resolution = resolution, fun = fun)
+    out <- rasterizeSparseMatrix(assay(input), spatialCoords(input), resolution = resolution, fun = fun, n_threads = n_threads, BPPARAM = BPPARAM)
   } else {
     stopifnot(is.character(assay_name))
-    out <- rasterizeSparseMatrix(assay(input, assay_name), spatialCoords(input), resolution = resolution, fun = fun)
+    out <- rasterizeSparseMatrix(assay(input, assay_name), spatialCoords(input), resolution = resolution, fun = fun, n_threads = n_threads, BPPARAM = BPPARAM)
   }
   data_rast <- out$data_rast
   pos_rast <- out$pos_rast
@@ -184,6 +218,18 @@ rasterizeGeneExpression <- function(input, assay_name = NULL, resolution = 100, 
 #' "sum", pixel value for each pixel would be the sum of gene expression for all 
 #' cells within the pixel.
 #' 
+#' @param n_threads \code{integer}: Number of threads for parallelization. Default = 1. 
+#' Inputting this argument when the \code{BPPARAM} argument is missing would set parallel 
+#' exeuction back-end to be \code{BiocParallel::MulticoreParam(workers = n_threads)}. 
+#' We recommend setting this argument to be the number of cores available 
+#' (\code{parallel::detectCores(logical = FALSE)}). If \code{BPPARAM} argument is 
+#' not missing, the \code{BPPARAM} argument would override \code{n_threads} argument.
+#' 
+#' @param BPPARAM \code{BiocParallelParam}: Optional additional argument for parallelization. 
+#' This argument is provided for advanced users of \code{BiocParallel} for further 
+#' flexibility for setting up parallel-execution back-end. Default is NULL. If 
+#' provided, this is assumed to be an instance of \code{BiocParallelParam}.
+#' 
 #' @param na.rm \code{logical}: If TRUE, NA values in the output 
 #' rasterized feature (genes) x observation (pixels) matrix (dgCmatrix) and 
 #' spatial coordinates matrix (matrix array) are removed. This corresponds to 
@@ -201,7 +247,7 @@ rasterizeGeneExpression <- function(input, assay_name = NULL, resolution = 100, 
 #' 
 #' @export
 #' 
-rasterizeCellType <- function(input, col_name, resolution = 100, fun = "mean", na.rm = FALSE) {
+rasterizeCellType <- function(input, col_name, resolution = 100, fun = "mean", n_threads = 1, BPPARAM = NULL, na.rm = FALSE) {
   ## extract cell type labels from SpatialExperiment
   cellTypes <- as.factor(colData(input)[,col_name])
   
@@ -211,7 +257,7 @@ rasterizeCellType <- function(input, col_name, resolution = 100, fun = "mean", n
   colnames(mat_ct) <- rownames(spatialCoords(input))
   
   ## rasterize
-  out <- rasterizeSparseMatrix(mat_ct, spatialCoords(input), resolution = resolution, fun = fun)
+  out <- rasterizeSparseMatrix(mat_ct, spatialCoords(input), resolution = resolution, fun = fun, n_threads = 1, BPPARAM = BPPARAM)
   data_rast <- out$data_rast
   pos_rast <- out$pos_rast
   meta_rast <- out$meta_rast
