@@ -9,6 +9,8 @@ rasterizeCellType(
   col_name,
   resolution = 100,
   fun = "mean",
+  n_threads = 1,
+  BPPARAM = NULL,
   na.rm = FALSE
 )
 }
@@ -30,6 +32,18 @@ coordinates of the input data.}
 would be the average of gene expression for all cells within the pixel. If 
 "sum", pixel value for each pixel would be the sum of gene expression for all 
 cells within the pixel.}
+
+\item{n_threads}{\code{integer}: Number of threads for parallelization. Default = 1. 
+Inputting this argument when the \code{BPPARAM} argument is missing would set parallel 
+exeuction back-end to be \code{BiocParallel::MulticoreParam(workers = n_threads)}. 
+We recommend setting this argument to be the number of cores available 
+(\code{parallel::detectCores(logical = FALSE)}). If \code{BPPARAM} argument is 
+not missing, the \code{BPPARAM} argument would override \code{n_threads} argument.}
+
+\item{BPPARAM}{\code{BiocParallelParam}: Optional additional argument for parallelization. 
+This argument is provided for advanced users of \code{BiocParallel} for further 
+flexibility for setting up parallel-execution back-end. Default is NULL. If 
+provided, this is assumed to be an instance of \code{BiocParallelParam}.}
 
 \item{na.rm}{\code{logical}: If TRUE, NA values in the output 
 rasterized feature (genes) x observation (pixels) matrix (dgCmatrix) and 
