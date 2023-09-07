@@ -42,7 +42,7 @@
 #' 
 #' @importFrom raster extent res rasterToPoints cellFromXY
 #' @importFrom methods new
-#' @importFrom BiocParallel MulticoreParam bpstart bplapply
+#' @importFrom BiocParallel MulticoreParam bpstart bplapply bpstop
 #' @importFrom Matrix rowMeans rowSums
 #' 
 #' @export
@@ -89,6 +89,9 @@ rasterizeSparseMatrix <- function(data, pos, resolution = 100, fun = "mean", n_t
     
     return(list(as(pixel_val, "CsparseMatrix"), meta_rast))
   }), recursive = FALSE)
+  
+  ## stop parallel execution back-end
+  BiocParallel::bpstop(BPPARAM)
   
   ## extract rasterized sparse matrix
   data_rast <- do.call(cbind, out[seq(1,length(out),by=2)])
