@@ -276,6 +276,7 @@ rasterizeSparseMatrix2 <- function(data, pos, resolution = 100, fun = "mean", n_
 #' 
 #' @importFrom SpatialExperiment spatialCoords SpatialExperiment
 #' @importFrom SummarizedExperiment assay
+#' @importFrom Matrix colSums
 #' 
 #' @export
 #' 
@@ -293,7 +294,7 @@ rasterizeGeneExpression <- function(input, assay_name = NULL, resolution = 100, 
   
   ## remove NA based on the na.rm argument
   if (na.rm) {
-    na_cols <- colSums(is.na(data_rast)) != 0
+    na_cols <- Matrix::colSums(is.na(data_rast)) != 0
     data_rast <- data_rast[,!na_cols]
     pos_rast <- pos_rast[!na_cols,]
     meta_rast <- meta_rast[!na_cols,]
@@ -359,7 +360,7 @@ rasterizeGeneExpression <- function(input, assay_name = NULL, resolution = 100, 
 #' 
 #' @importFrom SpatialExperiment spatialCoords SpatialExperiment
 #' @importFrom SummarizedExperiment colData
-#' @importFrom Matrix sparse.model.matrix
+#' @importFrom Matrix sparse.model.matrix colSums
 #' 
 #' @export
 #' 
@@ -380,7 +381,7 @@ rasterizeCellType <- function(input, col_name, resolution = 100, fun = "mean", n
   
   ## remove NA based on the na.rm argument
   if (na.rm) {
-    na_cols <- colSums(is.na(data_rast)) != 0
+    na_cols <- Matrix::colSums(is.na(data_rast)) != 0
     data_rast <- data_rast[,!na_cols]
     pos_rast <- pos_rast[!na_cols,]
     meta_rast <- meta_rast[!na_cols,]
