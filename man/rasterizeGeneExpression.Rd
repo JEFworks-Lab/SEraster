@@ -10,8 +10,7 @@ rasterizeGeneExpression(
   resolution = 100,
   fun = "mean",
   n_threads = 1,
-  BPPARAM = NULL,
-  na.rm = FALSE
+  BPPARAM = NULL
 )
 }
 \arguments{
@@ -46,11 +45,6 @@ not missing, the \code{BPPARAM} argument would override \code{n_threads} argumen
 This argument is provided for advanced users of \code{BiocParallel} for further 
 flexibility for setting up parallel-execution back-end. Default is NULL. If 
 provided, this is assumed to be an instance of \code{BiocParallelParam}.}
-
-\item{na.rm}{\code{logical}: If TRUE, NA values in the output 
-rasterized feature (genes) x observation (pixels) matrix (dgCmatrix) and 
-spatial coordinates matrix (matrix array) are removed. This corresponds to 
-removing pixels with no cells.}
 }
 \value{
 The output is returned as a new \code{SpatialExperiment} object with 

@@ -72,9 +72,10 @@ rasterizeSparseMatrix <- function(data, pos, resolution = 100, fun = "mean", n_t
   names(pixel_ids) <- rownames(pos)
   
   ## store aggregated subsetted sparse matrix data for each pixel into a CsparseMatrix, store cell IDs and # of cells for each pixel into a data frame
-  out <- unlist(BiocParallel::bplapply(seq_along(pos_pixel[,1]), function(id){
+  out <- unlist(BiocParallel::bplapply(sort(unique(pixel_ids)), function(id){
     ## get cell IDs for a particular pixel
     cell_ids <- names(pixel_ids[pixel_ids == id])
+    
     ## subset feature observation matrix
     spmat <- data[,cell_ids, drop = FALSE]
     ## aggregate cell counts to create pixel value
@@ -101,11 +102,11 @@ rasterizeSparseMatrix <- function(data, pos, resolution = 100, fun = "mean", n_t
   
   ## set rownames/colnames for rasterized sparse matrix and rasterized data frame
   rownames(data_rast) <- rownames(data)
-  colnames(data_rast) <- paste0("pixel", seq_along(pos_pixel[,1]))
-  rownames(meta_rast) <- paste0("pixel", seq_along(pos_pixel[,1]))
+  colnames(data_rast) <- paste0("pixel", sort(unique(pixel_ids)))
+  rownames(meta_rast) <- paste0("pixel", sort(unique(pixel_ids)))
   
-  ## convert NaN to NA
-  data_rast[is.nan(data_rast)] <- NA
+  ## subset rasterized pos
+  pos_pixel <- pos_pixel[rownames(pos_pixel) %in% colnames(data_rast),]
   
   ## output
   output <- list("data_rast" = data_rast, "pos_rast" = pos_pixel, "meta_rast" = meta_rast)
@@ -263,11 +264,6 @@ rasterizeSparseMatrix2 <- function(data, pos, resolution = 100, fun = "mean", n_
 #' flexibility for setting up parallel-execution back-end. Default is NULL. If 
 #' provided, this is assumed to be an instance of \code{BiocParallelParam}.
 #' 
-#' @param na.rm \code{logical}: If TRUE, NA values in the output 
-#' rasterized feature (genes) x observation (pixels) matrix (dgCmatrix) and 
-#' spatial coordinates matrix (matrix array) are removed. This corresponds to 
-#' removing pixels with no cells.
-#' 
 #' @return The output is returned as a new \code{SpatialExperiment} object with 
 #' \code{assay} slot containing the feature (genes) x observations (pixels) matrix 
 #' (dgCmatrix), \code{spatialCoords} slot containing spatial x,y coordinates of 
@@ -280,7 +276,7 @@ rasterizeSparseMatrix2 <- function(data, pos, resolution = 100, fun = "mean", n_
 #' 
 #' @export
 #' 
-rasterizeGeneExpression <- function(input, assay_name = NULL, resolution = 100, fun = "mean", n_threads = 1, BPPARAM = NULL, na.rm = FALSE) {
+rasterizeGeneExpression <- function(input, assay_name = NULL, resolution = 100, fun = "mean", n_threads = 1, BPPARAM = NULL) {
   ## rasterize
   if (is.null(assay_name)) {
     out <- rasterizeSparseMatrix(assay(input), spatialCoords(input), resolution = resolution, fun = fun, n_threads = n_threads, BPPARAM = BPPARAM)
@@ -291,14 +287,6 @@ rasterizeGeneExpression <- function(input, assay_name = NULL, resolution = 100, 
   data_rast <- out$data_rast
   pos_rast <- out$pos_rast
   meta_rast <- out$meta_rast
-  
-  ## remove NA based on the na.rm argument
-  if (na.rm) {
-    na_cols <- Matrix::colSums(is.na(data_rast)) != 0
-    data_rast <- data_rast[,!na_cols]
-    pos_rast <- pos_rast[!na_cols,]
-    meta_rast <- meta_rast[!na_cols,]
-  }
   
   ## construct a new SpatialExperiment object as output
   output <- SpatialExperiment::SpatialExperiment(
@@ -347,11 +335,6 @@ rasterizeGeneExpression <- function(input, assay_name = NULL, resolution = 100, 
 #' flexibility for setting up parallel-execution back-end. Default is NULL. If 
 #' provided, this is assumed to be an instance of \code{BiocParallelParam}.
 #' 
-#' @param na.rm \code{logical}: If TRUE, NA values in the output 
-#' rasterized feature (genes) x observation (pixels) matrix (dgCmatrix) and 
-#' spatial coordinates matrix (matrix array) are removed. This corresponds to 
-#' removing pixels with no cells.
-#' 
 #' @return The output is returned as a new \code{SpatialExperiment} object with 
 #' \code{assay} slot containing the feature (cell types) x observations (pixels) matrix 
 #' (dgCmatrix), \code{spatialCoords} slot containing spatial x,y coordinates of 
@@ -364,7 +347,7 @@ rasterizeGeneExpression <- function(input, assay_name = NULL, resolution = 100, 
 #' 
 #' @export
 #' 
-rasterizeCellType <- function(input, col_name, resolution = 100, fun = "mean", n_threads = 1, BPPARAM = NULL, na.rm = FALSE) {
+rasterizeCellType <- function(input, col_name, resolution = 100, fun = "mean", n_threads = 1, BPPARAM = NULL) {
   ## extract cell type labels from SpatialExperiment
   cellTypes <- as.factor(colData(input)[,col_name])
   
@@ -378,14 +361,6 @@ rasterizeCellType <- function(input, col_name, resolution = 100, fun = "mean", n
   data_rast <- out$data_rast
   pos_rast <- out$pos_rast
   meta_rast <- out$meta_rast
-  
-  ## remove NA based on the na.rm argument
-  if (na.rm) {
-    na_cols <- Matrix::colSums(is.na(data_rast)) != 0
-    data_rast <- data_rast[,!na_cols]
-    pos_rast <- pos_rast[!na_cols,]
-    meta_rast <- meta_rast[!na_cols,]
-  }
   
   ## construct a new SpatialExperiment object as output
   output <- SpatialExperiment::SpatialExperiment(
