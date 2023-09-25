@@ -166,7 +166,6 @@ rasterizeSparseMatrix2 <- function(data, pos, resolution = 100, fun = "mean", n_
   if (is.null(BPPARAM)) {
     BPPARAM <- BiocParallel::MulticoreParam(workers = n_threads)
   }
-  # BiocParallel::bpstart(BPPARAM)
   
   ## create RasterLayer (simplified way, using actual operations in raster() function)
   ext <- raster::extent(min(pos[,1])-resolution/2, max(pos[,1])+resolution/2, min(pos[,2])-resolution/2, max(pos[,2])+resolution/2)
@@ -186,9 +185,10 @@ rasterizeSparseMatrix2 <- function(data, pos, resolution = 100, fun = "mean", n_
   names(pixel_ids) <- rownames(pos)
   
   ## store aggregated subsetted sparse matrix data for each pixel into a CsparseMatrix, store cell IDs and # of cells for each pixel into a data frame
-  out <- unlist(BiocParallel::bplapply(seq_along(pos_pixel[,1]), function(id) {
+  out <- unlist(BiocParallel::bplapply(sort(unique(pixel_ids)), function(id){
     ## get cell IDs for a particular pixel
     cell_ids <- names(pixel_ids[pixel_ids == id])
+    
     ## subset feature observation matrix
     spmat <- data[,cell_ids, drop = FALSE]
     ## aggregate cell counts to create pixel value
@@ -204,9 +204,6 @@ rasterizeSparseMatrix2 <- function(data, pos, resolution = 100, fun = "mean", n_
     return(list(as(pixel_val, "CsparseMatrix"), meta_rast))
   }, BPPARAM = BPPARAM, BPOPTIONS = BiocParallel::bpoptions(packages = "Matrix")), recursive = FALSE)
   
-  ## stop parallel execution back-end
-  # BiocParallel::bpstop(BPPARAM)
-  
   ## extract rasterized sparse matrix
   data_rast <- do.call(cbind, out[seq(1,length(out),by=2)])
   
@@ -215,11 +212,11 @@ rasterizeSparseMatrix2 <- function(data, pos, resolution = 100, fun = "mean", n_
   
   ## set rownames/colnames for rasterized sparse matrix and rasterized data frame
   rownames(data_rast) <- rownames(data)
-  colnames(data_rast) <- paste0("pixel", seq_along(pos_pixel[,1]))
-  rownames(meta_rast) <- paste0("pixel", seq_along(pos_pixel[,1]))
+  colnames(data_rast) <- paste0("pixel", sort(unique(pixel_ids)))
+  rownames(meta_rast) <- paste0("pixel", sort(unique(pixel_ids)))
   
-  ## convert NaN to NA
-  data_rast[is.nan(data_rast)] <- NA
+  ## subset rasterized pos
+  pos_pixel <- pos_pixel[rownames(pos_pixel) %in% colnames(data_rast),]
   
   ## output
   output <- list("data_rast" = data_rast, "pos_rast" = pos_pixel, "meta_rast" = meta_rast)
