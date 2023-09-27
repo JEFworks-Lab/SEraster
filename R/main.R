@@ -222,6 +222,17 @@ rasterizeSparseMatrix2 <- function(data, pos, resolution = 100, fun = "mean", n_
   output <- list("data_rast" = data_rast, "pos_rast" = pos_pixel, "meta_rast" = meta_rast)
 }
 
+# rasterizeDenseMatrix <- function(data, pos, resolution = 100, fun = "mean", n_threads = 1, BPPARAM = NULL) {
+#   r <- terra::raster(xmn=min(pos[,1])-resolution/2, ymn=min(pos[,2])-resolution/2, xmx=max(pos[,1])+resolution/2, ymx=max(pos[,2])+resolution/2, resolution = resolution)
+#   if (fun = "mean") {
+#     rast <- terra::rasterize(pos, r, t(data), fun = mean)
+#   } else if (fun = "sum") {
+#     rast <- terra::rasterize(pos, r, t(data), fun = sum)
+#   }
+#   pts <- convertRasterToPoints(r, rast, removeNA = na.rm)
+#   output <- list("data_rast" = as.matrix(pts[[2]]), "pos_rast" = as.matrix(pts[[1]]))
+# }
+
 #' rasterizeGeneExpression
 #' 
 #' @description Function to rasterize feature x observation matrix in spatially-resolved 
@@ -368,3 +379,10 @@ rasterizeCellType <- function(input, col_name, resolution = 100, fun = "mean", n
   
   return(output)
 }
+
+#' calculateDensity
+#' 
+calculateDensity <- function(matrix.array) {
+  sum(matrix.array != 0)/(dim(matrix.array)[1] * dim(matrix.array)[2])
+}
+
