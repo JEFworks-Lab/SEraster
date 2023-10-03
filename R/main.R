@@ -1,3 +1,123 @@
+#' rasterizeMatrix
+#' 
+#' @description Function to rasterize a given input matrix (both dense or sparse) based on a given position matrix.
+#' 
+#' @description This function assumes that inputs are provided as a \code{dgCmatrix} 
+#' or \code{matrix} for data and \code{matrix} for position.
+#' 
+#' @param data \code{dgCmatrix} or \code{matrix}: Feature x observation matrix represented as a 
+#' \code{dgCmatrix} or \code{matrix} object. Features can be genes or cell types. In the case of 
+#' features being cell types, this matrix is assumed to be a sparse model matrix 
+#' with rows as cell types and columns as cell IDs.
+#' 
+#' @param pos \code{matrix}: Spatial x,y coordinates of observations stored as a 
+#' matrix array. Further, x,y coordinates are assumed to be stored in column 1 
+#' and 2 of \code{spatialCoords}.
+#' 
+#' @param bbox \code{bbox}: Bounding box for rasterization defined by a numeric 
+#' vector of length four, with xmin, ymin, xmax and ymax values.
+#' 
+#' @param resolution \code{integer}: Resolution or side length of each pixel. 
+#' The unit of this parameter is assumed to be the same as the unit of spatial 
+#' coordinates of the input data.
+#' 
+#' @param fun \code{character}: If "mean", pixel value for each pixel 
+#' would be the average of gene expression for all cells within the pixel. If 
+#' "sum", pixel value for each pixel would be the sum of gene expression for all 
+#' cells within the pixel.
+#' 
+#' @param n_threads \code{integer}: Number of threads for parallelization. Default = 1. 
+#' Inputting this argument when the \code{BPPARAM} argument is missing would set parallel 
+#' exeuction back-end to be \code{BiocParallel::MulticoreParam(workers = n_threads)}. 
+#' We recommend setting this argument to be the number of cores available 
+#' (\code{parallel::detectCores(logical = FALSE)}). If \code{BPPARAM} argument is 
+#' not missing, the \code{BPPARAM} argument would override \code{n_threads} argument.
+#' 
+#' @param BPPARAM \code{BiocParallelParam}: Optional additional argument for parallelization. 
+#' This argument is provided for advanced users of \code{BiocParallel} for further 
+#' flexibility for setting up parallel-execution back-end. Default is NULL. If 
+#' provided, this is assumed to be an instance of \code{BiocParallelParam}.
+#' 
+#' @return The output is returned as a \code{list} containing rasterized feature 
+#' x observation matrix as \code{dgCmatrix} if data was given as \code{dgCmatrix} 
+#' and as \code{matrix} if data was given as \code{matrix}, spatial x,y coordinates of pixel 
+#' centroids as \code{matrix}, and \code{data.frame} containing cell IDs of cells 
+#' that were aggregated in each pixel.
+#' 
+#' @importFrom sf st_make_grid st_coordinates st_centroid st_as_sf st_intersects
+#' @importFrom BiocParallel MulticoreParam bpstart bplapply bpstop
+#' @importFrom Matrix rowMeans rowSums
+#' 
+#' @export
+#' 
+rasterizeMatrix <- function(data, pos, bbox, resolution = 100, fun = "mean", n_threads = 1, BPPARAM = NULL) {
+  ## set up parallel execution back-end with BiocParallel
+  if (is.null(BPPARAM)) {
+    BPPARAM <- BiocParallel::MulticoreParam(workers = n_threads)
+  }
+  BiocParallel::bpstart(BPPARAM)
+  
+  ## create grid for rasterization
+  grid <- sf::st_make_grid(bbox, cellsize = resolution)
+  
+  ## extract position
+  pos_pixel <- sf::st_coordinates(sf::st_centroid(grid))
+  colnames(pos_pixel) <- c("x", "y")
+  rownames(pos_pixel) <- paste0("pixel",seq_along(pos_pixel[,1]))
+  
+  ## convert pos to sf
+  cells <- sf::st_as_sf(data.frame(pos), coords = c("x", "y"))
+  ## get pixel ID for each cell
+  pixel_ids <- unlist(sf::st_intersects(cells, grid))
+  names(pixel_ids) <- rownames(pos)
+  
+  ## store aggregated subsetted matrix data for each pixel, store cell IDs and number of cells for each pixel into a data frame
+  out <- unlist(BiocParallel::bplapply(sort(unique(pixel_ids)), function(id){
+    ## get cell IDs for a particular pixel
+    cell_ids <- names(pixel_ids[pixel_ids == id])
+    
+    ## subset feature observation matrix
+    sub <- data[,cell_ids, drop = FALSE]
+    ## aggregate cell counts to create pixel value
+    if (fun == "mean") {
+      pixel_val <- rowMeans(sub)
+    } else if (fun == "sum") {
+      pixel_val <- rowSums(sub)
+    }
+    
+    ## store number of cells
+    meta_rast <- data.frame(num_cell = length(cell_ids))
+    ## store a list of cell IDs
+    meta_rast$cellID_list <- list(cell_ids)
+    
+    if (is.matrix(data)) {
+      return(list(pixel_val, meta_rast))
+    } else {
+      return(list(as(pixel_val, "CsparseMatrix"), meta_rast))
+    }
+  }), recursive = FALSE)
+  
+  ## stop parallel execution back-end
+  BiocParallel::bpstop(BPPARAM)
+  
+  ## extract rasterized sparse matrix
+  data_rast <- do.call(cbind, out[seq(1,length(out),by=2)])
+  
+  ## extract rasterized data frame
+  meta_rast <- do.call(rbind, out[seq(1,length(out),by=2)+1])
+  
+  ## set rownames/colnames for rasterized sparse matrix and rasterized data frame
+  rownames(data_rast) <- rownames(data)
+  colnames(data_rast) <- paste0("pixel", sort(unique(pixel_ids)))
+  rownames(meta_rast) <- paste0("pixel", sort(unique(pixel_ids)))
+  
+  ## subset rasterized pos
+  pos_pixel <- pos_pixel[rownames(pos_pixel) %in% colnames(data_rast),]
+  
+  ## output
+  output <- list("data_rast" = data_rast, "pos_rast" = pos_pixel, "meta_rast" = meta_rast)
+}
+
 #' rasterizeSparseMatrix
 #' 
 #' @description Function to rasterize a given input sparse matrix based on a given position matrix.
@@ -222,17 +342,6 @@ rasterizeSparseMatrix2 <- function(data, pos, resolution = 100, fun = "mean", n_
   output <- list("data_rast" = data_rast, "pos_rast" = pos_pixel, "meta_rast" = meta_rast)
 }
 
-# rasterizeDenseMatrix <- function(data, pos, resolution = 100, fun = "mean", n_threads = 1, BPPARAM = NULL) {
-#   r <- terra::raster(xmn=min(pos[,1])-resolution/2, ymn=min(pos[,2])-resolution/2, xmx=max(pos[,1])+resolution/2, ymx=max(pos[,2])+resolution/2, resolution = resolution)
-#   if (fun = "mean") {
-#     rast <- terra::rasterize(pos, r, t(data), fun = mean)
-#   } else if (fun = "sum") {
-#     rast <- terra::rasterize(pos, r, t(data), fun = sum)
-#   }
-#   pts <- convertRasterToPoints(r, rast, removeNA = na.rm)
-#   output <- list("data_rast" = as.matrix(pts[[2]]), "pos_rast" = as.matrix(pts[[1]]))
-# }
-
 #' rasterizeGeneExpression
 #' 
 #' @description Function to rasterize feature x observation matrix in spatially-resolved 
@@ -285,25 +394,79 @@ rasterizeSparseMatrix2 <- function(data, pos, resolution = 100, fun = "mean", n_
 #' @export
 #' 
 rasterizeGeneExpression <- function(input, assay_name = NULL, resolution = 100, fun = "mean", n_threads = 1, BPPARAM = NULL) {
-  ## rasterize
-  if (is.null(assay_name)) {
-    out <- rasterizeSparseMatrix(assay(input), spatialCoords(input), resolution = resolution, fun = fun, n_threads = n_threads, BPPARAM = BPPARAM)
+  if (is.list(input)) {
+    ## create a common bbox
+    bbox_mat <- do.call(rbind, lapply(seq_along(input), function(i) {
+      pos <- spatialCoords(input[[i]])
+      if (!is.null(names(input))) {
+        dataset <- names(input)[i]
+      } else {
+        dataset <- i
+      }
+      return(data.frame(dataset = dataset, xmin = min(pos[,1]), xmax = max(pos[,1]), ymin = min(pos[,2]), ymax = max(pos[,2])))
+    }))
+    bbox_common <- sf::st_bbox(c(xmin=min(bbox_mat$xmin)-resolution/2, xmax=max(bbox_mat$xmax)+resolution/2, ymin=min(bbox_mat$ymin)-resolution/2, ymax=max(bbox_mat$ymax)+resolution/2))
+    
+    ## rasterize iteratively
+    ## rasterize iteratively
+    output_list <- lapply(seq_along(input), function(i) {
+      ## get SpatialExperiment object of the given index
+      spe <- input[[i]]
+      
+      if (is.null(assay_name)) {
+        out <- SEraster::rasterizeMatrix(assay(spe), spatialCoords(spe), bbox = bbox_common, resolution = resolution, fun = fun, n_threads = n_threads, BPPARAM = BPPARAM)
+      } else {
+        stopifnot(is.character(assay_name))
+        stopifnot("assay_name does not exist in the input SpatialExperiment object"= assay_name %in% assayNames(spe))
+        out <- SEraster::rasterizeMatrix(assay(spe, assay_name), spatialCoords(spe), bbox = bbox_common, resolution = resolution, fun = fun, n_threads = n_threads, BPPARAM = BPPARAM)
+      }
+      data_rast <- out$data_rast
+      pos_rast <- out$pos_rast
+      meta_rast <- out$meta_rast
+      
+      ## construct a new SpatialExperiment object as output
+      output <- SpatialExperiment::SpatialExperiment(
+        assays = list(pixelval = data_rast),
+        spatialCoords = pos_rast,
+        colData = meta_rast
+      )
+      
+      return(output)
+    })
+    
+    if (!is.null(names(input))) {
+      names(output_list) <- names(input)
+    }
+    
+    ## return a list of SpatialExperiment object
+    return(output_list)
+    
   } else {
-    stopifnot(is.character(assay_name))
-    out <- rasterizeSparseMatrix(assay(input, assay_name), spatialCoords(input), resolution = resolution, fun = fun, n_threads = n_threads, BPPARAM = BPPARAM)
+    ## create bbox
+    pos <- spatialCoords(input)
+    bbox <- sf::st_bbox(c(xmin=min(pos[,1])-resolution/2, xmax=max(pos[,1])+resolution/2, ymin=min(pos[,2])-resolution/2, ymax=max(pos[,2])+resolution/2))
+    
+    ## rasterize
+    if (is.null(assay_name)) {
+      out <- rasterizeMatrix(assay(input), spatialCoords(input), bbox = bbox, resolution = resolution, fun = fun, n_threads = n_threads, BPPARAM = BPPARAM)
+    } else {
+      stopifnot(is.character(assay_name))
+      out <- rasterizeMatrix(assay(input, assay_name), spatialCoords(input), bbox = bbox, resolution = resolution, fun = fun, n_threads = n_threads, BPPARAM = BPPARAM)
+    }
+    data_rast <- out$data_rast
+    pos_rast <- out$pos_rast
+    meta_rast <- out$meta_rast
+    
+    ## construct a new SpatialExperiment object as output
+    output <- SpatialExperiment::SpatialExperiment(
+      assays = list(pixelval = data_rast),
+      spatialCoords = pos_rast,
+      colData = meta_rast
+    )
+    
+    ## return a SpatialExperiment object
+    return(output)
   }
-  data_rast <- out$data_rast
-  pos_rast <- out$pos_rast
-  meta_rast <- out$meta_rast
-  
-  ## construct a new SpatialExperiment object as output
-  output <- SpatialExperiment::SpatialExperiment(
-    assays = list(pixelval = data_rast),
-    spatialCoords = pos_rast,
-    colData = meta_rast
-  )
-  
-  return(output)
 }
 
 #' rasterizeCellType
