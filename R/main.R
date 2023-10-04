@@ -349,24 +349,27 @@ rasterizeSparseMatrix2 <- function(data, pos, resolution = 100, fun = "mean", n_
 #'  
 #' @description This function assumes that the input is provided as a \code{SpatialExperiment} object.
 #' 
-#' @param input \code{SpatialExperiment}: Input data represented as a \code{SpatialExperiment} object. 
-#' It is assumed to have an \code{assay} slot containing feature (genes) x observation (cells)
-#' matrix as \code{dgCmatrix} and a \code{spatialCoords} slot containing spatial x,y 
+#' @param input \code{SpatialExperiment} or \code{list}: Input data represented as a 
+#' \code{SpatialExperiment} or \code{list} of \code{SpatialExperiment}. 
+#' Each \code{SpatialExperiment} is assumed to have an \code{assay} slot containing feature (genes) x observation (cells)
+#' matrix as \code{dgCmatrix} or \code{matrix} and a \code{spatialCoords} slot containing spatial x,y 
 #' coordinates of observations as matrix array. Further, x,y coordinates are assumed 
-#' to be stored in coloumn 1 and 2 of \code{spatialCoords}.
+#' to be stored in column 1 and 2 of \code{spatialCoords}.
 #' 
 #' @param assay_name \code{character}: Name of the assay slot of the input that 
 #' you want to apply rasterization. If no argument is given, the first assay of the input 
 #' would be rasterized. This argument is useful when you have both raw and normalized 
-#' assays stored in the input, and you want to apply rasterization to the normalized assay.
+#' assays stored in the input, and you want to apply rasterization to the normalized assay. 
+#' If the input is a \code{list}, assay_name is assumed to be present in all elements 
+#' (\code{SpatialExperiment}) of the input.
 #' 
 #' @param resolution \code{integer}: Resolution or side length of each pixel. 
 #' The unit of this parameter is assumed to be the same as the unit of spatial 
 #' coordinates of the input data.
 #' 
 #' @param fun \code{character}: If "mean", pixel value for each pixel 
-#' would be the average of gene expression for all cells within the pixel. If 
-#' "sum", pixel value for each pixel would be the sum of gene expression for all 
+#' would be mean of gene expression for all cells within the pixel. If 
+#' "sum", pixel value for each pixel would be sum of gene expression for all 
 #' cells within the pixel.
 #' 
 #' @param n_threads \code{integer}: Number of threads for parallelization. Default = 1. 
@@ -381,11 +384,16 @@ rasterizeSparseMatrix2 <- function(data, pos, resolution = 100, fun = "mean", n_
 #' flexibility for setting up parallel-execution back-end. Default is NULL. If 
 #' provided, this is assumed to be an instance of \code{BiocParallelParam}.
 #' 
-#' @return The output is returned as a new \code{SpatialExperiment} object with 
-#' \code{assay} slot containing the feature (genes) x observations (pixels) matrix 
-#' (dgCmatrix), \code{spatialCoords} slot containing spatial x,y coordinates of 
-#' pixel centroids, and \code{colData} slot containing cell IDs of cells that 
-#' were aggregated in each pixel.
+#' @return If the input was given as \code{SpatialExperiment}, the output is returned 
+#' as a new \code{SpatialExperiment} object with \code{assay} slot containing the 
+#' feature (genes) x observations (pixels) matrix (\code{dgCMatrix} or \code{matrix} 
+#' depending on the input, see documentation for \code{rasterizeMatrix}), \code{spatialCoords} 
+#' slot containing spatial x,y coordinates of pixel centroids, and \code{colData} 
+#' slot containing cell IDs of cells that were aggregated in each pixel. If the input 
+#' was provided as \code{list} of \code{SpatialExperiment}, the output is returned 
+#' as a new \code{list} of \code{SpatialExperiment} containing information described 
+#' above for corresponding \code{SpatialExperiment}. Further, \code{names(input)} 
+#' is inherited in the output.
 #' 
 #' @importFrom SpatialExperiment spatialCoords SpatialExperiment
 #' @importFrom SummarizedExperiment assay
@@ -405,9 +413,13 @@ rasterizeGeneExpression <- function(input, assay_name = NULL, resolution = 100, 
       }
       return(data.frame(dataset = dataset, xmin = min(pos[,1]), xmax = max(pos[,1]), ymin = min(pos[,2]), ymax = max(pos[,2])))
     }))
-    bbox_common <- sf::st_bbox(c(xmin=min(bbox_mat$xmin)-resolution/2, xmax=max(bbox_mat$xmax)+resolution/2, ymin=min(bbox_mat$ymin)-resolution/2, ymax=max(bbox_mat$ymax)+resolution/2))
+    bbox_common <- sf::st_bbox(c(
+      xmin = floor(min(bbox_mat$xmin)-resolution/2), 
+      xmax = ceiling(max(bbox_mat$xmax)+resolution/2), 
+      ymin = floor(min(bbox_mat$ymin)-resolution/2), 
+      ymax = ceiling(max(bbox_mat$ymax)+resolution/2)
+    ))
     
-    ## rasterize iteratively
     ## rasterize iteratively
     output_list <- lapply(seq_along(input), function(i) {
       ## get SpatialExperiment object of the given index
@@ -444,7 +456,12 @@ rasterizeGeneExpression <- function(input, assay_name = NULL, resolution = 100, 
   } else {
     ## create bbox
     pos <- spatialCoords(input)
-    bbox <- sf::st_bbox(c(xmin=min(pos[,1])-resolution/2, xmax=max(pos[,1])+resolution/2, ymin=min(pos[,2])-resolution/2, ymax=max(pos[,2])+resolution/2))
+    bbox <- sf::st_bbox(c(
+      xmin = floor(min(pos[,1])-resolution/2), 
+      xmax = ceiling(max(pos[,1])+resolution/2), 
+      ymin = floor(min(pos[,2])-resolution/2), 
+      ymax = ceiling(max(pos[,2])+resolution/2)
+    ))
     
     ## rasterize
     if (is.null(assay_name)) {
@@ -476,23 +493,26 @@ rasterizeGeneExpression <- function(input, assay_name = NULL, resolution = 100, 
 #'  
 #' @description This function assumes that the input is provided as a \code{SpatialExperiment} object.
 #' 
-#' @param input \code{SpatialExperiment}: Input data represented as a \code{SpatialExperiment} object. 
-#' It is assumed to have a \code{colData} slot containing cell type 
+#' @param input \code{SpatialExperiment} or \code{list}: Input data represented as a 
+#' \code{SpatialExperiment} or \code{list} of \code{SpatialExperiment}. 
+#' Each \code{SpatialExperiment} is assumed to have a \code{colData} slot containing cell type 
 #' labels for observations as a data frame column and a \code{spatialCoords} slot 
 #' containing spatial x,y coordinates of observations as matrix array. Further, 
-#' x,y coordinates are assumed to be stored in coloumn 1 and 2 of \code{spatialCoords}.
+#' x,y coordinates are assumed to be stored in column 1 and 2 of \code{spatialCoords}.
 #' 
 #' @param col_name \code{character}: Column name of the \code{colData} object 
-#' containing cell type labels for observations.
+#' containing cell type labels for observations. If the input is a \code{list}, 
+#' col_name is assumed to be present in all elements (\code{SpatialExperiment}) of the input.
 #' 
 #' @param resolution \code{integer}: Resolution or side length of each pixel. 
 #' The unit of this parameter is assumed to be the same as the unit of spatial 
 #' coordinates of the input data.
 #' 
 #' @param fun \code{character}: If "mean", pixel value for each pixel 
-#' would be the average of gene expression for all cells within the pixel. If 
-#' "sum", pixel value for each pixel would be the sum of gene expression for all 
-#' cells within the pixel.
+#' would be the proportion of each cell type based on the one-hot-encoded cell type 
+#' labels for all cells within the pixel. If "sum", pixel value for each pixel would 
+#' be the number of cells of each cell type based on the one-hot-encoded cell type 
+#' labels for all cells within the pixel.
 #' 
 #' @param n_threads \code{integer}: Number of threads for parallelization. Default = 1. 
 #' Inputting this argument when the \code{BPPARAM} argument is missing would set parallel 
@@ -506,11 +526,15 @@ rasterizeGeneExpression <- function(input, assay_name = NULL, resolution = 100, 
 #' flexibility for setting up parallel-execution back-end. Default is NULL. If 
 #' provided, this is assumed to be an instance of \code{BiocParallelParam}.
 #' 
-#' @return The output is returned as a new \code{SpatialExperiment} object with 
-#' \code{assay} slot containing the feature (cell types) x observations (pixels) matrix 
-#' (dgCmatrix), \code{spatialCoords} slot containing spatial x,y coordinates of 
-#' pixel centroids, and \code{colData} slot containing cell IDs of cells that 
-#' were aggregated in each pixel.
+#' @return If the input was given as \code{SpatialExperiment}, the output is returned 
+#' as a new \code{SpatialExperiment} object with \code{assay} slot containing the 
+#' feature (cell types) x observations (pixels) matrix (dgCmatrix), \code{spatialCoords} 
+#' slot containing spatial x,y coordinates of pixel centroids, and \code{colData} 
+#' slot containing cell IDs of cells that were aggregated in each pixel. If the input 
+#' was provided as \code{list} of \code{SpatialExperiment}, the output is returned 
+#' as a new \code{list} of \code{SpatialExperiment} containing information described 
+#' above for corresponding \code{SpatialExperiment}. Further, \code{names(input)} 
+#' is inherited in the output.
 #' 
 #' @importFrom SpatialExperiment spatialCoords SpatialExperiment
 #' @importFrom SummarizedExperiment colData
@@ -519,33 +543,96 @@ rasterizeGeneExpression <- function(input, assay_name = NULL, resolution = 100, 
 #' @export
 #' 
 rasterizeCellType <- function(input, col_name, resolution = 100, fun = "mean", n_threads = 1, BPPARAM = NULL) {
-  ## extract cell type labels from SpatialExperiment
-  cellTypes <- as.factor(colData(input)[,col_name])
-  
-  ## one-hot encode cell type labels as sparse matrix
-  mat_ct <- t(Matrix::sparse.model.matrix(~ 0 + cellTypes))
-  rownames(mat_ct) <- levels(cellTypes)
-  colnames(mat_ct) <- rownames(spatialCoords(input))
-  
-  ## rasterize
-  out <- rasterizeSparseMatrix(mat_ct, spatialCoords(input), resolution = resolution, fun = fun, n_threads = 1, BPPARAM = BPPARAM)
-  data_rast <- out$data_rast
-  pos_rast <- out$pos_rast
-  meta_rast <- out$meta_rast
-  
-  ## construct a new SpatialExperiment object as output
-  output <- SpatialExperiment::SpatialExperiment(
-    assays = list(pixelval = data_rast),
-    spatialCoords = pos_rast,
-    colData = meta_rast
-  )
-  
-  return(output)
+  if (is.list(input)) {
+    ## create a common bbox
+    bbox_mat <- do.call(rbind, lapply(seq_along(input), function(i) {
+      pos <- spatialCoords(input[[i]])
+      if (!is.null(names(input))) {
+        dataset <- names(input)[i]
+      } else {
+        dataset <- i
+      }
+      return(data.frame(dataset = dataset, xmin = min(pos[,1]), xmax = max(pos[,1]), ymin = min(pos[,2]), ymax = max(pos[,2])))
+    }))
+    bbox_common <- sf::st_bbox(c(
+      xmin = floor(min(bbox_mat$xmin)-resolution/2), 
+      xmax = ceiling(max(bbox_mat$xmax)+resolution/2), 
+      ymin = floor(min(bbox_mat$ymin)-resolution/2), 
+      ymax = ceiling(max(bbox_mat$ymax)+resolution/2)
+    ))
+    
+    ## rasterize iteratively
+    output_list <- lapply(seq_along(input), function(i) {
+      ## get SpatialExperiment object of the given index
+      spe <- input[[i]]
+      
+      ## extract cell type labels from SpatialExperiment
+      stopifnot(is.character(col_name))
+      stopifnot("col_name does not exist in the input SpatialExperiment object"= col_name %in% colnames(colData(spe)))
+      cellTypes <- as.factor(colData(spe)[,col_name])
+      
+      ## one-hot encode cell type labels as sparse matrix
+      mat_ct <- t(Matrix::sparse.model.matrix(~ 0 + cellTypes))
+      rownames(mat_ct) <- levels(cellTypes)
+      colnames(mat_ct) <- rownames(spatialCoords(spe))
+      
+      ## rasterize
+      out <- rasterizeMatrix(mat_ct, spatialCoords(spe), bbox_common, resolution = resolution, fun = fun, n_threads = 1, BPPARAM = BPPARAM)
+      data_rast <- out$data_rast
+      pos_rast <- out$pos_rast
+      meta_rast <- out$meta_rast
+      
+      ## construct a new SpatialExperiment object as output
+      output <- SpatialExperiment::SpatialExperiment(
+        assays = list(pixelval = data_rast),
+        spatialCoords = pos_rast,
+        colData = meta_rast
+      )
+      
+      return(output)
+    })
+    
+    if (!is.null(names(input))) {
+      names(output_list) <- names(input)
+    }
+    
+    ## return a list of SpatialExperiment object
+    return(output_list)
+    
+  } else {
+    ## create bbox
+    pos <- spatialCoords(input)
+    bbox <- sf::st_bbox(c(
+      xmin = floor(min(pos[,1])-resolution/2), 
+      xmax = ceiling(max(pos[,1])+resolution/2), 
+      ymin = floor(min(pos[,2])-resolution/2), 
+      ymax = ceiling(max(pos[,2])+resolution/2)
+    ))
+    
+    ## extract cell type labels from SpatialExperiment
+    stopifnot(is.character(col_name))
+    stopifnot("col_name does not exist in the input SpatialExperiment object"= col_name %in% colnames(colData(spe)))
+    cellTypes <- as.factor(colData(input)[,col_name])
+    
+    ## one-hot encode cell type labels as sparse matrix
+    mat_ct <- t(Matrix::sparse.model.matrix(~ 0 + cellTypes))
+    rownames(mat_ct) <- levels(cellTypes)
+    colnames(mat_ct) <- rownames(spatialCoords(input))
+    
+    ## rasterize
+    out <- rasterizeMatrix(mat_ct, spatialCoords(input), bbox, resolution = resolution, fun = fun, n_threads = 1, BPPARAM = BPPARAM)
+    data_rast <- out$data_rast
+    pos_rast <- out$pos_rast
+    meta_rast <- out$meta_rast
+    
+    ## construct a new SpatialExperiment object as output
+    output <- SpatialExperiment::SpatialExperiment(
+      assays = list(pixelval = data_rast),
+      spatialCoords = pos_rast,
+      colData = meta_rast
+    )
+    
+    ## return a SpatialExperiment object
+    return(output)
+  }
 }
-
-#' calculateDensity
-#' 
-calculateDensity <- function(matrix.array) {
-  sum(matrix.array != 0)/(dim(matrix.array)[1] * dim(matrix.array)[2])
-}
-

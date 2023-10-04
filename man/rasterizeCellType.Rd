@@ -14,23 +14,26 @@ rasterizeCellType(
 )
 }
 \arguments{
-\item{input}{\code{SpatialExperiment}: Input data represented as a \code{SpatialExperiment} object. 
-It is assumed to have a \code{colData} slot containing cell type 
+\item{input}{\code{SpatialExperiment} or \code{list}: Input data represented as a 
+\code{SpatialExperiment} or \code{list} of \code{SpatialExperiment}. 
+Each \code{SpatialExperiment} is assumed to have a \code{colData} slot containing cell type 
 labels for observations as a data frame column and a \code{spatialCoords} slot 
 containing spatial x,y coordinates of observations as matrix array. Further, 
-x,y coordinates are assumed to be stored in coloumn 1 and 2 of \code{spatialCoords}.}
+x,y coordinates are assumed to be stored in column 1 and 2 of \code{spatialCoords}.}
 
 \item{col_name}{\code{character}: Column name of the \code{colData} object 
-containing cell type labels for observations.}
+containing cell type labels for observations. If the input is a \code{list}, 
+col_name is assumed to be present in all elements (\code{SpatialExperiment}) of the input.}
 
 \item{resolution}{\code{integer}: Resolution or side length of each pixel. 
 The unit of this parameter is assumed to be the same as the unit of spatial 
 coordinates of the input data.}
 
 \item{fun}{\code{character}: If "mean", pixel value for each pixel 
-would be the average of gene expression for all cells within the pixel. If 
-"sum", pixel value for each pixel would be the sum of gene expression for all 
-cells within the pixel.}
+would be the proportion of each cell type based on the one-hot-encoded cell type 
+labels for all cells within the pixel. If "sum", pixel value for each pixel would 
+be the number of cells of each cell type based on the one-hot-encoded cell type 
+labels for all cells within the pixel.}
 
 \item{n_threads}{\code{integer}: Number of threads for parallelization. Default = 1. 
 Inputting this argument when the \code{BPPARAM} argument is missing would set parallel 
@@ -45,11 +48,15 @@ flexibility for setting up parallel-execution back-end. Default is NULL. If
 provided, this is assumed to be an instance of \code{BiocParallelParam}.}
 }
 \value{
-The output is returned as a new \code{SpatialExperiment} object with 
-\code{assay} slot containing the feature (cell types) x observations (pixels) matrix 
-(dgCmatrix), \code{spatialCoords} slot containing spatial x,y coordinates of 
-pixel centroids, and \code{colData} slot containing cell IDs of cells that 
-were aggregated in each pixel.
+If the input was given as \code{SpatialExperiment}, the output is returned 
+as a new \code{SpatialExperiment} object with \code{assay} slot containing the 
+feature (cell types) x observations (pixels) matrix (dgCmatrix), \code{spatialCoords} 
+slot containing spatial x,y coordinates of pixel centroids, and \code{colData} 
+slot containing cell IDs of cells that were aggregated in each pixel. If the input 
+was provided as \code{list} of \code{SpatialExperiment}, the output is returned 
+as a new \code{list} of \code{SpatialExperiment} containing information described 
+above for corresponding \code{SpatialExperiment}. Further, \code{names(input)} 
+is inherited in the output.
 }
 \description{
 Function to rasterize cell type labels in spatially-resolved 
