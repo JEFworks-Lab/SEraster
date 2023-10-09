@@ -68,7 +68,8 @@ rasterizeMatrix <- function(data, pos, bbox, resolution = 100, fun = "mean", n_t
   ## convert pos to sf
   cells <- sf::st_as_sf(data.frame(pos), coords = c("x", "y"))
   ## get pixel ID for each cell
-  pixel_ids <- unlist(sf::st_intersects(cells, grid))
+  ## since some cells are assigned to > 1 pixels if they are on the border, choose the 1st pixel id
+  pixel_ids <- unlist(lapply(sf::st_intersects(cells, grid), function(sublist) sublist[1]))
   names(pixel_ids) <- rownames(pos)
   
   ## store aggregated subsetted matrix data for each pixel, store cell IDs and number of cells for each pixel into a data frame
