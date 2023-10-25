@@ -539,7 +539,7 @@ rasterizeGeneExpression <- function(input, assay_name = NULL, resolution = 100, 
 #' 
 #' @importFrom SpatialExperiment spatialCoords SpatialExperiment
 #' @importFrom SummarizedExperiment colData
-#' @importFrom Matrix sparse.model.matrix colSums
+#' @importFrom Matrix sparse.model.matrix t colSums
 #' 
 #' @export
 #' 
@@ -573,7 +573,7 @@ rasterizeCellType <- function(input, col_name, resolution = 100, fun = "mean", n
       cellTypes <- as.factor(colData(spe)[,col_name])
       
       ## one-hot encode cell type labels as sparse matrix
-      mat_ct <- t(Matrix::sparse.model.matrix(~ 0 + cellTypes))
+      mat_ct <- Matrix::t(Matrix::sparse.model.matrix(~ 0 + cellTypes))
       rownames(mat_ct) <- levels(cellTypes)
       colnames(mat_ct) <- rownames(spatialCoords(spe))
       
@@ -616,7 +616,7 @@ rasterizeCellType <- function(input, col_name, resolution = 100, fun = "mean", n
     cellTypes <- as.factor(colData(input)[,col_name])
     
     ## one-hot encode cell type labels as sparse matrix
-    mat_ct <- t(Matrix::sparse.model.matrix(~ 0 + cellTypes))
+    mat_ct <- Matrix::t(Matrix::sparse.model.matrix(~ 0 + cellTypes))
     rownames(mat_ct) <- levels(cellTypes)
     colnames(mat_ct) <- rownames(spatialCoords(input))
     
