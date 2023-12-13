@@ -384,7 +384,7 @@ rasterizeSparseMatrix2 <- function(data, pos, resolution = 100, fun = "mean", n_
 #' @return If the input was given as \code{SpatialExperiment}, the output is returned 
 #' as a new \code{SpatialExperiment} object with \code{assay} slot containing the 
 #' feature (genes) x observations (pixels) matrix (\code{dgCMatrix} or \code{matrix} 
-#' depending on the input, see documentation for \code{rasterizeMatrix}), \code{spatialCoords} 
+#' depending on the input, see documentation for \link{rasterizeMatrix}), \code{spatialCoords} 
 #' slot containing spatial x,y coordinates of pixel centroids, and \code{colData} 
 #' slot containing cell IDs of cells that were aggregated in each pixel. If the input 
 #' was provided as \code{list} of \code{SpatialExperiment}, the output is returned 
@@ -487,7 +487,7 @@ rasterizeGeneExpression <- function(input, assay_name = NULL, resolution = 100, 
 #' 
 #' @description Function to rasterize cell type labels in spatially-resolved 
 #' transcriptomics data represented as SpatialExperiment class.
-#'  
+#'
 #' @description This function assumes that the input is provided as a \code{SpatialExperiment} object.
 #' 
 #' @param input \code{SpatialExperiment} or \code{list}: Input data represented as a 
@@ -634,13 +634,62 @@ rasterizeCellType <- function(input, col_name, resolution = 100, fun = "mean", n
   }
 }
 
+#' plotRaster
+#' 
+#' @description Function based on \code{ggplot2::geom_tile} to visualize a rasterized spatial omics dataset represented as a \code{SpatialExperiment} object.
+#' 
+#' @param input \code{SpatialExperiment}: Input data represented as a 
+#' \code{SpatialExperiment}. The given \code{SpatialExperiment} is assumed to have 
+#' an \code{assay} slot containing a features-by-observations matrix as \code{dgCmatrix} 
+#' or \code{matrix} and a \code{spatialCoords} slot containing spatial x,y coordinates of 
+#' observations as matrix array. The features-by-observations matrix is assumed to 
+#' have either genes or cell types as features and pixels as observations. Further, 
+#' x,y coordinates are assumed to be stored in column 1 and 2 of \code{spatialCoords}.
+#' 
+#' @param assay_name \code{character}: Name of the assay slot of the input that 
+#' you want to visualize. If no argument is given, the first assay of the input 
+#' would be visualized. This argument is useful when you have multiple assays stored 
+#' in the input, and you want to visualize a specific assay. Default is NULL.
+#' 
+#' @param feature_name \code{character}: Name of the feature in the input that you 
+#' want to visualize. This argument is useful when you want to specify a feature you 
+#' want to visualize. You can also use "sum" to visualize sum of all feature 
+#' values per observation or "mean" to visualize mean of all feature values per observation. 
+#' Default is "sum".
+#' 
+#' @param factor_levels \code{character} or \code{numeric} or \code{factor}: An 
+#' optional vector to convert and plot the input data as \code{factor}. This argument 
+#' is useful if you want to plot categorical/ordinal variables, such as binarized 
+#' occurrence of a specific cell type. \code{factor_levels} is fed into \code{levels} 
+#' argument of the \code{factor} function in base R. Default is NULL.
+#' 
+#' @param showLegend \code{logical}: Boolean to show the legend. Default is TRUE.
+#' 
+#' @param plotTitle \code{character}: An optional argument to add a title to the 
+#' resulting plot. Default is NULL.
+#' 
+#' @param showAxis \code{logical}: Boolean to show axis title, texts, and ticks. 
+#' Default is FALSE.
+#' 
+#' @param ... Additional parameters to pass to \code{ggplot2::scale_fill_viridis_c} 
+#' if no argument is provided to \code{factor_levels} or \code{ggplot2::scale_fill_viridis_d} 
+#' if a vector is provided to \code{factor_levels}. If you wish to use other color 
+#' maps, we recommend overriding the resulting \code{ggplot} object.
+#' 
+#' @return The output is returned as a \code{ggplot} object, where the input is 
+#' visualized as \code{ggplot2::geom_tile}. Coloring of each tile/pixel represent 
+#' the corresponding values of summarized (sum or mean) or specific feature (e.g. 
+#' rasterized gene expression) per observation (pixel). The x,y coordinates represent 
+#' the pixel centroids.
+#' 
 #' @importFrom SpatialExperiment spatialCoords
 #' @importFrom SummarizedExperiment assay
 #' @importFrom Matrix colSums colMeans
 #' @importFrom ggplot2 ggplot theme ggtitle
 #' 
 #' @export
-plotRaster <- function(input, assay_name = NULL, feature_name = "sum", factor_levels = NULL, showLegend = TRUE, plotTitle = NULL, showMinimal = TRUE, ...) {
+#' 
+plotRaster <- function(input, assay_name = NULL, feature_name = "sum", factor_levels = NULL, showLegend = TRUE, plotTitle = NULL, showAxis = FALSE, ...) {
   ## get the indicated assay slot (features-by-observations matrix)
   if (is.null(assay_name)) {
     mat <- assay(input)
@@ -690,7 +739,7 @@ plotRaster <- function(input, assay_name = NULL, feature_name = "sum", factor_le
     plt <- plt + ggplot2::ggtitle(plotTitle)
   }
   
-  if (showMinimal) {
+  if (!showAxis) {
     plt <- plt + ggplot2::theme(
       axis.title = element_blank(),
       axis.text = element_blank(),

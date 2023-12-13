@@ -53,7 +53,7 @@ provided, this is assumed to be an instance of \code{BiocParallelParam}.}
 If the input was given as \code{SpatialExperiment}, the output is returned 
 as a new \code{SpatialExperiment} object with \code{assay} slot containing the 
 feature (genes) x observations (pixels) matrix (\code{dgCMatrix} or \code{matrix} 
-depending on the input, see documentation for \code{rasterizeMatrix}), \code{spatialCoords} 
+depending on the input, see documentation for \link{rasterizeMatrix}), \code{spatialCoords} 
 slot containing spatial x,y coordinates of pixel centroids, and \code{colData} 
 slot containing cell IDs of cells that were aggregated in each pixel. If the input 
 was provided as \code{list} of \code{SpatialExperiment}, the output is returned 
