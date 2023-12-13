@@ -166,8 +166,6 @@ rasterizeMatrix <- function(data, pos, bbox, resolution = 100, fun = "mean", n_t
 #' @importFrom BiocParallel MulticoreParam bpstart bplapply bpstop
 #' @importFrom Matrix rowMeans rowSums
 #' 
-#' @export
-#' 
 rasterizeSparseMatrix <- function(data, pos, resolution = 100, fun = "mean", n_threads = 1, BPPARAM = NULL) {
   ## set up parallel execution back-end with BiocParallel
   if (is.null(BPPARAM)) {
@@ -279,8 +277,6 @@ rasterizeSparseMatrix <- function(data, pos, resolution = 100, fun = "mean", n_t
 #' @importFrom methods new
 #' @importFrom BiocParallel MulticoreParam bpstart bplapply bpstop bpoptions
 #' @importFrom Matrix rowMeans rowSums
-#' 
-#' @export
 #' 
 rasterizeSparseMatrix2 <- function(data, pos, resolution = 100, fun = "mean", n_threads = 1, BPPARAM = NULL) {
   ## set up parallel execution back-end with BiocParallel
@@ -636,4 +632,71 @@ rasterizeCellType <- function(input, col_name, resolution = 100, fun = "mean", n
     ## return a SpatialExperiment object
     return(output)
   }
+}
+
+#' @importFrom SpatialExperiment spatialCoords
+#' @importFrom SummarizedExperiment assay
+#' @importFrom Matrix colSums colMeans
+#' @importFrom ggplot2 ggplot theme ggtitle
+#' 
+#' @export
+plotRaster <- function(input, assay_name = NULL, feature_name = "sum", factor_levels = NULL, showLegend = TRUE, plotTitle = NULL, showMinimal = TRUE, ...) {
+  ## get the indicated assay slot (features-by-observations matrix)
+  if (is.null(assay_name)) {
+    mat <- assay(input)
+  } else {
+    stopifnot(is.character(assay_name))
+    stopifnot("assay_name does not exist in the input SpatialExperiment object"= assay_name %in% assayNames(input))
+    mat <- assay(input, assay_name)
+  }
+  
+  ## create data.frame for plotting
+  if (feature_name == "sum") {
+    df <- data.frame(x = SpatialExperiment::spatialCoords(input)[,1], y = SpatialExperiment::spatialCoords(input)[,2], fill = colSums(mat))
+  } else if (feature_name == "mean") {
+    df <- data.frame(x = SpatialExperiment::spatialCoords(input)[,1], y = SpatialExperiment::spatialCoords(input)[,2], fill = colMeans(mat))
+  } else {
+    stopifnot(is.character(feature_name))
+    stopifnot("feature_name does not exist in the input SpatialExperiment object's assay slot" = feature_name %in% rownames(mat))
+    df <- data.frame(x = SpatialExperiment::spatialCoords(input)[,1], y = SpatialExperiment::spatialCoords(input)[,2], fill = mat[feature_name,])
+  }
+  
+  ## compute resolution
+  resolution <- diff(spatialCoords(input))[1,1]
+  
+  ## change object class of fill if plotting categorical variables
+  if (is.null(factor_levels)) {
+    plt <- ggplot2::ggplot(df, aes(x = x, y = y, fill = fill)) +
+      coord_fixed() +
+      geom_tile(width = resolution, height = resolution) +
+      scale_fill_viridis_c(...) +
+      theme_bw() +
+      theme(panel.grid = element_blank())
+  } else {
+    df$fill <- factor(df$fill, levels = factor_levels)
+    plt <- ggplot2::ggplot(df, aes(x = x, y = y, fill = fill)) +
+      coord_fixed() +
+      geom_tile(width = resolution, height = resolution) +
+      scale_fill_viridis_d(...) +
+      theme_bw() +
+      theme(panel.grid = element_blank())
+  }
+  
+  if (!showLegend) {
+    plt <- plt + ggplot2::theme(legend.position = "none")
+  }
+  
+  if (!is.null(plotTitle)) {
+    plt <- plt + ggplot2::ggtitle(plotTitle)
+  }
+  
+  if (showMinimal) {
+    plt <- plt + ggplot2::theme(
+      axis.title = element_blank(),
+      axis.text = element_blank(),
+      axis.ticks = element_blank()
+    )
+  }
+  
+  return(plt)
 }
