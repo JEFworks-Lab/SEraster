@@ -1,0 +1,40 @@
+---
+title: "Getting Started With SEraster"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{getting-started-with-SEraster}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(SEraster)
+
+## data
+library(MERINGUE)
+data("mPOA")
+
+## create spatial experiment object
+spe <- SpatialExperiment::SpatialExperiment(
+  spatialCoords = as.matrix(mPOA$pos),
+  colData = mPOA$annot,
+  assays = list(volnorm = mPOA$mat)
+)
+spe
+
+## rasterize gene expression
+rastGexp <- SEraster::rasterizeGeneExpression(spe, assay_name="volnorm", resolution = 50)
+## rasterize cell type
+rastCt <- SEraster::rasterizeCellType(spe, col_name = "main", resolution = 50)
+
+## plot
+SEraster::plotRaster(rastGexp)
+SEraster::plotRaster(rastCt)
+```
