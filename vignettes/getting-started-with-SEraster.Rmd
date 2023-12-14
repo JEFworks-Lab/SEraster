@@ -23,18 +23,30 @@ data("mPOA")
 
 ## create spatial experiment object
 spe <- SpatialExperiment::SpatialExperiment(
-  spatialCoords = as.matrix(mPOA$pos),
-  colData = mPOA$annot,
-  assays = list(volnorm = mPOA$mat)
+  assays = list(volnorm = mPOA$mat),
+  spatialCoords = as.matrix(mPOA$pos)[,c("x","y")],
+  colData = data.frame(mPOA$annot, brainPos = mPOA$pos$brainPos)
 )
 spe
 
+## subset based on brainPos
+spe_sub <- spe[, spe$brainPos == 11]
+dim(spe_sub)
+
+## remove cells with NaN for some genes
+bad_cells <- names(which(colSums(is.nan(as.matrix(assay(spe_sub)))) > 0))
+length(bad_cells)
+spe_sub <- spe_sub[,!colnames(spe_sub) %in% bad_cells]
+dim(spe_sub)
+
 ## rasterize gene expression
-rastGexp <- SEraster::rasterizeGeneExpression(spe, assay_name="volnorm", resolution = 50)
+rastGexp <- SEraster::rasterizeGeneExpression(spe_sub, assay_name="volnorm", resolution = 50)
 ## rasterize cell type
-rastCt <- SEraster::rasterizeCellType(spe, col_name = "main", resolution = 50)
+rastCt <- SEraster::rasterizeCellType(spe_sub, col_name = "main", resolution = 50)
 
 ## plot
-SEraster::plotRaster(rastGexp)
-SEraster::plotRaster(rastCt)
+SEraster::plotRaster(rastGexp, name = "Total rasterized gene expression")
+SEraster::plotRaster(rastGexp, feature_name = "Baiap2", name = "Baiap2")
+SEraster::plotRaster(rastCt, name = "cell counts", option = "inferno")
+SEraster::plotRaster(rastCt, feature_name = "Ependymal", name = "Ependymal counts", option = "inferno")
 ```

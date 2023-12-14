@@ -8,7 +8,7 @@ rasterizeCellType(
   input,
   col_name,
   resolution = 100,
-  fun = "mean",
+  fun = "sum",
   n_threads = 1,
   BPPARAM = NULL
 )
