@@ -16,20 +16,49 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(SpatialExperiment)
-## manually load the package for now
-devtools::load_all()
 library(SEraster)
+```
 
+Load data
+
+```{r data}
 data("merfish_mousePOA")
+merfish_mousePOA
+```
 
+Rasterize gene expression
+
+```{r gexp}
 ## rasterize gene expression
 rastGexp <- SEraster::rasterizeGeneExpression(merfish_mousePOA, assay_name="volnorm", resolution = 50)
-## rasterize cell type
-rastCt <- SEraster::rasterizeCellType(merfish_mousePOA, col_name = "celltype", resolution = 50)
 
 ## plot
 SEraster::plotRaster(rastGexp, name = "Total rasterized gene expression")
-SEraster::plotRaster(rastGexp, feature_name = "Baiap2", name = "Baiap2")
+SEraster::plotRaster(rastGexp, feature_name = "Esr1", name = "Esr1")
+```
+
+Rasterize cell-type
+
+```{r ct}
+## rasterize cell type
+rastCt <- SEraster::rasterizeCellType(merfish_mousePOA, col_name = "neurontype", resolution = 50)
+
+## plot
 SEraster::plotRaster(rastCt, name = "cell counts", option = "inferno")
-SEraster::plotRaster(rastCt, feature_name = "Ependymal", name = "Ependymal counts", option = "inferno")
+SEraster::plotRaster(rastCt, feature_name = "I-13", name = "I-13 counts", option = "inferno")
+```
+
+Rasterize gene expression within cell-type
+
+```{r ctgexp}
+## rasterize cell-type specific gene expression by subsetting to cell-type of interest
+cellsidx <- colData(merfish_mousePOA)$neurontype == 'I-13'
+subset <- merfish_mousePOA[, cellsidx]
+
+## rasterize gene expression
+rastGexpSubset <- SEraster::rasterizeGeneExpression(subset, assay_name="volnorm", resolution = 50)
+
+## plot
+SEraster::plotRaster(rastGexpSubset, name = "Total rasterized gene expression in I-11")
+SEraster::plotRaster(rastGexpSubset, feature_name = "Esr1", name = "Esr1 in I-13 inhibitory neurons")
 ```
