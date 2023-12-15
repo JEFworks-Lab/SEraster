@@ -15,34 +15,17 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
+library(SpatialExperiment)
+## manually load the package for now
+devtools::load_all()
 library(SEraster)
 
-## data
-library(MERINGUE)
-data("mPOA")
-
-## create spatial experiment object
-spe <- SpatialExperiment::SpatialExperiment(
-  assays = list(volnorm = mPOA$mat),
-  spatialCoords = as.matrix(mPOA$pos)[,c("x","y")],
-  colData = data.frame(mPOA$annot, brainPos = mPOA$pos$brainPos)
-)
-spe
-
-## subset based on brainPos
-spe_sub <- spe[, spe$brainPos == 11]
-dim(spe_sub)
-
-## remove cells with NaN for some genes
-bad_cells <- names(which(colSums(is.nan(as.matrix(assay(spe_sub)))) > 0))
-length(bad_cells)
-spe_sub <- spe_sub[,!colnames(spe_sub) %in% bad_cells]
-dim(spe_sub)
+data("merfish_mousePOA")
 
 ## rasterize gene expression
-rastGexp <- SEraster::rasterizeGeneExpression(spe_sub, assay_name="volnorm", resolution = 50)
+rastGexp <- SEraster::rasterizeGeneExpression(merfish_mousePOA, assay_name="volnorm", resolution = 50)
 ## rasterize cell type
-rastCt <- SEraster::rasterizeCellType(spe_sub, col_name = "main", resolution = 50)
+rastCt <- SEraster::rasterizeCellType(merfish_mousePOA, col_name = "celltype", resolution = 50)
 
 ## plot
 SEraster::plotRaster(rastGexp, name = "Total rasterized gene expression")

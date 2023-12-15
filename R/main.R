@@ -245,6 +245,7 @@ rasterizeGeneExpression <- function(input, assay_name = NULL, resolution = 100, 
       out <- rasterizeMatrix(SummarizedExperiment::assay(input), SpatialExperiment::spatialCoords(input), bbox = bbox, resolution = resolution, fun = fun, n_threads = n_threads, BPPARAM = BPPARAM)
     } else {
       stopifnot(is.character(assay_name))
+      stopifnot("assay_name does not exist in the input SpatialExperiment object"= assay_name %in% SummarizedExperiment::assayNames(input))
       out <- rasterizeMatrix(SummarizedExperiment::assay(input, assay_name), SpatialExperiment::spatialCoords(input), bbox = bbox, resolution = resolution, fun = fun, n_threads = n_threads, BPPARAM = BPPARAM)
     }
     data_rast <- out$data_rast
@@ -388,7 +389,7 @@ rasterizeCellType <- function(input, col_name, resolution = 100, fun = "sum", n_
     
     ## extract cell type labels from SpatialExperiment
     stopifnot(is.character(col_name))
-    stopifnot("col_name does not exist in the input SpatialExperiment object"= col_name %in% colnames(colData(spe)))
+    stopifnot("col_name does not exist in the input SpatialExperiment object"= col_name %in% colnames(colData(input)))
     cellTypes <- as.factor(colData(input)[,col_name])
     
     ## one-hot encode cell type labels as sparse matrix
