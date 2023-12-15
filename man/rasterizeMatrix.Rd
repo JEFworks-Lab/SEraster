@@ -27,7 +27,7 @@ and 2 of \code{spatialCoords}.}
 \item{bbox}{\code{bbox}: Bounding box for rasterization defined by a numeric 
 vector of length four, with xmin, ymin, xmax and ymax values.}
 
-\item{resolution}{\code{integer}: Resolution or side length of each pixel. 
+\item{resolution}{\code{integer} or \code{double}: Resolution or side length of each pixel. 
 The unit of this parameter is assumed to be the same as the unit of spatial 
 coordinates of the input data.}
 

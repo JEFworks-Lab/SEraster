@@ -9,6 +9,7 @@ plotRaster(
   assay_name = NULL,
   feature_name = "sum",
   factor_levels = NULL,
+  resolution = NULL,
   showLegend = TRUE,
   plotTitle = NULL,
   showAxis = FALSE,
@@ -40,6 +41,13 @@ optional vector to convert and plot the input data as \code{factor}. This argume
 is useful if you want to plot categorical/ordinal variables, such as binarized 
 occurrence of a specific cell type. \code{factor_levels} is fed into \code{levels} 
 argument of the \code{factor} function in base R. Default is NULL.}
+
+\item{resolution}{\code{integer} or \code{double}: Resolution or side length of each pixel in the resulting plot. 
+The unit of this parameter is assumed to be the same as the unit of spatial 
+coordinates of the input data. Default is NULL, and if no value is inputted, 
+resolution would be estimated based on the assumption that first two pixels would 
+have x or y distance that is equivalent to resolution. This argument would be useful 
+when pixels are sparse across space (or when the aforementioned assumption fails).}
 
 \item{showLegend}{\code{logical}: Boolean to show the legend. Default is TRUE.}
 

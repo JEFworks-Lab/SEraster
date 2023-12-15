@@ -25,7 +25,7 @@ x,y coordinates are assumed to be stored in column 1 and 2 of \code{spatialCoord
 containing cell type labels for observations. If the input is a \code{list}, 
 col_name is assumed to be present in all elements (\code{SpatialExperiment}) of the input.}
 
-\item{resolution}{\code{integer}: Resolution or side length of each pixel. 
+\item{resolution}{\code{integer} or \code{double}: Resolution or side length of each pixel. 
 The unit of this parameter is assumed to be the same as the unit of spatial 
 coordinates of the input data.}
 

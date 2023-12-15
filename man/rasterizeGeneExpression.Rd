@@ -28,7 +28,7 @@ assays stored in the input, and you want to apply rasterization to the normalize
 If the input is a \code{list}, assay_name is assumed to be present in all elements 
 (\code{SpatialExperiment}) of the input.}
 
-\item{resolution}{\code{integer}: Resolution or side length of each pixel. 
+\item{resolution}{\code{integer} or \code{double}: Resolution or side length of each pixel. 
 The unit of this parameter is assumed to be the same as the unit of spatial 
 coordinates of the input data.}
 

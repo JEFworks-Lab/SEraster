@@ -64,6 +64,7 @@ subset <- merfish_mousePOA[, cellsidx]
 rastGexpSubset <- SEraster::rasterizeGeneExpression(subset, assay_name="volnorm", resolution = 50)
 
 ## plot
-SEraster::plotRaster(rastGexpSubset, name = "Total rasterized gene expression in I-11")
+SEraster::plotRaster(rastGexpSubset, name = "Total rasterized gene expression in I-13")
 SEraster::plotRaster(rastGexpSubset, feature_name = "Esr1", name = "Esr1 in I-13 inhibitory neurons")
 ```
+

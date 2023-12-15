@@ -17,7 +17,7 @@
 #' @param bbox \code{bbox}: Bounding box for rasterization defined by a numeric 
 #' vector of length four, with xmin, ymin, xmax and ymax values.
 #' 
-#' @param resolution \code{integer}: Resolution or side length of each pixel. 
+#' @param resolution \code{integer} or \code{double}: Resolution or side length of each pixel. 
 #' The unit of this parameter is assumed to be the same as the unit of spatial 
 #' coordinates of the input data.
 #' 
@@ -140,7 +140,7 @@ rasterizeMatrix <- function(data, pos, bbox, resolution = 100, fun = "mean", n_t
 #' If the input is a \code{list}, assay_name is assumed to be present in all elements 
 #' (\code{SpatialExperiment}) of the input.
 #' 
-#' @param resolution \code{integer}: Resolution or side length of each pixel. 
+#' @param resolution \code{integer} or \code{double}: Resolution or side length of each pixel. 
 #' The unit of this parameter is assumed to be the same as the unit of spatial 
 #' coordinates of the input data.
 #' 
@@ -282,7 +282,7 @@ rasterizeGeneExpression <- function(input, assay_name = NULL, resolution = 100, 
 #' containing cell type labels for observations. If the input is a \code{list}, 
 #' col_name is assumed to be present in all elements (\code{SpatialExperiment}) of the input.
 #' 
-#' @param resolution \code{integer}: Resolution or side length of each pixel. 
+#' @param resolution \code{integer} or \code{double}: Resolution or side length of each pixel. 
 #' The unit of this parameter is assumed to be the same as the unit of spatial 
 #' coordinates of the input data.
 #' 
@@ -444,6 +444,13 @@ rasterizeCellType <- function(input, col_name, resolution = 100, fun = "sum", n_
 #' occurrence of a specific cell type. \code{factor_levels} is fed into \code{levels} 
 #' argument of the \code{factor} function in base R. Default is NULL.
 #' 
+#' @param resolution \code{integer} or \code{double}: Resolution or side length of each pixel in the resulting plot. 
+#' The unit of this parameter is assumed to be the same as the unit of spatial 
+#' coordinates of the input data. Default is NULL, and if no value is inputted, 
+#' resolution would be estimated based on the assumption that first two pixels would 
+#' have x or y distance that is equivalent to resolution. This argument would be useful 
+#' when pixels are sparse across space (or when the aforementioned assumption fails).
+#' 
 #' @param showLegend \code{logical}: Boolean to show the legend. Default is TRUE.
 #' 
 #' @param plotTitle \code{character}: An optional argument to add a title to the 
@@ -470,7 +477,7 @@ rasterizeCellType <- function(input, col_name, resolution = 100, fun = "sum", n_
 #' 
 #' @export
 #' 
-plotRaster <- function(input, assay_name = NULL, feature_name = "sum", factor_levels = NULL, showLegend = TRUE, plotTitle = NULL, showAxis = FALSE, ...) {
+plotRaster <- function(input, assay_name = NULL, feature_name = "sum", factor_levels = NULL, resolution = NULL, showLegend = TRUE, plotTitle = NULL, showAxis = FALSE, ...) {
   ## get the indicated assay slot (features-by-observations matrix)
   if (is.null(assay_name)) {
     mat <- SummarizedExperiment::assay(input)
@@ -492,7 +499,10 @@ plotRaster <- function(input, assay_name = NULL, feature_name = "sum", factor_le
   }
   
   ## compute resolution
-  resolution <- diff(SpatialExperiment::spatialCoords(input))[1,1]
+  if (is.null(resolution)) {
+    dist <- diff(SpatialExperiment::spatialCoords(input))[1,]
+    resolution <- min(dist[dist > 0])
+  }
   
   ## change object class of fill if plotting categorical variables
   if (is.null(factor_levels)) {
