@@ -1,6 +1,10 @@
 ---
 title: "Getting Started With SEraster"
-output: rmarkdown::html_vignette
+output:
+  md_document:
+     variant: markdown_github
+     toc: true
+     toc_depth: 3
 vignette: >
   %\VignetteIndexEntry{getting-started-with-SEraster}
   %\VignetteEngine{knitr::rmarkdown}
