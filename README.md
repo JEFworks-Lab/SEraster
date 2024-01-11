@@ -61,6 +61,10 @@ SEraster::plotRaster(rastGexp, name = "Total rasterized gene expression")
 SEraster::plotRaster(rastGexp, feature_name = "Esr1", name = "Esr1")
 ```
 
+<p align="center">
+<img src="https://github.com/JEFworks/SEraster/blob/main/docs/images/rasterized_gexp_esr1.png?raw=true" height="400"/>
+</p>
+
 #### Rasterize cell-type labels
 ``` r
 rastCt <- SEraster::rasterizeCellType(merfish_mousePOA, col_name = "celltype", resolution = 50)
@@ -69,10 +73,18 @@ rastCt <- SEraster::rasterizeCellType(merfish_mousePOA, col_name = "celltype", r
 SEraster::plotRaster(rastCt, name = "cell counts", option = "inferno")
 ```
 
+<p align="center">
+<img src="https://github.com/JEFworks/SEraster/blob/main/docs/images/rasterized_ct_total.png?raw=true" height="400"/>
+</p>
+
 ``` r
 # plot specific cell-type
 SEraster::plotRaster(rastCt, feature_name = "Inhibitory", name = "Inhibitory neuron counts", option = "inferno")
 ```
+
+<p align="center">
+<img src="https://github.com/JEFworks/SEraster/blob/main/docs/images/rasterized_ct_inhibitory.png?raw=true" height="400"/>
+</p>
 
 ### Downstream Analysis
 
@@ -110,6 +122,10 @@ top_svg_name <- rownames(rowData(rastGexp))[top_svg]
 SEraster::plotRaster(rastGexp, feature_name = top_svg_name, name = top_svg_name)
 ```
 
+<p align="center">
+<img src="https://github.com/JEFworks/SEraster/blob/main/docs/images/rasterized_gexp_top_svg.png?raw=true" height="400"/>
+</p>
+
 We can also perform cell-type specific SVG analysis by subsetting the dataset prior to applying SEraster.
 
 ``` r
@@ -142,6 +158,10 @@ top_svg <- which(rowData(rastGexp_sub)$rank == 1)
 top_svg_name <- rownames(rowData(rastGexp_sub))[top_svg]
 SEraster::plotRaster(rastGexp_sub, feature_name = top_svg_name, name = top_svg_name)
 ```
+
+<p align="center">
+<img src="https://github.com/JEFworks/SEraster/blob/main/docs/images/rasterized_gexp_sub_top_svg.png?raw=true" height="400"/>
+</p>
 
 #### Cell-type cooccurrence analysis
 
@@ -176,15 +196,27 @@ ct_interest <- "Ependymal"
 plotRaster(rastCt, assay_name = "pixelval", feature_name = ct_interest, name = "cell-type counts", option = "inferno")
 ```
 
+<p align="center">
+<img src="https://github.com/JEFworks/SEraster/blob/main/docs/images/rasterized_ct_sub_total.png?raw=true" height="400"/>
+</p>
+
 ``` r
 # plot RE value for a cell-type of interest
 plotRaster(rastCt, assay_name = "re", feature_name = ct_interest, name = "RE", option = "inferno")
 ```
 
+<p align="center">
+<img src="https://github.com/JEFworks/SEraster/blob/main/docs/images/rasterized_ct_sub_re.png?raw=true" height="400"/>
+</p>
+
 ``` r
 # plot binarized value for a cell-type of interest
 plotRaster(rastCt, assay_name = "bin", feature_name = ct_interest, factor_levels = c(0,1), name = "binarized", option = "inferno")
 ```
+
+<p align="center">
+<img src="https://github.com/JEFworks/SEraster/blob/main/docs/images/rasterized_ct_sub_bin.png?raw=true" height="400"/>
+</p>
 
 ``` r
 # run CooccurrenceAffinity
@@ -193,5 +225,9 @@ ct_coocc <- CooccurrenceAffinity::affinity(data = mat_bin, row.or.col = "row", s
 # plot maximum likelihood estimates of affinity metric (alpha MLE)
 CooccurrenceAffinity::plotgg(data = ct_coocc, variable = "alpha_mle", legendlimit = "datarange")
 ```
+
+<p align="center">
+<img src="https://github.com/JEFworks/SEraster/blob/main/docs/images/coocc_heatmap.png?raw=true" height="500"/>
+</p>
 
 ## Citation
