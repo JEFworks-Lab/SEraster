@@ -39,6 +39,10 @@ data("merfish_mousePOA")
 dim(merfish_mousePOA)
 ```
 
+``` r
+[1]  155 6509
+```
+
 ### Getting started
 
 #### Rasterize gene expression
@@ -57,12 +61,16 @@ SEraster::plotRaster(rastGexp, name = "Total rasterized gene expression")
 SEraster::plotRaster(rastGexp, feature_name = "Esr1", name = "Esr1")
 ```
 
-#### Rasterize cell type labels
+#### Rasterize cell-type labels
 ``` r
 rastCt <- SEraster::rasterizeCellType(merfish_mousePOA, col_name = "celltype", resolution = 50)
 
-# plot
+# plot total cell counts
 SEraster::plotRaster(rastCt, name = "cell counts", option = "inferno")
+```
+
+``` r
+# plot specific cell-type
 SEraster::plotRaster(rastCt, feature_name = "Inhibitory", name = "Inhibitory neuron counts", option = "inferno")
 ```
 
@@ -75,6 +83,10 @@ We will highlight spatial variable gene (SVG) and cell-type cooccurrence analyse
 Here, we use a previously developed tool called `nnSVG`. Please refer to [nnSVG](https://bioconductor.org/packages/nnSVG) for more details about the package. We can directly input rasterized gene expression `SpatialExperiment` object from `SEraster` into `nnSVG`.
 
 ``` r
+library(nnSVG)
+```
+
+``` r
 # run nnSVG
 set.seed(0)
 rastGexp <- nnSVG(rastGexp, assay_name = "pixelval")
@@ -85,10 +97,16 @@ rastGexp <- nnSVG(rastGexp, assay_name = "pixelval")
 table(rowData(rastGexp)$padj <= 0.05)
 ```
 
+```r
+## 
+## FALSE  TRUE
+##    17   138
+```
+
 ``` r
 # plot rasterized gene expression of top-ranked SVG
 top_svg <- which(rowData(rastGexp)$rank == 1)
-top_svg_name <- rowData(rastGexp)$gene_name[top_svg]
+top_svg_name <- rownames(rowData(rastGexp))[top_svg]
 SEraster::plotRaster(rastGexp, feature_name = top_svg_name, name = top_svg_name)
 ```
 
@@ -96,32 +114,42 @@ We can also perform cell-type specific SVG analysis by subsetting the dataset pr
 
 ``` r
 # subset data
-ct_interest <- "Ependymal"
-spe_epend <- merfish_mousePOA[,merfish_mousePOA$celltype == ct_interest]
+ct_interest <- "Excitatory"
+spe_sub <- merfish_mousePOA[,merfish_mousePOA$celltype == ct_interest]
 
 # run SEraster
-rastGexp_epend <- SEraster::rasterizeGeneExpression(spe_epend, assay_name="volnorm", resolution = 50)
+rastGexp_sub <- SEraster::rasterizeGeneExpression(spe_sub, assay_name="volnorm", resolution = 50)
 
 # run nnSVG
 set.seed(0)
-rastGexp_epend <- nnSVG(rastGexp_epend, assay_name = "pixelval")
+rastGexp_sub <- nnSVG(rastGexp_sub, assay_name = "pixelval")
 ```
 
 ``` r
 # number of significant SVGs
-table(rowData(rastGexp_epend)$padj <= 0.05)
+table(rowData(rastGexp_sub)$padj <= 0.05)
+```
+
+``` r
+## 
+## FALSE  TRUE 
+##    45   110
 ```
 
 ``` r
 # plot rasterized gene expression of top-ranked SVG
-top_svg <- which(rowData(rastGexp_epend)$rank == 1)
-top_svg_name <- rowData(rastGexp_epend)$gene_name[top_svg]
-SEraster::plotRaster(rastGexp_epend, feature_name = top_svg_name, name = top_svg_name)
+top_svg <- which(rowData(rastGexp_sub)$rank == 1)
+top_svg_name <- rownames(rowData(rastGexp_sub))[top_svg]
+SEraster::plotRaster(rastGexp_sub, feature_name = top_svg_name, name = top_svg_name)
 ```
 
 #### Cell-type cooccurrence analysis
 
 Rasterized cell-type labels can be used to analyze pair-wise cell-type cooccurrence. To do so, we binarize the rasterized cell-type labels using a relative enrichment metric and a previously developed tool called `CooccurrenceAffinity`. Please refer to our paper for more details about the methodology and [CooccurrenceAffinity](https://CRAN.R-project.org/package=CooccurrenceAffinity) for more details about the package.
+
+``` r
+library(CooccurrenceAffinity)
+```
 
 ``` r
 # extract cell-type labels
