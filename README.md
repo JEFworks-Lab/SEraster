@@ -3,7 +3,7 @@
 `SEraster` is a pre-processing tool to enable scalable and accurate analysis of large-scale spatial omics datasets with existing tools.
 
 <p align="center">
-  <img src="https://github.com/JEFworks/CRAWDAD/blob/main/docs/img/CRAWDAD_logo.png?raw=true" height="200"/>
+  <img src="https://github.com/JEFworks/SEraster/blob/main/docs/images/seraster_logo_hex.png?raw=true" height="200"/>
 </p>
 
 ## Overview
