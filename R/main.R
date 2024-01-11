@@ -96,7 +96,7 @@ rasterizeMatrix <- function(data, pos, bbox, resolution = 100, fun = "mean", n_t
     } else {
       return(list(as(pixel_val, "CsparseMatrix"), meta_rast))
     }
-  }), recursive = FALSE)
+  }, BPPARAM = BPPARAM), recursive = FALSE)
   
   ## stop parallel execution back-end
   BiocParallel::bpstop(BPPARAM)
