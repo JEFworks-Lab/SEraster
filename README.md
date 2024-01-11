@@ -48,7 +48,9 @@ rastGexp <- SEraster::rasterizeGeneExpression(merfish_mousePOA, assay_name="voln
 # plot total rasterized gene expression
 SEraster::plotRaster(rastGexp, name = "Total rasterized gene expression")
 ```
-<img src="https://github.com/JEFworks/SEraster/blob/main/docs/images/rasterized_gexp_total.png?raw=true" height="300"/>
+<p align="center">
+<img src="https://github.com/JEFworks/SEraster/blob/main/docs/images/rasterized_gexp_total.png?raw=true" height="500"/>
+</p>
 
 ``` r
 # plot specific gene
