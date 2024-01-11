@@ -45,8 +45,13 @@ dim(merfish_mousePOA)
 ``` r
 rastGexp <- SEraster::rasterizeGeneExpression(merfish_mousePOA, assay_name="volnorm", resolution = 50)
 
-# plot
+# plot total rasterized gene expression
 SEraster::plotRaster(rastGexp, name = "Total rasterized gene expression")
+```
+<img src="https://github.com/JEFworks/CRAWDAD/blob/main/docs/img/coloc.png?raw=true" height="600"/>
+
+``` r
+# plot specific gene
 SEraster::plotRaster(rastGexp, feature_name = "Esr1", name = "Esr1")
 ```
 
