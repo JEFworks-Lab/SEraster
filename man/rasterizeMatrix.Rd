@@ -25,7 +25,7 @@ matrix array. Further, x,y coordinates are assumed to be stored in column 1
 and 2 of \code{spatialCoords}.}
 
 \item{bbox}{\code{bbox} or \code{numeric}: Bounding box for rasterization defined 
-by a bbox class object or a numeric vector of length four, with xmin, ymin, xmax 
+by a bbox class object (as created by sf::st_bbox) or a numeric vector of length four, with xmin, ymin, xmax 
 and ymax values. Values in a numeric vector are assumed to be in the order of xmin, 
 ymin, xmax, and ymax.}
 
