@@ -14,8 +14,10 @@
 #' matrix array. Further, x,y coordinates are assumed to be stored in column 1 
 #' and 2 of \code{spatialCoords}.
 #' 
-#' @param bbox \code{bbox}: Bounding box for rasterization defined by a numeric 
-#' vector of length four, with xmin, ymin, xmax and ymax values.
+#' @param bbox \code{bbox} or \code{numeric}: Bounding box for rasterization defined 
+#' by a bbox class object or a numeric vector of length four, with xmin, ymin, xmax 
+#' and ymax values. Values in a numeric vector are assumed to be in the order of xmin, 
+#' ymin, xmax, and ymax.
 #' 
 #' @param resolution \code{integer} or \code{double}: Resolution or side length of each pixel. 
 #' The unit of this parameter is assumed to be the same as the unit of spatial 
