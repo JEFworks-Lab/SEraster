@@ -60,7 +60,7 @@ rasterizeMatrix <- function(data, pos, bbox, resolution = 100, fun = "mean", n_t
   BiocParallel::bpstart(BPPARAM)
   
   ## check to see if data and pos are have the same number of cells
-  stopifnot(ncol(data)==nrow(pos), 'data and pos must have same number of cells')
+  stopifnot("data and pos must have same number of cells" = ncol(data)==nrow(pos))
   ## check if cellnames in data and pos are identical if they are provided in colnames and rownames respectively
   stopifnot((is.null(colnames(data)) | is.null(rownames(pos))) | identical(colnames(data), rownames(pos)))|
   ## check to see if bbox input is of class numeric or bbox, if numeric, convert to st_bbox
