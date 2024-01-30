@@ -1,6 +1,6 @@
 # Spatial Experiments raster (SEraster)
 
-`SEraster` is a pre-processing tool to enable scalable and accurate analysis of large-scale spatial omics datasets with existing tools.
+`SEraster` is a rasterization preprocessing framework that aggregates cellular information into spatial pixels to enhance the scalability of spatial omics data analysis.
 
 <p align="center">
   <img src="https://github.com/JEFworks/SEraster/blob/main/docs/images/seraster_logo_hex.png?raw=true" height="200"/>
@@ -86,9 +86,9 @@ SEraster::plotRaster(rastCt, feature_name = "Inhibitory", name = "Inhibitory neu
 <img src="https://github.com/JEFworks/SEraster/blob/main/docs/images/rasterized_ct_inhibitory.png?raw=true" height="400"/>
 </p>
 
-### Downstream Analysis
+### Sample Downstream Analysis
 
-We will highlight spatial variable gene (SVG) and cell-type cooccurrence analyses as examples of downstream analysis that benefit from SEraster.
+`SEraster` returns rasteriezd gene-expression and cell-type information as `SpatialExperiment` objects that can be integrated with other existing downstream analysis tools. We demonstrate below spatial variable gene (SVG) and cell-type cooccurrence analyses as examples of such potential downstream analysis.
 
 #### Spatial variable gene (SVG) analysis
 
