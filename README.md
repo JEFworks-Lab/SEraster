@@ -48,7 +48,14 @@ dim(merfish_mousePOA)
 #### Rasterize gene expression
 ``` r
 rastGexp <- SEraster::rasterizeGeneExpression(merfish_mousePOA, assay_name="volnorm", resolution = 50)
+dim(rastGexp)
+```
+``` r
+[1]  155 1301
+```
+As you can see, SEraster aggregated 6,509 single cells into 1,301 pixels.
 
+``` r
 # plot total rasterized gene expression
 SEraster::plotRaster(rastGexp, name = "Total rasterized gene expression")
 ```
@@ -68,7 +75,12 @@ SEraster::plotRaster(rastGexp, feature_name = "Esr1", name = "Esr1")
 #### Rasterize cell-type labels
 ``` r
 rastCt <- SEraster::rasterizeCellType(merfish_mousePOA, col_name = "celltype", resolution = 50)
-
+dim(rastGexp)
+```
+``` r
+[1]  16 1301
+```
+``` r
 # plot total cell counts
 SEraster::plotRaster(rastCt, name = "cell counts", option = "inferno")
 ```
