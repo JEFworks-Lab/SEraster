@@ -11,7 +11,7 @@
 `SEraster` reduces the number of spatial points in spatial omics datasets for downstream analysis through a process of rasterization where single cells’ gene expression or cell-type labels are aggregated into equally sized pixels based on a user-defined `resolution`. Here, we refer to a particular `resolution` of rasterization by the side length of the pixel such that finer `resolution` indicates smaller pixel size and coarser `resolution` indicates larger pixel size.
 
 <p align="center">
-  <img src="https://github.com/JEFworks-Lab/SEraster/blob/main/docs/images/overview.png" height="400"/>
+  <img src="https://github.com/JEFworks-Lab/SEraster/blob/main/docs/images/overview.png" height="600"/>
 </p>
 
 ## Installation
@@ -42,6 +42,8 @@ library(SEraster)
 ### Load example dataset
 ``` r
 data("merfish_mousePOA")
+
+# check the dimension of the genes-by-cells matrix at single-cell resolution
 dim(merfish_mousePOA)
 ```
 
@@ -50,6 +52,7 @@ dim(merfish_mousePOA)
 ```
 
 ``` r
+# check the number of cell-types
 length(unique(colData(merfish_mousePOA)$celltype))
 ```
 
@@ -72,7 +75,7 @@ ggplot(df, aes(x = x, y = y, col = celltype)) +
 ```
 
 <p align="center">
-  <img src="https://github.com/JEFworks-Lab/SEraster/blob/main/docs/images/singlecell_celltypes.png" height="200"/>
+  <img src="https://github.com/JEFworks-Lab/SEraster/blob/main/docs/images/singlecell_celltypes.png" height="400"/>
 </p>
 
 ### Getting started
@@ -80,6 +83,7 @@ ggplot(df, aes(x = x, y = y, col = celltype)) +
 #### Rasterize gene expression
 ``` r
 rastGexp <- SEraster::rasterizeGeneExpression(merfish_mousePOA, assay_name="volnorm", resolution = 50)
+# check the dimension of the genes-by-cells matrix after rasterizing gene expression
 dim(rastGexp)
 ```
 ``` r
@@ -107,6 +111,8 @@ SEraster::plotRaster(rastGexp, feature_name = "Esr1", name = "Esr1")
 #### Rasterize cell-type labels
 ``` r
 rastCt <- SEraster::rasterizeCellType(merfish_mousePOA, col_name = "celltype", resolution = 50)
+
+# check the dimension of the cell-types-by-cells matrix after rasterizing cell-type labels
 dim(rastGexp)
 ```
 ``` r
