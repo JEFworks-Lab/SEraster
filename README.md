@@ -75,7 +75,7 @@ ggplot(df, aes(x = x, y = y, col = celltype)) +
 ```
 
 <p align="center">
-  <img src="https://github.com/JEFworks-Lab/SEraster/blob/main/docs/images/singlecell_celltypes.png" height="400"/>
+  <img src="https://github.com/JEFworks-Lab/SEraster/blob/main/docs/images/singlecell_celltypes.png" height="600"/>
 </p>
 
 ### Getting started
