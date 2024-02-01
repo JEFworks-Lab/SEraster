@@ -83,6 +83,7 @@ ggplot(df, aes(x = x, y = y, col = celltype)) +
 #### Rasterize gene expression
 ``` r
 rastGexp <- SEraster::rasterizeGeneExpression(merfish_mousePOA, assay_name="volnorm", resolution = 50)
+
 # check the dimension of the genes-by-cells matrix after rasterizing gene expression
 dim(rastGexp)
 ```
