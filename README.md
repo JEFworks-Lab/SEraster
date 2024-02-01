@@ -1,12 +1,18 @@
 # Spatial Experiments raster (SEraster)
 
-`SEraster` is a rasterization preprocessing framework that aggregates cellular information into spatial pixels to enhance the scalability of spatial omics data analysis.
+`SEraster` is a rasterization preprocessing framework that aggregates cellular information into spatial pixels to reduce resource requirements for spatial omics data analysis.
 
 <p align="center">
   <img src="https://github.com/JEFworks/SEraster/blob/main/docs/images/seraster_logo_hex.png?raw=true" height="200"/>
 </p>
 
 ## Overview
+
+`SEraster` reduces the number of spatial points in spatial omics datasets for downstream analysis through a process of rasterization where single cells’ gene expression or cell-type labels are aggregated into equally sized pixels based on a user-defined `resolution`. Here, we refer to a particular `resolution` of rasterization by the side length of the pixel such that finer `resolution` indicates smaller pixel size and coarser `resolution` indicates larger pixel size.
+
+<p align="center">
+  <img src="https://github.com/JEFworks-Lab/SEraster/blob/main/docs/images/overview.png" height="400"/>
+</p>
 
 ## Installation
 
@@ -42,6 +48,32 @@ dim(merfish_mousePOA)
 ``` r
 [1]  155 6509
 ```
+
+``` r
+length(unique(colData(merfish_mousePOA)$celltype))
+```
+
+``` r
+[1]  16
+```
+
+This MERFISH mouse preoptic area dataset contains 6,509 cells and 16 cell-types.
+
+``` r
+# plot at single-cell resolution
+df <- data.frame(spatialCoords(merfish_mousePOA), celltype = colData(merfish_mousePOA)$celltype)
+ggplot(df, aes(x = x, y = y, col = celltype)) +
+  geom_point(size = 1) +
+  labs(x = "x (μm)",
+       y = "y (μm)",
+       col = "Cell-types") +
+  theme_bw() +
+  theme(panel.grid = element_blank())
+```
+
+<p align="center">
+  <img src="https://github.com/JEFworks-Lab/SEraster/blob/main/docs/images/singlecell_celltypes.png" height="200"/>
+</p>
 
 ### Getting started
 
