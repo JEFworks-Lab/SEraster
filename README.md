@@ -11,7 +11,7 @@
 `SEraster` reduces the number of spatial points in spatial omics datasets for downstream analysis through a process of rasterization where single cells’ gene expression or cell-type labels are aggregated into equally sized pixels based on a user-defined `resolution`. Here, we refer to a particular `resolution` of rasterization by the side length of the pixel such that finer `resolution` indicates smaller pixel size and coarser `resolution` indicates larger pixel size.
 
 <p align="center">
-  <img src="https://github.com/JEFworks-Lab/SEraster/blob/main/docs/images/overview.png" height="600"/>
+  <img src="https://github.com/JEFworks-Lab/SEraster/blob/main/docs/images/overview.png?raw=true" height="600"/>
 </p>
 
 ## Installation
@@ -75,7 +75,7 @@ ggplot(df, aes(x = x, y = y, col = celltype)) +
 ```
 
 <p align="center">
-  <img src="https://github.com/JEFworks-Lab/SEraster/blob/main/docs/images/singlecell_celltypes.png" height="550"/>
+  <img src="https://github.com/JEFworks-Lab/SEraster/blob/main/docs/images/singlecell_celltypes.png?raw=true" height="550"/>
 </p>
 
 ### Getting started
