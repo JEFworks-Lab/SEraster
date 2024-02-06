@@ -1,12 +1,18 @@
 # Spatial Experiments raster (SEraster)
 
-`SEraster` is a pre-processing tool to enable scalable and accurate analysis of large-scale spatial omics datasets with existing tools.
+`SEraster` is a rasterization preprocessing framework that aggregates cellular information into spatial pixels to reduce resource requirements for spatial omics data analysis.
 
 <p align="center">
   <img src="https://github.com/JEFworks/SEraster/blob/main/docs/images/seraster_logo_hex.png?raw=true" height="200"/>
 </p>
 
 ## Overview
+
+`SEraster` reduces the number of spatial points in spatial omics datasets for downstream analysis through a process of rasterization where single cells’ gene expression or cell-type labels are aggregated into equally sized pixels based on a user-defined `resolution`. Here, we refer to a particular `resolution` of rasterization by the side length of the pixel such that finer `resolution` indicates smaller pixel size and coarser `resolution` indicates larger pixel size.
+
+<p align="center">
+  <img src="https://github.com/JEFworks-Lab/SEraster/blob/main/docs/images/overview.png" height="600"/>
+</p>
 
 ## Installation
 
@@ -36,6 +42,8 @@ library(SEraster)
 ### Load example dataset
 ``` r
 data("merfish_mousePOA")
+
+# check the dimension of the genes-by-cells matrix at single-cell resolution
 dim(merfish_mousePOA)
 ```
 
@@ -43,12 +51,48 @@ dim(merfish_mousePOA)
 [1]  155 6509
 ```
 
+``` r
+# check the number of cell-types
+length(unique(colData(merfish_mousePOA)$celltype))
+```
+
+``` r
+[1]  16
+```
+
+This MERFISH mouse preoptic area dataset contains 6,509 cells and 16 cell-types.
+
+``` r
+# plot at single-cell resolution
+df <- data.frame(spatialCoords(merfish_mousePOA), celltype = colData(merfish_mousePOA)$celltype)
+ggplot(df, aes(x = x, y = y, col = celltype)) +
+  geom_point(size = 1) +
+  labs(x = "x (μm)",
+       y = "y (μm)",
+       col = "Cell-types") +
+  theme_bw() +
+  theme(panel.grid = element_blank())
+```
+
+<p align="center">
+  <img src="https://github.com/JEFworks-Lab/SEraster/blob/main/docs/images/singlecell_celltypes.png" height="550"/>
+</p>
+
 ### Getting started
 
 #### Rasterize gene expression
 ``` r
 rastGexp <- SEraster::rasterizeGeneExpression(merfish_mousePOA, assay_name="volnorm", resolution = 50)
 
+# check the dimension of the genes-by-cells matrix after rasterizing gene expression
+dim(rastGexp)
+```
+``` r
+[1]  155 1301
+```
+As you can see, SEraster aggregated 6,509 single cells into 1,301 pixels.
+
+``` r
 # plot total rasterized gene expression
 SEraster::plotRaster(rastGexp, name = "Total rasterized gene expression")
 ```
@@ -69,6 +113,13 @@ SEraster::plotRaster(rastGexp, feature_name = "Esr1", name = "Esr1")
 ``` r
 rastCt <- SEraster::rasterizeCellType(merfish_mousePOA, col_name = "celltype", resolution = 50)
 
+# check the dimension of the cell-types-by-cells matrix after rasterizing cell-type labels
+dim(rastGexp)
+```
+``` r
+[1]  16 1301
+```
+``` r
 # plot total cell counts
 SEraster::plotRaster(rastCt, name = "cell counts", option = "inferno")
 ```
@@ -86,9 +137,9 @@ SEraster::plotRaster(rastCt, feature_name = "Inhibitory", name = "Inhibitory neu
 <img src="https://github.com/JEFworks/SEraster/blob/main/docs/images/rasterized_ct_inhibitory.png?raw=true" height="400"/>
 </p>
 
-### Downstream Analysis
+### Sample Downstream Analysis
 
-We will highlight spatial variable gene (SVG) and cell-type cooccurrence analyses as examples of downstream analysis that benefit from SEraster.
+`SEraster` returns rasteriezd gene-expression and cell-type information as `SpatialExperiment` objects that can be integrated with other existing downstream analysis tools. We demonstrate below spatial variable gene (SVG) and cell-type cooccurrence analyses as examples of such potential downstream analysis.
 
 #### Spatial variable gene (SVG) analysis
 
@@ -231,3 +282,7 @@ CooccurrenceAffinity::plotgg(data = ct_coocc, variable = "alpha_mle", legendlimi
 </p>
 
 ## Citation
+
+Our preprint describing `SEraster` is available on bioRxiv:
+
+[Aihara G. et al. (2024), "SEraster: a rasterization preprocessing framework for scalable spatial omics data analysis", bioRxiv](https://doi.org/10.1101/2024.02.01.578436)
