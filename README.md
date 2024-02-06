@@ -282,3 +282,7 @@ CooccurrenceAffinity::plotgg(data = ct_coocc, variable = "alpha_mle", legendlimi
 </p>
 
 ## Citation
+
+Our preprint describing `SEraster` is available on bioRxiv:
+
+[Aihara G. et al. (2024), "SEraster: a rasterization preprocessing framework for scalable spatial omics data analysis", bioRxiv. doi: https://doi.org/10.1101/2024.02.01.578436] (https://doi.org/10.1101/2024.02.01.578436)
