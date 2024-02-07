@@ -8,6 +8,7 @@ rasterizeCellType(
   input,
   col_name,
   resolution = 100,
+  square = TRUE,
   fun = "sum",
   n_threads = 1,
   BPPARAM = NULL
@@ -25,9 +26,13 @@ x,y coordinates are assumed to be stored in column 1 and 2 of \code{spatialCoord
 containing cell type labels for observations. If the input is a \code{list}, 
 col_name is assumed to be present in all elements (\code{SpatialExperiment}) of the input.}
 
-\item{resolution}{\code{integer} or \code{double}: Resolution or side length of each pixel. 
-The unit of this parameter is assumed to be the same as the unit of spatial 
-coordinates of the input data.}
+\item{resolution}{\code{integer} or \code{double}: Resolution refers to the side 
+length of each pixel for square pixels and the distance between opposite edges 
+of each pixel for hexagonal pixels. The unit of this parameter is assumed to 
+be the same as the unit of spatial coordinates of the input data.}
+
+\item{square}{\code{logical}: If TRUE (default), rasterize into square pixels. If FALSE, 
+rasterize into hexagonal pixels.}
 
 \item{fun}{\code{character}: If "mean", pixel value for each pixel 
 would be the proportion of each cell type based on the one-hot-encoded cell type 

@@ -9,6 +9,7 @@ rasterizeMatrix(
   pos,
   bbox,
   resolution = 100,
+  square = TRUE,
   fun = "mean",
   n_threads = 1,
   BPPARAM = NULL
@@ -29,9 +30,13 @@ by a bbox class object (as created by sf::st_bbox) or a numeric vector of length
 and ymax values. Values in a numeric vector are assumed to be in the order of xmin, 
 ymin, xmax, and ymax.}
 
-\item{resolution}{\code{integer} or \code{double}: Resolution or side length of each pixel. 
-The unit of this parameter is assumed to be the same as the unit of spatial 
-coordinates of the input data.}
+\item{resolution}{\code{integer} or \code{double}: Resolution refers to the side 
+length of each pixel for square pixels and the distance between opposite edges 
+of each pixel for hexagonal pixels. The unit of this parameter is assumed to 
+be the same as the unit of spatial coordinates of the input data.}
+
+\item{square}{\code{logical}: If TRUE (default), rasterize into square pixels. If FALSE, 
+rasterize into hexagonal pixels.}
 
 \item{fun}{\code{character}: If "mean", pixel value for each pixel 
 would be the average of gene expression for all cells within the pixel. If 

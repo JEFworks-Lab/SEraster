@@ -19,9 +19,13 @@
 #' and ymax values. Values in a numeric vector are assumed to be in the order of xmin, 
 #' ymin, xmax, and ymax.
 #' 
-#' @param resolution \code{integer} or \code{double}: Resolution or side length of each pixel. 
-#' The unit of this parameter is assumed to be the same as the unit of spatial 
-#' coordinates of the input data.
+#' @param resolution \code{integer} or \code{double}: Resolution refers to the side 
+#' length of each pixel for square pixels and the distance between opposite edges 
+#' of each pixel for hexagonal pixels. The unit of this parameter is assumed to 
+#' be the same as the unit of spatial coordinates of the input data.
+#' 
+#' @param square \code{logical}: If TRUE (default), rasterize into square pixels. If FALSE, 
+#' rasterize into hexagonal pixels.
 #' 
 #' @param fun \code{character}: If "mean", pixel value for each pixel 
 #' would be the average of gene expression for all cells within the pixel. If 
@@ -52,7 +56,7 @@
 #' 
 #' @export
 #' 
-rasterizeMatrix <- function(data, pos, bbox, resolution = 100, fun = "mean", n_threads = 1, BPPARAM = NULL) {
+rasterizeMatrix <- function(data, pos, bbox, resolution = 100, square = TRUE, fun = "mean", n_threads = 1, BPPARAM = NULL) {
   ## set up parallel execution back-end with BiocParallel
   if (is.null(BPPARAM)) {
     BPPARAM <- BiocParallel::MulticoreParam(workers = n_threads)
@@ -70,7 +74,7 @@ rasterizeMatrix <- function(data, pos, bbox, resolution = 100, fun = "mean", n_t
     bbox <- sf::st_bbox(c(xmin = bbox[1], ymin = bbox[2], xmax = bbox[3], ymax = bbox[4]))
   } 
   ## create grid for rasterization
-  grid <- sf::st_make_grid(bbox, cellsize = resolution)
+  grid <- sf::st_make_grid(bbox, cellsize = resolution, square = square)
   
   ## extract position
   pos_pixel <- sf::st_coordinates(sf::st_centroid(grid))
@@ -152,9 +156,13 @@ rasterizeMatrix <- function(data, pos, bbox, resolution = 100, fun = "mean", n_t
 #' If the input is a \code{list}, assay_name is assumed to be present in all elements 
 #' (\code{SpatialExperiment}) of the input.
 #' 
-#' @param resolution \code{integer} or \code{double}: Resolution or side length of each pixel. 
-#' The unit of this parameter is assumed to be the same as the unit of spatial 
-#' coordinates of the input data.
+#' @param resolution \code{integer} or \code{double}: Resolution refers to the side 
+#' length of each pixel for square pixels and the distance between opposite edges 
+#' of each pixel for hexagonal pixels. The unit of this parameter is assumed to 
+#' be the same as the unit of spatial coordinates of the input data.
+#' 
+#' @param square \code{logical}: If TRUE (default), rasterize into square pixels. If FALSE, 
+#' rasterize into hexagonal pixels.
 #' 
 #' @param fun \code{character}: If "mean", pixel value for each pixel 
 #' would be mean of gene expression for all cells within the pixel. If 
@@ -190,7 +198,7 @@ rasterizeMatrix <- function(data, pos, bbox, resolution = 100, fun = "mean", n_t
 #' 
 #' @export
 #' 
-rasterizeGeneExpression <- function(input, assay_name = NULL, resolution = 100, fun = "mean", n_threads = 1, BPPARAM = NULL) {
+rasterizeGeneExpression <- function(input, assay_name = NULL, resolution = 100, square = TRUE, fun = "mean", n_threads = 1, BPPARAM = NULL) {
   if (is.list(input)) {
     ## create a common bbox
     bbox_mat <- do.call(rbind, lapply(seq_along(input), function(i) {
@@ -215,11 +223,11 @@ rasterizeGeneExpression <- function(input, assay_name = NULL, resolution = 100, 
       spe <- input[[i]]
       
       if (is.null(assay_name)) {
-        out <- SEraster::rasterizeMatrix(SummarizedExperiment::assay(spe), SpatialExperiment::spatialCoords(spe), bbox = bbox_common, resolution = resolution, fun = fun, n_threads = n_threads, BPPARAM = BPPARAM)
+        out <- SEraster::rasterizeMatrix(SummarizedExperiment::assay(spe), SpatialExperiment::spatialCoords(spe), bbox = bbox_common, resolution = resolution, square = square, fun = fun, n_threads = n_threads, BPPARAM = BPPARAM)
       } else {
         stopifnot(is.character(assay_name))
         stopifnot("assay_name does not exist in the input SpatialExperiment object"= assay_name %in% SummarizedExperiment::assayNames(spe))
-        out <- SEraster::rasterizeMatrix(SummarizedExperiment::assay(spe, assay_name), SpatialExperiment::spatialCoords(spe), bbox = bbox_common, resolution = resolution, fun = fun, n_threads = n_threads, BPPARAM = BPPARAM)
+        out <- SEraster::rasterizeMatrix(SummarizedExperiment::assay(spe, assay_name), SpatialExperiment::spatialCoords(spe), bbox = bbox_common, resolution = resolution, square = square, fun = fun, n_threads = n_threads, BPPARAM = BPPARAM)
       }
       data_rast <- out$data_rast
       pos_rast <- out$pos_rast
@@ -254,11 +262,11 @@ rasterizeGeneExpression <- function(input, assay_name = NULL, resolution = 100, 
     
     ## rasterize
     if (is.null(assay_name)) {
-      out <- rasterizeMatrix(SummarizedExperiment::assay(input), SpatialExperiment::spatialCoords(input), bbox = bbox, resolution = resolution, fun = fun, n_threads = n_threads, BPPARAM = BPPARAM)
+      out <- rasterizeMatrix(SummarizedExperiment::assay(input), SpatialExperiment::spatialCoords(input), bbox = bbox, resolution = resolution, square = square, fun = fun, n_threads = n_threads, BPPARAM = BPPARAM)
     } else {
       stopifnot(is.character(assay_name))
       stopifnot("assay_name does not exist in the input SpatialExperiment object"= assay_name %in% SummarizedExperiment::assayNames(input))
-      out <- rasterizeMatrix(SummarizedExperiment::assay(input, assay_name), SpatialExperiment::spatialCoords(input), bbox = bbox, resolution = resolution, fun = fun, n_threads = n_threads, BPPARAM = BPPARAM)
+      out <- rasterizeMatrix(SummarizedExperiment::assay(input, assay_name), SpatialExperiment::spatialCoords(input), bbox = bbox, resolution = resolution, square = square, fun = fun, n_threads = n_threads, BPPARAM = BPPARAM)
     }
     data_rast <- out$data_rast
     pos_rast <- out$pos_rast
@@ -294,9 +302,13 @@ rasterizeGeneExpression <- function(input, assay_name = NULL, resolution = 100, 
 #' containing cell type labels for observations. If the input is a \code{list}, 
 #' col_name is assumed to be present in all elements (\code{SpatialExperiment}) of the input.
 #' 
-#' @param resolution \code{integer} or \code{double}: Resolution or side length of each pixel. 
-#' The unit of this parameter is assumed to be the same as the unit of spatial 
-#' coordinates of the input data.
+#' @param resolution \code{integer} or \code{double}: Resolution refers to the side 
+#' length of each pixel for square pixels and the distance between opposite edges 
+#' of each pixel for hexagonal pixels. The unit of this parameter is assumed to 
+#' be the same as the unit of spatial coordinates of the input data.
+#' 
+#' @param square \code{logical}: If TRUE (default), rasterize into square pixels. If FALSE, 
+#' rasterize into hexagonal pixels.
 #' 
 #' @param fun \code{character}: If "mean", pixel value for each pixel 
 #' would be the proportion of each cell type based on the one-hot-encoded cell type 
@@ -332,7 +344,7 @@ rasterizeGeneExpression <- function(input, assay_name = NULL, resolution = 100, 
 #' 
 #' @export
 #' 
-rasterizeCellType <- function(input, col_name, resolution = 100, fun = "sum", n_threads = 1, BPPARAM = NULL) {
+rasterizeCellType <- function(input, col_name, resolution = 100, square = TRUE, fun = "sum", n_threads = 1, BPPARAM = NULL) {
   if (is.list(input)) {
     ## create a common bbox
     bbox_mat <- do.call(rbind, lapply(seq_along(input), function(i) {
@@ -367,7 +379,7 @@ rasterizeCellType <- function(input, col_name, resolution = 100, fun = "sum", n_
       colnames(mat_ct) <- rownames(SpatialExperiment::spatialCoords(spe))
       
       ## rasterize
-      out <- rasterizeMatrix(mat_ct, SpatialExperiment::spatialCoords(spe), bbox_common, resolution = resolution, fun = fun, n_threads = 1, BPPARAM = BPPARAM)
+      out <- rasterizeMatrix(mat_ct, SpatialExperiment::spatialCoords(spe), bbox_common, resolution = resolution, square = square, fun = fun, n_threads = 1, BPPARAM = BPPARAM)
       data_rast <- out$data_rast
       pos_rast <- out$pos_rast
       meta_rast <- out$meta_rast
@@ -410,7 +422,7 @@ rasterizeCellType <- function(input, col_name, resolution = 100, fun = "sum", n_
     colnames(mat_ct) <- rownames(SpatialExperiment::spatialCoords(input))
     
     ## rasterize
-    out <- rasterizeMatrix(mat_ct, SpatialExperiment::spatialCoords(input), bbox, resolution = resolution, fun = fun, n_threads = 1, BPPARAM = BPPARAM)
+    out <- rasterizeMatrix(mat_ct, SpatialExperiment::spatialCoords(input), bbox, resolution = resolution, square = square, fun = fun, n_threads = 1, BPPARAM = BPPARAM)
     data_rast <- out$data_rast
     pos_rast <- out$pos_rast
     meta_rast <- out$meta_rast

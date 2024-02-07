@@ -8,6 +8,7 @@ rasterizeGeneExpression(
   input,
   assay_name = NULL,
   resolution = 100,
+  square = TRUE,
   fun = "mean",
   n_threads = 1,
   BPPARAM = NULL
@@ -28,9 +29,13 @@ assays stored in the input, and you want to apply rasterization to the normalize
 If the input is a \code{list}, assay_name is assumed to be present in all elements 
 (\code{SpatialExperiment}) of the input.}
 
-\item{resolution}{\code{integer} or \code{double}: Resolution or side length of each pixel. 
-The unit of this parameter is assumed to be the same as the unit of spatial 
-coordinates of the input data.}
+\item{resolution}{\code{integer} or \code{double}: Resolution refers to the side 
+length of each pixel for square pixels and the distance between opposite edges 
+of each pixel for hexagonal pixels. The unit of this parameter is assumed to 
+be the same as the unit of spatial coordinates of the input data.}
+
+\item{square}{\code{logical}: If TRUE (default), rasterize into square pixels. If FALSE, 
+rasterize into hexagonal pixels.}
 
 \item{fun}{\code{character}: If "mean", pixel value for each pixel 
 would be mean of gene expression for all cells within the pixel. If 
