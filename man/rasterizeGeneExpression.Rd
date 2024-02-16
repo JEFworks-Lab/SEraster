@@ -11,7 +11,8 @@ rasterizeGeneExpression(
   square = TRUE,
   fun = "mean",
   n_threads = 1,
-  BPPARAM = NULL
+  BPPARAM = NULL,
+  verbose = FALSE
 )
 }
 \arguments{
@@ -53,6 +54,8 @@ not missing, the \code{BPPARAM} argument would override \code{n_threads} argumen
 This argument is provided for advanced users of \code{BiocParallel} for further 
 flexibility for setting up parallel-execution back-end. Default is NULL. If 
 provided, this is assumed to be an instance of \code{BiocParallelParam}.}
+
+\item{verbose}{\code{logical}: Whether to display verbose output or warning. Default is FALSE}
 }
 \value{
 If the input was given as \code{SpatialExperiment}, the output is returned 
