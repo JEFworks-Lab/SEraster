@@ -133,6 +133,15 @@ rasterizeMatrix <- function(data, pos, bbox, resolution = 100, square = TRUE, fu
   ## extract rasterized data frame
   meta_rast <- do.call(rbind, out[seq(1,length(out),by=2)+1])
   
+  ## add pixel information to data frame
+  if (square) {
+    meta_rast$type <- "square"
+  } else {
+    meta_rast$type <- "hexagon"
+  }
+  meta_rast$bbox <- lapply(1:nrow(meta_rast), function(i) {bbox})
+  meta_rast$resolution <- resolution
+  
   ## set rownames/colnames for rasterized sparse matrix and rasterized data frame
   rownames(data_rast) <- rownames(data)
   colnames(data_rast) <- paste0("pixel", sort(unique(pixel_ids)))
