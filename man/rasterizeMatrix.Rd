@@ -62,8 +62,10 @@ provided, this is assumed to be an instance of \code{BiocParallelParam}.}
 The output is returned as a \code{list} containing rasterized feature 
 x observation matrix as \code{dgCmatrix} if data was given as \code{dgCmatrix} 
 and as \code{matrix} if data was given as \code{matrix}, spatial x,y coordinates of pixel 
-centroids as \code{matrix}, and \code{data.frame} containing cell IDs of cells 
-that were aggregated in each pixel.
+centroids as \code{matrix}, and \code{data.frame} containing meta data for pixels 
+(number of cells that were aggregated in each pixel, cell IDs of cells that were 
+aggregated in each pixel, pixel type based on the \code{square} argument, pixel 
+resolution based on the \code{resolution} argument, pixel geometry as \code{sfc_POLYGON}).
 }
 \description{
 Function to rasterize a given input matrix (both dense or sparse) based on a given position matrix.

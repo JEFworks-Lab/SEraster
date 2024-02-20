@@ -59,11 +59,14 @@ provided, this is assumed to be an instance of \code{BiocParallelParam}.}
 If the input was given as \code{SpatialExperiment}, the output is returned 
 as a new \code{SpatialExperiment} object with \code{assay} slot containing the 
 feature (cell types) x observations (pixels) matrix (dgCmatrix), \code{spatialCoords} 
-slot containing spatial x,y coordinates of pixel centroids, and \code{colData} 
-slot containing cell IDs of cells that were aggregated in each pixel. If the input 
-was provided as \code{list} of \code{SpatialExperiment}, the output is returned 
-as a new \code{list} of \code{SpatialExperiment} containing information described 
-above for corresponding \code{SpatialExperiment}. Further, \code{names(input)} 
+slot containing spatial x,y coordinates of pixel centroids, and \code{colData} slot 
+containing meta data for pixels (number of cells that were aggregated in each pixel, 
+cell IDs of cells that were aggregated in each pixel, pixel type based on the 
+\code{square} argument, pixel resolution based on the \code{resolution} argument, 
+pixel geometry as \code{sfc_POLYGON}). If the input was provided as \code{list} 
+of \code{SpatialExperiment}, the output is returned as a new \code{list} of 
+\code{SpatialExperiment} containing information described above for corresponding 
+\code{SpatialExperiment}. Further, \code{names(input)} is inherited in the output.
 is inherited in the output.
 }
 \description{

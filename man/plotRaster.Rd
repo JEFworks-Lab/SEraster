@@ -9,7 +9,6 @@ plotRaster(
   assay_name = NULL,
   feature_name = "sum",
   factor_levels = NULL,
-  resolution = NULL,
   showLegend = TRUE,
   plotTitle = NULL,
   showAxis = FALSE,
@@ -20,10 +19,9 @@ plotRaster(
 \item{input}{\code{SpatialExperiment}: Input data represented as a 
 \code{SpatialExperiment}. The given \code{SpatialExperiment} is assumed to have 
 an \code{assay} slot containing a features-by-observations matrix as \code{dgCmatrix} 
-or \code{matrix} and a \code{spatialCoords} slot containing spatial x,y coordinates of 
-observations as matrix array. The features-by-observations matrix is assumed to 
-have either genes or cell types as features and pixels as observations. Further, 
-x,y coordinates are assumed to be stored in column 1 and 2 of \code{spatialCoords}.}
+or \code{matrix} and a \code{colData} slot containing \code{sfc_POLYGON} geometry 
+of pixels. The features-by-observations matrix is assumed to have either genes 
+or cell types as features and pixels as observations.}
 
 \item{assay_name}{\code{character}: Name of the assay slot of the input that 
 you want to visualize. If no argument is given, the first assay of the input 
@@ -42,13 +40,6 @@ is useful if you want to plot categorical/ordinal variables, such as binarized
 occurrence of a specific cell type. \code{factor_levels} is fed into \code{levels} 
 argument of the \code{factor} function in base R. Default is NULL.}
 
-\item{resolution}{\code{integer} or \code{double}: Resolution or side length of each pixel in the resulting plot. 
-The unit of this parameter is assumed to be the same as the unit of spatial 
-coordinates of the input data. Default is NULL, and if no value is inputted, 
-resolution would be estimated based on the assumption that first two pixels would 
-have x or y distance that is equivalent to resolution. This argument would be useful 
-when pixels are sparse across space (or when the aforementioned assumption fails).}
-
 \item{showLegend}{\code{logical}: Boolean to show the legend. Default is TRUE.}
 
 \item{plotTitle}{\code{character}: An optional argument to add a title to the 
@@ -64,10 +55,10 @@ maps, we recommend overriding the resulting \code{ggplot} object.}
 }
 \value{
 The output is returned as a \code{ggplot} object, where the input is 
-visualized as \code{ggplot2::geom_tile}. Coloring of each tile/pixel represent 
-the corresponding values of summarized (sum or mean) or specific feature (e.g. 
-rasterized gene expression) per observation (pixel). The x,y coordinates represent 
-the pixel centroids.
+visualized as \code{ggplot2::geom_sf}. Each pixel is plotted based on \code{sfc_POLYGON} 
+geometry stored in the \code{colData} slot. Coloring of pixel represent the corresponding 
+values of summarized (sum or mean) or specific feature (e.g. rasterized gene expression) 
+per observation (pixel).
 }
 \description{
 Function based on \code{ggplot2::geom_tile} to visualize a rasterized spatial omics dataset represented as a \code{SpatialExperiment} object.

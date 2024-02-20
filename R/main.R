@@ -49,8 +49,10 @@
 #' @return The output is returned as a \code{list} containing rasterized feature 
 #' x observation matrix as \code{dgCmatrix} if data was given as \code{dgCmatrix} 
 #' and as \code{matrix} if data was given as \code{matrix}, spatial x,y coordinates of pixel 
-#' centroids as \code{matrix}, and \code{data.frame} containing cell IDs of cells 
-#' that were aggregated in each pixel.
+#' centroids as \code{matrix}, and \code{data.frame} containing meta data for pixels 
+#' (number of cells that were aggregated in each pixel, cell IDs of cells that were 
+#' aggregated in each pixel, pixel type based on the \code{square} argument, pixel 
+#' resolution based on the \code{resolution} argument, pixel geometry as \code{sfc_POLYGON}).
 #' 
 #' @importFrom sf st_make_grid st_coordinates st_centroid st_as_sf st_intersects
 #' @importFrom BiocParallel MulticoreParam bpstart bplapply bpstop
@@ -133,15 +135,6 @@ rasterizeMatrix <- function(data, pos, bbox, resolution = 100, square = TRUE, fu
   ## extract rasterized data frame
   meta_rast <- do.call(rbind, out[seq(1,length(out),by=2)+1])
   
-  ## add pixel information to data frame
-  if (square) {
-    meta_rast$type <- "square"
-  } else {
-    meta_rast$type <- "hexagon"
-  }
-  meta_rast$bbox <- lapply(1:nrow(meta_rast), function(i) {bbox})
-  meta_rast$resolution <- resolution
-  
   ## set rownames/colnames for rasterized sparse matrix and rasterized data frame
   rownames(data_rast) <- rownames(data)
   colnames(data_rast) <- paste0("pixel", sort(unique(pixel_ids)))
@@ -149,6 +142,20 @@ rasterizeMatrix <- function(data, pos, bbox, resolution = 100, square = TRUE, fu
   
   ## subset rasterized pos
   pos_pixel <- pos_pixel[rownames(pos_pixel) %in% colnames(data_rast), , drop = FALSE]
+  
+  ## add pixel information to data frame
+  # pixel type
+  if (square) {
+    meta_rast$type <- "square"
+  } else {
+    meta_rast$type <- "hexagon"
+  }
+  # pixel resolution
+  meta_rast$resolution <- resolution
+  # pixel geometry
+  df_sf <- sf::st_sf(geometry = grid, row.names = paste0("pixel",seq_along(grid)))
+  df_sf <- df_sf[rownames(df_sf) %in% rownames(pos_pixel),]
+  meta_rast$geometry <- df_sf$geometry
   
   ## output
   output <- list("data_rast" = data_rast, "pos_rast" = pos_pixel, "meta_rast" = meta_rast)
@@ -206,13 +213,15 @@ rasterizeMatrix <- function(data, pos, bbox, resolution = 100, square = TRUE, fu
 #' as a new \code{SpatialExperiment} object with \code{assay} slot containing the 
 #' feature (genes) x observations (pixels) matrix (\code{dgCMatrix} or \code{matrix} 
 #' depending on the input, see documentation for \link{rasterizeMatrix}), \code{spatialCoords} 
-#' slot containing spatial x,y coordinates of pixel centroids, and \code{colData} 
-#' slot containing cell IDs of cells that were aggregated in each pixel. If the input 
-#' was provided as \code{list} of \code{SpatialExperiment}, the output is returned 
-#' as a new \code{list} of \code{SpatialExperiment} containing information described 
-#' above for corresponding \code{SpatialExperiment}. Further, \code{names(input)} 
-#' is inherited in the output.
-#' 
+#' slot containing spatial x,y coordinates of pixel centroids, and \code{colData} slot 
+#' containing meta data for pixels (number of cells that were aggregated in each pixel, 
+#' cell IDs of cells that were aggregated in each pixel, pixel type based on the 
+#' \code{square} argument, pixel resolution based on the \code{resolution} argument, 
+#' pixel geometry as \code{sfc_POLYGON}). If the input was provided as \code{list} 
+#' of \code{SpatialExperiment}, the output is returned as a new \code{list} of 
+#' \code{SpatialExperiment} containing information described above for corresponding 
+#' \code{SpatialExperiment}. Further, \code{names(input)} is inherited in the output.
+
 #' @importFrom SpatialExperiment spatialCoords SpatialExperiment
 #' @importFrom SummarizedExperiment assay assayNames
 #' @importFrom Matrix colSums
@@ -354,11 +363,14 @@ rasterizeGeneExpression <- function(input, assay_name = NULL, resolution = 100, 
 #' @return If the input was given as \code{SpatialExperiment}, the output is returned 
 #' as a new \code{SpatialExperiment} object with \code{assay} slot containing the 
 #' feature (cell types) x observations (pixels) matrix (dgCmatrix), \code{spatialCoords} 
-#' slot containing spatial x,y coordinates of pixel centroids, and \code{colData} 
-#' slot containing cell IDs of cells that were aggregated in each pixel. If the input 
-#' was provided as \code{list} of \code{SpatialExperiment}, the output is returned 
-#' as a new \code{list} of \code{SpatialExperiment} containing information described 
-#' above for corresponding \code{SpatialExperiment}. Further, \code{names(input)} 
+#' slot containing spatial x,y coordinates of pixel centroids, and \code{colData} slot 
+#' containing meta data for pixels (number of cells that were aggregated in each pixel, 
+#' cell IDs of cells that were aggregated in each pixel, pixel type based on the 
+#' \code{square} argument, pixel resolution based on the \code{resolution} argument, 
+#' pixel geometry as \code{sfc_POLYGON}). If the input was provided as \code{list} 
+#' of \code{SpatialExperiment}, the output is returned as a new \code{list} of 
+#' \code{SpatialExperiment} containing information described above for corresponding 
+#' \code{SpatialExperiment}. Further, \code{names(input)} is inherited in the output.
 #' is inherited in the output.
 #' 
 #' @importFrom SpatialExperiment spatialCoords SpatialExperiment
@@ -469,10 +481,9 @@ rasterizeCellType <- function(input, col_name, resolution = 100, square = TRUE, 
 #' @param input \code{SpatialExperiment}: Input data represented as a 
 #' \code{SpatialExperiment}. The given \code{SpatialExperiment} is assumed to have 
 #' an \code{assay} slot containing a features-by-observations matrix as \code{dgCmatrix} 
-#' or \code{matrix} and a \code{spatialCoords} slot containing spatial x,y coordinates of 
-#' observations as matrix array. The features-by-observations matrix is assumed to 
-#' have either genes or cell types as features and pixels as observations. Further, 
-#' x,y coordinates are assumed to be stored in column 1 and 2 of \code{spatialCoords}.
+#' or \code{matrix} and a \code{colData} slot containing \code{sfc_POLYGON} geometry 
+#' of pixels. The features-by-observations matrix is assumed to have either genes 
+#' or cell types as features and pixels as observations.
 #' 
 #' @param assay_name \code{character}: Name of the assay slot of the input that 
 #' you want to visualize. If no argument is given, the first assay of the input 
@@ -491,13 +502,6 @@ rasterizeCellType <- function(input, col_name, resolution = 100, square = TRUE, 
 #' occurrence of a specific cell type. \code{factor_levels} is fed into \code{levels} 
 #' argument of the \code{factor} function in base R. Default is NULL.
 #' 
-#' @param resolution \code{integer} or \code{double}: Resolution or side length of each pixel in the resulting plot. 
-#' The unit of this parameter is assumed to be the same as the unit of spatial 
-#' coordinates of the input data. Default is NULL, and if no value is inputted, 
-#' resolution would be estimated based on the assumption that first two pixels would 
-#' have x or y distance that is equivalent to resolution. This argument would be useful 
-#' when pixels are sparse across space (or when the aforementioned assumption fails).
-#' 
 #' @param showLegend \code{logical}: Boolean to show the legend. Default is TRUE.
 #' 
 #' @param plotTitle \code{character}: An optional argument to add a title to the 
@@ -512,19 +516,19 @@ rasterizeCellType <- function(input, col_name, resolution = 100, square = TRUE, 
 #' maps, we recommend overriding the resulting \code{ggplot} object.
 #' 
 #' @return The output is returned as a \code{ggplot} object, where the input is 
-#' visualized as \code{ggplot2::geom_tile}. Coloring of each tile/pixel represent 
-#' the corresponding values of summarized (sum or mean) or specific feature (e.g. 
-#' rasterized gene expression) per observation (pixel). The x,y coordinates represent 
-#' the pixel centroids.
+#' visualized as \code{ggplot2::geom_sf}. Each pixel is plotted based on \code{sfc_POLYGON} 
+#' geometry stored in the \code{colData} slot. Coloring of pixel represent the corresponding 
+#' values of summarized (sum or mean) or specific feature (e.g. rasterized gene expression) 
+#' per observation (pixel).
 #' 
-#' @importFrom SpatialExperiment spatialCoords
-#' @importFrom SummarizedExperiment assay assayNames
+#' @importFrom SummarizedExperiment assay assayNames colData
 #' @importFrom Matrix colSums colMeans
-#' @importFrom ggplot2 ggplot aes coord_fixed geom_tile scale_fill_viridis_c scale_fill_viridis_d theme_bw theme ggtitle element_blank
+#' @importFrom sf st_sf
+#' @importFrom ggplot2 ggplot aes coord_fixed geom_sf scale_fill_viridis_c scale_fill_viridis_d theme_bw theme ggtitle element_blank
 #' 
 #' @export
 #' 
-plotRaster <- function(input, assay_name = NULL, feature_name = "sum", factor_levels = NULL, resolution = NULL, showLegend = TRUE, plotTitle = NULL, showAxis = FALSE, ...) {
+plotRaster <- function(input, assay_name = NULL, feature_name = "sum", factor_levels = NULL, showLegend = TRUE, plotTitle = NULL, showAxis = FALSE, ...) {
   ## get the indicated assay slot (features-by-observations matrix)
   if (is.null(assay_name)) {
     mat <- SummarizedExperiment::assay(input)
@@ -535,35 +539,31 @@ plotRaster <- function(input, assay_name = NULL, feature_name = "sum", factor_le
   }
   
   ## create data.frame for plotting
+  # create sf data.frame with geometry (sfc_POLYGON) from colData
+  df_sf <- sf::st_sf(geometry = colData(input)$geometry, row.names = rownames(colData(input)))
+  # add pixel values
   if (feature_name == "sum") {
-    df <- data.frame(x = SpatialExperiment::spatialCoords(input)[,1], y = SpatialExperiment::spatialCoords(input)[,2], fill = colSums(mat))
+    df_sf <- cbind(df_sf, fill = colSums(mat))
   } else if (feature_name == "mean") {
-    df <- data.frame(x = SpatialExperiment::spatialCoords(input)[,1], y = SpatialExperiment::spatialCoords(input)[,2], fill = colMeans(mat))
+    df_sf <- cbind(df_sf, fill = colMeans(mat))
   } else {
     stopifnot(is.character(feature_name))
     stopifnot("feature_name does not exist in the input SpatialExperiment object's assay slot" = feature_name %in% rownames(mat))
-    df <- data.frame(x = SpatialExperiment::spatialCoords(input)[,1], y = SpatialExperiment::spatialCoords(input)[,2], fill = mat[feature_name,])
+    df_sf <- cbind(df_sf, fill = mat[feature_name,])
   }
   
-  ## compute resolution
-  if (is.null(resolution)) {
-    dist <- diff(SpatialExperiment::spatialCoords(input))[1,]
-    resolution <- min(dist[dist > 0])
-  }
-  
-  ## change object class of fill if plotting categorical variables
   if (is.null(factor_levels)) {
-    plt <- ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, fill = fill)) +
+    plt <- ggplot2::ggplot() +
       ggplot2::coord_fixed() +
-      ggplot2::geom_tile(width = resolution, height = resolution) +
+      ggplot2::geom_sf(data = df_sf, ggplot2::aes(fill = fill)) +
       ggplot2::scale_fill_viridis_c(...) +
       ggplot2::theme_bw() +
       ggplot2::theme(panel.grid = ggplot2::element_blank())
   } else {
-    df$fill <- factor(df$fill, levels = factor_levels)
-    plt <- ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, fill = fill)) +
+    df_sf$fill <- factor(df_sf$fill, levels = factor_levels)
+    plt <- ggplot2::ggplot() +
       ggplot2::coord_fixed() +
-      ggplot2::geom_tile(width = resolution, height = resolution) +
+      ggplot2::geom_sf(data = df_sf, ggplot2::aes(fill = fill)) +
       ggplot2::scale_fill_viridis_d(...) +
       ggplot2::theme_bw() +
       ggplot2::theme(panel.grid = ggplot2::element_blank())
