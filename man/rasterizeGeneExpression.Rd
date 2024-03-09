@@ -73,7 +73,8 @@ of \code{SpatialExperiment}, the output is returned as a new \code{list} of
 }
 \description{
 Function to rasterize feature x observation matrix in spatially-resolved 
-transcriptomics data represented as SpatialExperiment class.
+omics data represented as SpatialExperiment class.
 
-This function assumes that the input is provided as a \code{SpatialExperiment} object.
+This function assumes that the input is provided as a \code{SpatialExperiment} 
+object or a \code{list} of \code{SpatialExperiment} objects.
 }
