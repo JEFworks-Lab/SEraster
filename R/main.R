@@ -161,6 +161,7 @@ rasterizeMatrix <- function(data, pos, bbox, resolution = 100, square = TRUE, fu
   output <- list("data_rast" = data_rast, "pos_rast" = pos_pixel, "meta_rast" = meta_rast)
 }
 
+
 #' rasterizeGeneExpression
 #' 
 #' @description Function to rasterize feature x observation matrix in spatially-resolved 
@@ -314,6 +315,7 @@ rasterizeGeneExpression <- function(input, assay_name = NULL, resolution = 100, 
     return(output)
   }
 }
+
 
 #' rasterizeCellType
 #' 
@@ -475,6 +477,144 @@ rasterizeCellType <- function(input, col_name, resolution = 100, square = TRUE, 
   }
 }
 
+
+#' permutateByRotation
+#' 
+#' @description Function to permutate a given input SpatialExperiment object(s) 
+#' by rotating the x,y coordinates around the midrange point.
+#' 
+#' @description This function assumes that the input is provided as a \code{SpatialExperiment} 
+#' object or a \code{list} of \code{SpatialExperiment} objects.
+#'
+#' @description When the input is a \code{list} of \code{SpatialExperiment} objects, 
+#' all \code{SpatialExperiment} objects will be rotated around a common midrange 
+#' point computed based on combined x,y coordinates.
+#' 
+#' @param input \code{SpatialExperiment} or \code{list}: Input data represented as a 
+#' \code{SpatialExperiment} or \code{list} of \code{SpatialExperiment}. 
+#' Each \code{SpatialExperiment} is assumed to have an \code{assay} slot containing feature (genes) x observation (cells)
+#' matrix as \code{dgCmatrix} or \code{matrix} and a \code{spatialCoords} slot containing spatial x,y 
+#' coordinates of observations as matrix array. Further, x,y coordinates are assumed 
+#' to be stored in column 1 and 2 of \code{spatialCoords}, and column names of \code{spatialCoords} 
+#' are assumed to be "x" and "y", respectively.
+#' 
+#' @param n_perm \code{integer}: Number of permutations. Default = 1. This number is used to compute the angles at which the input is rotated at.
+#' 
+#' @param verbose \code{logical}: Whether to display verbose output or warning. Default is FALSE. 
+#' 
+#' @return If the input was given as \code{SpatialExperiment}, the output is returned 
+#' as a \code{list} of \code{n_perm} \code{SpatialExperiment} objects. Each \code{SpatialExperiment} 
+#' object has an updated \code{spatialCoords} slot containing the spatial x,y coordinates 
+#' rotated at a corresponding angle. \code{assay} and \code{colData} slots are inherited.
+#' Further, \code{names()} of the output indicates the angles at which the input 
+#' is rotated at. If the input was given as \code{list} of \code{SpatialExperiment}, 
+#' the output is returned as a new \code{list} of \code{length(input)} * \code{n_perm} 
+#' \code{SpatialExperiment} objects. Each \code{SpatialExperiment} object has an 
+#' updated \code{spatialCoords} slot containing the spatial x,y coordinates rotated 
+#' at a corresponding angle. \code{assay} and \code{colData} slots are inherited.
+#' Further, \code{names()} of the output indicates the dataset names from \code{names(input)} 
+#' and the angles at which the input is rotated at.
+#' 
+#' @importFrom SpatialExperiment spatialCoords
+#' @importFrom SummarizedExperiment assays colData
+#' @importFrom rearrr rotate_2d midrange
+#' 
+#' @export
+#' 
+permutateByRotation <- function(input, n_perm = 1, verbose = FALSE) {
+  ## compute rotation degrees based on the required number of permutation
+  angles <- seq(0, 360, by = 360/n_perm)[1:n_perm]
+  
+  if (verbose) {
+    message(paste0("Number of permutations = ", n_perm))
+    message(paste0("Angles used for rotations are ", paste(angles, collapse = ", "), " degrees"))
+  }
+  
+  if (is.list(input)) {
+    ## combine all x,y coordinates
+    pos_comb <- do.call(rbind, lapply(seq_along(input), function(i) {
+      pos <- SpatialExperiment::spatialCoords(input[[i]])
+      if (!is.null(names(input))) {
+        dataset <- names(input)[i]
+      } else {
+        dataset <- i
+      }
+      return(data.frame(dataset = dataset, x = pos[,1], y = pos[,2]))
+    }))
+    ## find the midrange point across combined x,y coordinates
+    midrange_pt <- rearrr::midrange(pos_comb, cols = c("x", "y"))
+    
+    if (verbose) {
+      message(paste0("Rotating all datasets around (x, y) = (", midrange_pt$x, ", ", midrange_pt$y, ")."))
+    }
+    
+    output <- unlist(lapply(input, function(spe) {
+      stopifnot("input must be a SpatialExperiment object or a list of SpatialExperiment objects"=class(spe) == "SpatialExperiment")
+      
+      ## get original x,y coordinates
+      pos_orig <- data.frame(spatialCoords(spe))
+      stopifnot("Column 1 and 2 of the spatialCoords slot should be named x and y, respectively. Please change column names accordingly."=colnames(pos_orig)[1:2] == c("x", "y"))
+      
+      output2 <- lapply(angles, function(angle) {
+        ## rotate around the midrange point
+        pos_rotated <- rearrr::rotate_2d(data = pos_orig, degrees = angle, x_col = "x", y_col = "y", origin = as.numeric(midrange_pt), overwrite = TRUE)
+        
+        pos_rotated <- as.matrix(pos_rotated[,c("x_rotated", "y_rotated")])
+        colnames(pos_rotated) <- c("x", "y")
+        rownames(pos_rotated) <- rownames(pos_orig)
+        
+        ## update SpatialExperiment object
+        spe_rotated <- SpatialExperiment::SpatialExperiment(
+          assays = SummarizedExperiment::assays(spe),
+          spatialCoords = pos_rotated,
+          colData = SummarizedExperiment::colData(spe)
+        )
+        return(spe_rotated)
+      })
+      return(output2)
+    }))
+    
+    ## assign list names
+    if (!is.null(names(input))) {
+      names(output) <- paste0(rep(names(input), each = length(angles)), "_rotated_", angles)
+    }
+    
+    ## return a list of SpatialExperiment objects
+    return(output)
+    
+  } else {
+    stopifnot("input must be a SpatialExperiment object or a list of SpatialExperiment objects"=class(input) == "SpatialExperiment")
+    
+    ## get original x,y coordinates
+    pos_orig <- data.frame(spatialCoords(input))
+    stopifnot("Column 1 and 2 of the spatialCoords slot should be named x and y, respectively. Please change column names accordingly."=colnames(pos_orig)[1:2] == c("x", "y"))
+    
+    output  <- lapply(angles, function(angle) {
+      ## rotate around the midrange point
+      pos_rotated <- rearrr::rotate_2d(data = pos_orig, degrees = angle, x_col = "x", y_col = "y", origin_fn = rearrr::midrange, overwrite = TRUE)
+      
+      pos_rotated <- as.matrix(pos_rotated[,c("x_rotated", "y_rotated")])
+      colnames(pos_rotated) <- c("x", "y")
+      rownames(pos_rotated) <- rownames(pos_orig)
+      
+      ## update SpatialExperiment object
+      spe_rotated <- SpatialExperiment::SpatialExperiment(
+        assays = SummarizedExperiment::assays(input),
+        spatialCoords = pos_rotated,
+        colData = SummarizedExperiment::colData(input)
+      )
+      return(spe_rotated)
+    })
+    
+    ## assign list names
+    names(output) <- paste0("rotated_", angles)
+    
+    ## return a list of SpatialExperiment objects
+    return(output)
+  }
+}
+
+
 #' plotRaster
 #' 
 #' @description Function based on \code{ggplot2::geom_tile} to visualize a rasterized spatial omics dataset represented as a \code{SpatialExperiment} object.
@@ -587,119 +727,4 @@ plotRaster <- function(input, assay_name = NULL, feature_name = "sum", factor_le
   }
   
   return(plt)
-}
-
-#' permutateByRotation
-#' 
-#' @description Function to permutate a given input SpatialExperiment object(s) 
-#' by rotating the x,y coordinates around the midpoint.
-#' 
-#' @description This function assumes that the input is provided as a \code{SpatialExperiment} 
-#' object or a \code{list} of \code{SpatialExperiment} objects.
-#' 
-#' @param input \code{SpatialExperiment} or \code{list}: Input data represented as a 
-#' \code{SpatialExperiment} or \code{list} of \code{SpatialExperiment}. 
-#' Each \code{SpatialExperiment} is assumed to have an \code{assay} slot containing feature (genes) x observation (cells)
-#' matrix as \code{dgCmatrix} or \code{matrix} and a \code{spatialCoords} slot containing spatial x,y 
-#' coordinates of observations as matrix array. Further, x,y coordinates are assumed 
-#' to be stored in column 1 and 2 of \code{spatialCoords}, and column names of \code{spatialCoords} 
-#' are assumed to be "x" and "y", respectively.
-#' 
-#' @param n_perm \code{integer}: Number of permutations. Default = 1. This number is used to compute the angles at which the input is rotated at.
-#' 
-#' @param verbose \code{logical}: Whether to display verbose output or warning. Default is FALSE. 
-#' 
-#' @return If the input was given as \code{SpatialExperiment}, the output is returned 
-#' as a \code{list} of \code{n_perm} \code{SpatialExperiment} objects. Each \code{SpatialExperiment} 
-#' object has an updated \code{spatialCoords} slot containing the spatial x,y coordinates 
-#' rotated at a corresponding angle. \code{assay} and \code{colData} slots are inherited.
-#' Further, \code{names()} of the output indicates the angles at which the input 
-#' is rotated at. If the input was given as \code{list} of \code{SpatialExperiment}, 
-#' the output is returned as a new \code{list} of \code{length(input)} * \code{n_perm} 
-#' \code{SpatialExperiment} objects. Each \code{SpatialExperiment} object has an 
-#' updated \code{spatialCoords} slot containing the spatial x,y coordinates rotated 
-#' at a corresponding angle. \code{assay} and \code{colData} slots are inherited.
-#' Further, \code{names()} of the output indicates the dataset names from \code{names(input)} 
-#' and the angles at which the input is rotated at.
-#' 
-#' @importFrom SpatialExperiment spatialCoords
-#' @importFrom SummarizedExperiment assays colData
-#' @importFrom rearrr rotate_2d midrange
-#' 
-#' @export
-#' 
-permutateByRotation <- function(input, n_perm = 1, verbose = FALSE) {
-  ## compute rotation degrees based on the required number of permutation
-  angles <- seq(0, 360, by = 360/n_perm)[1:n_perm]
-  
-  if (verbose) {
-    message(paste0("Number of permutations = ", n_perm))
-    message(paste0("Angles used for rotations are ", paste(angles, collapse = ", "), " degrees"))
-  }
-  
-  if (is.list(input)) {
-    output <- unlist(lapply(input, function(spe) {
-      stopifnot("input must be a SpatialExperiment object or a list of SpatialExperiment objects"=class(spe) == "SpatialExperiment")
-      
-      ## get original x,y coordinates
-      pos_orig <- data.frame(spatialCoords(spe))
-      stopifnot("Column 1 and 2 of the spatialCoords slot should be named x and y, respectively. Please change column names accordingly."=colnames(pos_orig)[1:2] == c("x", "y"))
-      
-      output2 <- lapply(angles, function(angle) {
-        ## rotate around midpoint in both x and y axes
-        pos_rotated <- rearrr::rotate_2d(data = pos_orig, degrees = angle, x_col = "x", y_col = "y", origin_fn = rearrr::midrange, overwrite = TRUE)
-        
-        pos_rotated <- as.matrix(pos_rotated[,c("x_rotated", "y_rotated")])
-        colnames(pos_rotated) <- c("x", "y")
-        rownames(pos_rotated) <- rownames(pos_orig)
-        
-        ## update SpatialExperiment object
-        spe_rotated <- SpatialExperiment::SpatialExperiment(
-          assays = SummarizedExperiment::assays(spe),
-          spatialCoords = pos_rotated,
-          colData = SummarizedExperiment::colData(spe)
-        )
-        return(spe_rotated)
-      })
-      return(output2)
-    }))
-    
-    ## assign list names
-    if (!is.null(names(input))) {
-      names(output) <- paste0(rep(names(input), each = length(angles)), "_rotated_", angles)
-    }
-    
-    ## return a list of SpatialExperiment objects
-    return(output)
-    
-  } else {
-    stopifnot("input must be a SpatialExperiment object or a list of SpatialExperiment objects"=class(input) == "SpatialExperiment")
-    
-    ## get original x,y coordinates
-    pos_orig <- data.frame(spatialCoords(input))
-    stopifnot("Column 1 and 2 of the spatialCoords slot should be named x and y, respectively. Please change column names accordingly."=colnames(pos_orig)[1:2] == c("x", "y"))
-    
-    output  <- lapply(angles, function(angle) {
-      ## rotate around midpoint in both x and y axes
-      pos_rotated <- rearrr::rotate_2d(data = pos_orig, degrees = angle, x_col = "x", y_col = "y", origin_fn = rearrr::midrange, overwrite = TRUE)
-      
-      pos_rotated <- as.matrix(pos_rotated[,c("x_rotated", "y_rotated")])
-      colnames(pos_rotated) <- c("x", "y")
-      rownames(pos_rotated) <- rownames(pos_orig)
-      
-      ## update SpatialExperiment object
-      spe_rotated <- SpatialExperiment::SpatialExperiment(
-        assays = SummarizedExperiment::assays(input),
-        spatialCoords = pos_rotated,
-        colData = SummarizedExperiment::colData(input)
-      )
-      return(spe_rotated)
-    })
-    
-    ## assign list names
-    names(output) <- paste0("rotated_", angles)
-    
-    ## return a list of SpatialExperiment objects
-    return(output)
-  }
 }

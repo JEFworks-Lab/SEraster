@@ -35,8 +35,12 @@ and the angles at which the input is rotated at.
 }
 \description{
 Function to permutate a given input SpatialExperiment object(s) 
-by rotating the x,y coordinates around the midpoint.
+by rotating the x,y coordinates around the midrange point.
 
 This function assumes that the input is provided as a \code{SpatialExperiment} 
 object or a \code{list} of \code{SpatialExperiment} objects.
+
+When the input is a \code{list} of \code{SpatialExperiment} objects, 
+all \code{SpatialExperiment} objects will be rotated around a common midrange 
+point computed based on combined x,y coordinates.
 }

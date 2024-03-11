@@ -1,17 +1,44 @@
 Package: SEraster
 Type: Package
-Title: What the Package Does (Title Case)
-Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Title: Rasterization Preprocessing Framework for Scalable Spatial Omics Data Analysis
+Version: 0.99.0
+Authors@R: 
+    c(person("Gohta", "Aihara", email = "gaihara1@jh.edu", 
+    role = c("aut", "cre"), 
+    comment = c(ORCID = "0000-0002-2492-9610")), 
+    person("Lyla", "Atta", email = "lylaatta@jhmi.edu", 
+    role = c("aut"), 
+    comment = c(ORCID = "0000-0002-6113-0082")), 
+    person("Jean", "Fan", email = "jeanfan@jhu.edu", 
+    role = c("aut", "rev"), 
+    comment = c(ORCID = "0000-0002-0212-5451")))
+URL: https://github.com/JEFworks-Lab/SEraster
+BugReports: https://github.com/JEFworks-Lab/SEraster/issues
+Description: SEraster is a rasterization preprocessing framework that aggregates  
+  cellular information into spatial pixels to reduce resource requirements for  
+  spatial omics data analysis. SEraster reduces the number of spatial points in  
+  spatial omics datasets for downstream analysis through a process of rasterization  
+  where single cells’ gene expression or cell-type labels are aggregated into  
+  equally sized pixels based on a user-defined resolution. SEraster is built on  
+  an R/Bioconductor S4 class called SpatialExperiment. SEraster can be incorporated  
+  with other packages to conduct downstream analyses for spatial omics datasets,  
+  such as detecting spatially variable genes. 
+License: GPL-3
 Encoding: UTF-8
-LazyData: true
+LazyData: FALSE
 Suggests: 
+    CooccurrenceAffinity,
+    nnSVG,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 RoxygenNote: 7.3.1
 Depends: 
     R (>= 2.10)
+Imports: 
+    BiocParallel,
+    ggplot2,
+    Matrix,
+    rearrr,
+    sf,
+    SpatialExperiment,
+    SummarizedExperiment
