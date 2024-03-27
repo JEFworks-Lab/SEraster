@@ -84,13 +84,13 @@
 </h1></div>
 <p><code>SEraster</code> is a rasterization preprocessing framework that aggregates cellular information into spatial pixels to reduce resource requirements for spatial omics data analysis.</p>
 <p align="center">
-<img src="https://github.com/JEFworks/SEraster/blob/main/docs/images/seraster_logo_hex.png?raw=true" height="200"></p>
+<img src="https://github.com/JEFworks/SEraster/blob/main/images/seraster_logo_hex.png?raw=true" height="200"></p>
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
 <p><code>SEraster</code> reduces the number of spatial points in spatial omics datasets for downstream analysis through a process of rasterization where single cells’ gene expression or cell-type labels are aggregated into equally sized pixels based on a user-defined <code>resolution</code>. Here, we refer to a particular <code>resolution</code> of rasterization by the side length of the pixel such that finer <code>resolution</code> indicates smaller pixel size and coarser <code>resolution</code> indicates larger pixel size.</p>
 <p align="center">
-<img src="https://github.com/JEFworks-Lab/SEraster/blob/main/docs/images/overview.png?raw=true" height="600"></p>
+<img src="https://github.com/JEFworks-Lab/SEraster/blob/main/images/overview.png?raw=true" height="600"></p>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -145,7 +145,7 @@
 <span>  <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">theme</span><span class="op">(</span>panel.grid <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p align="center">
-<img src="https://github.com/JEFworks-Lab/SEraster/blob/main/docs/images/singlecell_celltypes.png?raw=true" height="550"></p>
+<img src="https://github.com/JEFworks-Lab/SEraster/blob/main/images/singlecell_celltypes.png?raw=true" height="550"></p>
 </div>
 <div class="section level3">
 <h3 id="getting-started">Getting started<a class="anchor" aria-label="anchor" href="#getting-started"></a>
@@ -164,12 +164,12 @@
 <code class="sourceCode R"><span><span class="co"># plot total rasterized gene expression</span></span>
 <span><span class="fu">SEraster</span><span class="fu">::</span><span class="fu"><a href="reference/plotRaster.html">plotRaster</a></span><span class="op">(</span><span class="va">rastGexp</span>, name <span class="op">=</span> <span class="st">"Total rasterized gene expression"</span><span class="op">)</span></span></code></pre></div>
 <p align="center">
-<img src="https://github.com/JEFworks/SEraster/blob/main/docs/images/rasterized_gexp_total.png?raw=true" height="400"></p>
+<img src="https://github.com/JEFworks/SEraster/blob/main/images/rasterized_gexp_total.png?raw=true" height="400"></p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># plot specific gene</span></span>
 <span><span class="fu">SEraster</span><span class="fu">::</span><span class="fu"><a href="reference/plotRaster.html">plotRaster</a></span><span class="op">(</span><span class="va">rastGexp</span>, feature_name <span class="op">=</span> <span class="st">"Esr1"</span>, name <span class="op">=</span> <span class="st">"Esr1"</span><span class="op">)</span></span></code></pre></div>
 <p align="center">
-<img src="https://github.com/JEFworks/SEraster/blob/main/docs/images/rasterized_gexp_esr1.png?raw=true" height="400"></p>
+<img src="https://github.com/JEFworks/SEraster/blob/main/images/rasterized_gexp_esr1.png?raw=true" height="400"></p>
 </div>
 <div class="section level4">
 <h4 id="rasterize-cell-type-labels">Rasterize cell-type labels<a class="anchor" aria-label="anchor" href="#rasterize-cell-type-labels"></a>
@@ -184,12 +184,12 @@
 <code class="sourceCode R"><span><span class="co"># plot total cell counts</span></span>
 <span><span class="fu">SEraster</span><span class="fu">::</span><span class="fu"><a href="reference/plotRaster.html">plotRaster</a></span><span class="op">(</span><span class="va">rastCt</span>, name <span class="op">=</span> <span class="st">"cell counts"</span>, option <span class="op">=</span> <span class="st">"inferno"</span><span class="op">)</span></span></code></pre></div>
 <p align="center">
-<img src="https://github.com/JEFworks/SEraster/blob/main/docs/images/rasterized_ct_total.png?raw=true" height="400"></p>
+<img src="https://github.com/JEFworks/SEraster/blob/main/images/rasterized_ct_total.png?raw=true" height="400"></p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># plot specific cell-type</span></span>
 <span><span class="fu">SEraster</span><span class="fu">::</span><span class="fu"><a href="reference/plotRaster.html">plotRaster</a></span><span class="op">(</span><span class="va">rastCt</span>, feature_name <span class="op">=</span> <span class="st">"Inhibitory"</span>, name <span class="op">=</span> <span class="st">"Inhibitory neuron counts"</span>, option <span class="op">=</span> <span class="st">"inferno"</span><span class="op">)</span></span></code></pre></div>
 <p align="center">
-<img src="https://github.com/JEFworks/SEraster/blob/main/docs/images/rasterized_ct_inhibitory.png?raw=true" height="400"></p>
+<img src="https://github.com/JEFworks/SEraster/blob/main/images/rasterized_ct_inhibitory.png?raw=true" height="400"></p>
 </div>
 </div>
 <div class="section level3">
@@ -219,7 +219,7 @@
 <span><span class="va">top_svg_name</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="fu">rowData</span><span class="op">(</span><span class="va">rastGexp</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="va">top_svg</span><span class="op">]</span></span>
 <span><span class="fu">SEraster</span><span class="fu">::</span><span class="fu"><a href="reference/plotRaster.html">plotRaster</a></span><span class="op">(</span><span class="va">rastGexp</span>, feature_name <span class="op">=</span> <span class="va">top_svg_name</span>, name <span class="op">=</span> <span class="va">top_svg_name</span><span class="op">)</span></span></code></pre></div>
 <p align="center">
-<img src="https://github.com/JEFworks/SEraster/blob/main/docs/images/rasterized_gexp_top_svg.png?raw=true" height="400"></p>
+<img src="https://github.com/JEFworks/SEraster/blob/main/images/rasterized_gexp_top_svg.png?raw=true" height="400"></p>
 <p>We can also perform cell-type specific SVG analysis by subsetting the dataset prior to applying SEraster.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># subset data</span></span>
@@ -245,7 +245,7 @@
 <span><span class="va">top_svg_name</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="fu">rowData</span><span class="op">(</span><span class="va">rastGexp_sub</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="va">top_svg</span><span class="op">]</span></span>
 <span><span class="fu">SEraster</span><span class="fu">::</span><span class="fu"><a href="reference/plotRaster.html">plotRaster</a></span><span class="op">(</span><span class="va">rastGexp_sub</span>, feature_name <span class="op">=</span> <span class="va">top_svg_name</span>, name <span class="op">=</span> <span class="va">top_svg_name</span><span class="op">)</span></span></code></pre></div>
 <p align="center">
-<img src="https://github.com/JEFworks/SEraster/blob/main/docs/images/rasterized_gexp_sub_top_svg.png?raw=true" height="400"></p>
+<img src="https://github.com/JEFworks/SEraster/blob/main/images/rasterized_gexp_sub_top_svg.png?raw=true" height="400"></p>
 </div>
 <div class="section level4">
 <h4 id="cell-type-cooccurrence-analysis">Cell-type cooccurrence analysis<a class="anchor" aria-label="anchor" href="#cell-type-cooccurrence-analysis"></a>
@@ -275,17 +275,17 @@
 <span><span class="co"># plot pixel value for a cell-type of interest</span></span>
 <span><span class="fu"><a href="reference/plotRaster.html">plotRaster</a></span><span class="op">(</span><span class="va">rastCt</span>, assay_name <span class="op">=</span> <span class="st">"pixelval"</span>, feature_name <span class="op">=</span> <span class="va">ct_interest</span>, name <span class="op">=</span> <span class="st">"cell-type counts"</span>, option <span class="op">=</span> <span class="st">"inferno"</span><span class="op">)</span></span></code></pre></div>
 <p align="center">
-<img src="https://github.com/JEFworks/SEraster/blob/main/docs/images/rasterized_ct_sub_total.png?raw=true" height="400"></p>
+<img src="https://github.com/JEFworks/SEraster/blob/main/images/rasterized_ct_sub_total.png?raw=true" height="400"></p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># plot RE value for a cell-type of interest</span></span>
 <span><span class="fu"><a href="reference/plotRaster.html">plotRaster</a></span><span class="op">(</span><span class="va">rastCt</span>, assay_name <span class="op">=</span> <span class="st">"re"</span>, feature_name <span class="op">=</span> <span class="va">ct_interest</span>, name <span class="op">=</span> <span class="st">"RE"</span>, option <span class="op">=</span> <span class="st">"inferno"</span><span class="op">)</span></span></code></pre></div>
 <p align="center">
-<img src="https://github.com/JEFworks/SEraster/blob/main/docs/images/rasterized_ct_sub_re.png?raw=true" height="400"></p>
+<img src="https://github.com/JEFworks/SEraster/blob/main/images/rasterized_ct_sub_re.png?raw=true" height="400"></p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># plot binarized value for a cell-type of interest</span></span>
 <span><span class="fu"><a href="reference/plotRaster.html">plotRaster</a></span><span class="op">(</span><span class="va">rastCt</span>, assay_name <span class="op">=</span> <span class="st">"bin"</span>, feature_name <span class="op">=</span> <span class="va">ct_interest</span>, factor_levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span>, name <span class="op">=</span> <span class="st">"binarized"</span>, option <span class="op">=</span> <span class="st">"inferno"</span><span class="op">)</span></span></code></pre></div>
 <p align="center">
-<img src="https://github.com/JEFworks/SEraster/blob/main/docs/images/rasterized_ct_sub_bin.png?raw=true" height="400"></p>
+<img src="https://github.com/JEFworks/SEraster/blob/main/images/rasterized_ct_sub_bin.png?raw=true" height="400"></p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># run CooccurrenceAffinity</span></span>
 <span><span class="va">ct_coocc</span> <span class="op">&lt;-</span> <span class="fu">CooccurrenceAffinity</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/CooccurrenceAffinity/man/affinity.html" class="external-link">affinity</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">mat_bin</span>, row.or.col <span class="op">=</span> <span class="st">"row"</span>, squarematrix <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"all"</span><span class="op">)</span><span class="op">)</span></span>
@@ -293,7 +293,7 @@
 <span><span class="co"># plot maximum likelihood estimates of affinity metric (alpha MLE)</span></span>
 <span><span class="fu">CooccurrenceAffinity</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/CooccurrenceAffinity/man/plotgg.html" class="external-link">plotgg</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">ct_coocc</span>, variable <span class="op">=</span> <span class="st">"alpha_mle"</span>, legendlimit <span class="op">=</span> <span class="st">"datarange"</span><span class="op">)</span></span></code></pre></div>
 <p align="center">
-<img src="https://github.com/JEFworks/SEraster/blob/main/docs/images/coocc_heatmap.png?raw=true" height="500"></p>
+<img src="https://github.com/JEFworks/SEraster/blob/main/images/coocc_heatmap.png?raw=true" height="500"></p>
 </div>
 </div>
 </div>
