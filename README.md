@@ -3,7 +3,7 @@
 `SEraster` is a rasterization preprocessing framework that aggregates cellular information into spatial pixels to reduce resource requirements for spatial omics data analysis.
 
 <p align="center">
-  <img src="https://github.com/JEFworks/SEraster/blob/main/docs/images/seraster_logo_hex.png?raw=true" height="200"/>
+  <img src="https://github.com/JEFworks/SEraster/blob/main/images/seraster_logo_hex.png?raw=true" height="200"/>
 </p>
 
 ## Overview
@@ -11,7 +11,7 @@
 `SEraster` reduces the number of spatial points in spatial omics datasets for downstream analysis through a process of rasterization where single cells’ gene expression or cell-type labels are aggregated into equally sized pixels based on a user-defined `resolution`. Here, we refer to a particular `resolution` of rasterization by the side length of the pixel such that finer `resolution` indicates smaller pixel size and coarser `resolution` indicates larger pixel size.
 
 <p align="center">
-  <img src="https://github.com/JEFworks-Lab/SEraster/blob/main/docs/images/overview.png?raw=true" height="600"/>
+  <img src="https://github.com/JEFworks-Lab/SEraster/blob/main/images/overview.png?raw=true" height="600"/>
 </p>
 
 ## Installation
@@ -75,7 +75,7 @@ ggplot(df, aes(x = x, y = y, col = celltype)) +
 ```
 
 <p align="center">
-  <img src="https://github.com/JEFworks-Lab/SEraster/blob/main/docs/images/singlecell_celltypes.png?raw=true" height="550"/>
+  <img src="https://github.com/JEFworks-Lab/SEraster/blob/main/images/singlecell_celltypes.png?raw=true" height="550"/>
 </p>
 
 ### Getting started
@@ -97,7 +97,7 @@ As you can see, SEraster aggregated 6,509 single cells into 1,301 pixels.
 SEraster::plotRaster(rastGexp, name = "Total rasterized gene expression")
 ```
 <p align="center">
-<img src="https://github.com/JEFworks/SEraster/blob/main/docs/images/rasterized_gexp_total.png?raw=true" height="400"/>
+<img src="https://github.com/JEFworks/SEraster/blob/main/images/rasterized_gexp_total.png?raw=true" height="400"/>
 </p>
 
 ``` r
@@ -106,7 +106,7 @@ SEraster::plotRaster(rastGexp, feature_name = "Esr1", name = "Esr1")
 ```
 
 <p align="center">
-<img src="https://github.com/JEFworks/SEraster/blob/main/docs/images/rasterized_gexp_esr1.png?raw=true" height="400"/>
+<img src="https://github.com/JEFworks/SEraster/blob/main/images/rasterized_gexp_esr1.png?raw=true" height="400"/>
 </p>
 
 #### Rasterize cell-type labels
@@ -125,7 +125,7 @@ SEraster::plotRaster(rastCt, name = "cell counts", option = "inferno")
 ```
 
 <p align="center">
-<img src="https://github.com/JEFworks/SEraster/blob/main/docs/images/rasterized_ct_total.png?raw=true" height="400"/>
+<img src="https://github.com/JEFworks/SEraster/blob/main/images/rasterized_ct_total.png?raw=true" height="400"/>
 </p>
 
 ``` r
@@ -134,7 +134,7 @@ SEraster::plotRaster(rastCt, feature_name = "Inhibitory", name = "Inhibitory neu
 ```
 
 <p align="center">
-<img src="https://github.com/JEFworks/SEraster/blob/main/docs/images/rasterized_ct_inhibitory.png?raw=true" height="400"/>
+<img src="https://github.com/JEFworks/SEraster/blob/main/images/rasterized_ct_inhibitory.png?raw=true" height="400"/>
 </p>
 
 ### Sample Downstream Analysis
@@ -174,7 +174,7 @@ SEraster::plotRaster(rastGexp, feature_name = top_svg_name, name = top_svg_name)
 ```
 
 <p align="center">
-<img src="https://github.com/JEFworks/SEraster/blob/main/docs/images/rasterized_gexp_top_svg.png?raw=true" height="400"/>
+<img src="https://github.com/JEFworks/SEraster/blob/main/images/rasterized_gexp_top_svg.png?raw=true" height="400"/>
 </p>
 
 We can also perform cell-type specific SVG analysis by subsetting the dataset prior to applying SEraster.
@@ -211,7 +211,7 @@ SEraster::plotRaster(rastGexp_sub, feature_name = top_svg_name, name = top_svg_n
 ```
 
 <p align="center">
-<img src="https://github.com/JEFworks/SEraster/blob/main/docs/images/rasterized_gexp_sub_top_svg.png?raw=true" height="400"/>
+<img src="https://github.com/JEFworks/SEraster/blob/main/images/rasterized_gexp_sub_top_svg.png?raw=true" height="400"/>
 </p>
 
 #### Cell-type cooccurrence analysis
@@ -248,7 +248,7 @@ plotRaster(rastCt, assay_name = "pixelval", feature_name = ct_interest, name = "
 ```
 
 <p align="center">
-<img src="https://github.com/JEFworks/SEraster/blob/main/docs/images/rasterized_ct_sub_total.png?raw=true" height="400"/>
+<img src="https://github.com/JEFworks/SEraster/blob/main/images/rasterized_ct_sub_total.png?raw=true" height="400"/>
 </p>
 
 ``` r
@@ -257,7 +257,7 @@ plotRaster(rastCt, assay_name = "re", feature_name = ct_interest, name = "RE", o
 ```
 
 <p align="center">
-<img src="https://github.com/JEFworks/SEraster/blob/main/docs/images/rasterized_ct_sub_re.png?raw=true" height="400"/>
+<img src="https://github.com/JEFworks/SEraster/blob/main/images/rasterized_ct_sub_re.png?raw=true" height="400"/>
 </p>
 
 ``` r
@@ -266,7 +266,7 @@ plotRaster(rastCt, assay_name = "bin", feature_name = ct_interest, factor_levels
 ```
 
 <p align="center">
-<img src="https://github.com/JEFworks/SEraster/blob/main/docs/images/rasterized_ct_sub_bin.png?raw=true" height="400"/>
+<img src="https://github.com/JEFworks/SEraster/blob/main/images/rasterized_ct_sub_bin.png?raw=true" height="400"/>
 </p>
 
 ``` r
@@ -278,7 +278,7 @@ CooccurrenceAffinity::plotgg(data = ct_coocc, variable = "alpha_mle", legendlimi
 ```
 
 <p align="center">
-<img src="https://github.com/JEFworks/SEraster/blob/main/docs/images/coocc_heatmap.png?raw=true" height="500"/>
+<img src="https://github.com/JEFworks/SEraster/blob/main/images/coocc_heatmap.png?raw=true" height="500"/>
 </p>
 
 ## Citation
