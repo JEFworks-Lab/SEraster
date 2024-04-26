@@ -50,47 +50,47 @@ test_that("Correct structure of rasterizeGeneExpression output when input is a S
   # output is a SpatialExperiment
   expect_s4_class(out_rasterizeGeneExpression_spe, "SpatialExperiment")
   # output has the same number of genes as the input
-  
+  # [insert code]
   # output contains an assay slot
-  
+  # [insert code]
   # output contains a SpatialCoords slot
-  
+  # [insert code]
   # output contains a colData slot
-  
+  # [insert code]
 })
 
 test_that("Correct structure of rasterizeGeneExpression output when input is a list of SpatialExperiment object (list)", {
   # output is a list
-  
+  # [insert code]
   # output list names have the same list names as the input
-  
+  # [insert code]
 })
 
 test_that("Correct structure of rasterizeCellType output when input is a SpatialExperiment object (SpatialExperiment)", {
   # output is a SpatialExperiment
-  
+  # [insert code]
   # output has the same number of celltypes as the input
-  
+  # [insert code]
   # output contains an assay slot
-  
+  # [insert code]
   # output contains a SpatialCoords slot
-  
+  # [insert code]
   # output contains a colData slot
-  
+  # [insert code]
 })
 
 test_that("Correct structure of rasterizeCellType output when input is a list of SpatialExperiment object (list)", {
   # output is a list
-  
+  # [insert code]
   # output list names have the same list names as the input
-  
+  # [insert code]
 })
 
 test_that("Correct structure of permutateByRotation output (list)", {
   # output is a list
-  
+  # [insert code]
   # output has the same number of elements as the n_perm argument
-  
+  # [insert code]
   # output does not have redundant rotations
   angles <- as.numeric(gsub("rotated_", "", names(out_permutateByRotation)))
   expect_false(any(duplicated(angles)))

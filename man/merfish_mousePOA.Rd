@@ -16,7 +16,7 @@ cell type, and neuron type meta data.
 \url{https://www.science.org/doi/10.1126/science.aau5324}
 }
 \usage{
-data(mousePOA)
+data("merfish_mousePOA")
 }
 \description{
 Preprocessed MERFISH dataset of the mouse preoptic area for a bregma -0.29 slice 
