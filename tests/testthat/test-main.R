@@ -2,6 +2,10 @@ library(SpatialExperiment)
 library(Matrix)
 library(sf)
 
+setwd("~/Desktop/SEraster")
+devtools::load_all()
+
+
 data("merfish_mousePOA")
 
 resolution <- 100
@@ -46,51 +50,54 @@ test_that("Correct structure of rasterizeMatrix output (list)", {
   expect_lte(ncol(out_rasterizeMatrix$data_rast), ncol(data))
 })
 
+ 
 test_that("Correct structure of rasterizeGeneExpression output when input is a SpatialExperiment object (SpatialExperiment)", {
   # output is a SpatialExperiment
   expect_s4_class(out_rasterizeGeneExpression_spe, "SpatialExperiment")
   # output has the same number of genes as the input
-  # [insert code]
+  expect_equal(nrow(out_rasterizeGeneExpression_spe), nrow(merfish_mousePOA))
   # output contains an assay slot
-  # [insert code]
+  expect_true(.hasSlot(out_rasterizeGeneExpression_spe, "assays"))
   # output contains a SpatialCoords slot
-  # [insert code]
+  expect_true(.hasSlot(out_rasterizeGeneExpression_spe, "spatialCoords"))
+  # output contains a spatialCoords slot
+  expect_type(spatialCoords(out_rasterizeGeneExpression_spe), "double")
   # output contains a colData slot
-  # [insert code]
+  expect_true(.hasSlot(out_rasterizeCellType_spe, "colData")) 
 })
 
 test_that("Correct structure of rasterizeGeneExpression output when input is a list of SpatialExperiment object (list)", {
   # output is a list
-  # [insert code]
+  expect_type(out_rasterizeGeneExpression_list, "list")
   # output list names have the same list names as the input
-  # [insert code]
+  expect_equal(names(out_rasterizeGeneExpression_list), names(out_permutateByRotation))
 })
 
 test_that("Correct structure of rasterizeCellType output when input is a SpatialExperiment object (SpatialExperiment)", {
   # output is a SpatialExperiment
-  # [insert code]
+  expect_s4_class(out_rasterizeCellType_spe, "SpatialExperiment")
   # output has the same number of celltypes as the input
-  # [insert code]
+  expect_equal(nrow(out_rasterizeCellType_spe), length(unique(colData(merfish_mousePOA)$celltype)))
   # output contains an assay slot
-  # [insert code]
-  # output contains a SpatialCoords slot
-  # [insert code]
+  expect_true(.hasSlot(out_rasterizeCellType_spe, "assays"))
+  # output contains a spatialCoords slot
+  expect_type(spatialCoords(out_rasterizeCellType_spe), "double")
   # output contains a colData slot
-  # [insert code]
+  expect_true(.hasSlot(out_rasterizeCellType_spe, "colData")) 
 })
 
 test_that("Correct structure of rasterizeCellType output when input is a list of SpatialExperiment object (list)", {
   # output is a list
-  # [insert code]
+  expect_type(out_rasterizeCellType_list, "list")
   # output list names have the same list names as the input
-  # [insert code]
+  expect_equal(names(out_rasterizeCellType_list), names(out_permutateByRotation))
 })
 
 test_that("Correct structure of permutateByRotation output (list)", {
   # output is a list
-  # [insert code]
+  expect_type(out_permutateByRotation, "list")
   # output has the same number of elements as the n_perm argument
-  # [insert code]
+  expect_equal(length(out_permutateByRotation), 10)
   # output does not have redundant rotations
   angles <- as.numeric(gsub("rotated_", "", names(out_permutateByRotation)))
   expect_false(any(duplicated(angles)))
@@ -100,3 +107,5 @@ test_that("Correct structure of plotRaster output (ggplot)", {
   # output is a ggplot
   expect_s3_class(out_plotRaster, "ggplot")
 })
+
+devtools::test()
