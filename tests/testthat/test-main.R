@@ -58,8 +58,6 @@ test_that("Correct structure of rasterizeGeneExpression output when input is a S
   expect_equal(nrow(out_rasterizeGeneExpression_spe), nrow(merfish_mousePOA))
   # output contains an assay slot
   expect_true(.hasSlot(out_rasterizeGeneExpression_spe, "assays"))
-  # output contains a SpatialCoords slot
-  expect_true(.hasSlot(out_rasterizeGeneExpression_spe, "spatialCoords"))
   # output contains a spatialCoords slot
   expect_type(spatialCoords(out_rasterizeGeneExpression_spe), "double")
   # output contains a colData slot
