@@ -9,5 +9,5 @@
 #'
 #' @source \url{https://www.science.org/doi/10.1126/science.aau5324}
 #' 
-#' @usage data(mousePOA)
+#' @usage data("merfish_mousePOA")
 "merfish_mousePOA"
