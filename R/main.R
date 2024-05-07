@@ -60,6 +60,25 @@
 #' 
 #' @export
 #' 
+#' @examples
+#' data("merfish_mousePOA")
+#' # extract features-by-cells matrix, spatial coordinates from the SpatialExperiment object
+#' data <- assay(merfish_mousePOA)
+#' pos <- spatialCoords(merfish_mousePOA)
+#' # compute bounding box
+#' bbox <- sf::st_bbox(c(
+#'   xmin = floor(min(pos[,1])-resolution/2), 
+#'   xmax = ceiling(max(pos[,1])+resolution/2), 
+#'   ymin = floor(min(pos[,2])-resolution/2), 
+#'   ymax = ceiling(max(pos[,2])+resolution/2)
+#' ))
+#' # rasterize with mean as the aggregation function
+#' out_mean <- rasterizeMatrix(data, pos, bbox, fun = "mean")
+#' # rasterize with sum as the aggregation function
+#' out_sum <- rasterizeMatrix(data, pos, bbox, fun = "sum")
+#' # rasterize with user-defined resolution and hexagonal pixels
+#' out_hex <- rasterizeMatrix(data, pos, bbox, resolution = 200, square = FALSE, fun = "mean")
+#' 
 rasterizeMatrix <- function(data, pos, bbox, resolution = 100, square = TRUE, fun = "mean", n_threads = 1, BPPARAM = NULL, verbose = TRUE) {
   ## set up parallel execution back-end with BiocParallel
   if (is.null(BPPARAM)) {
@@ -229,6 +248,18 @@ rasterizeMatrix <- function(data, pos, bbox, resolution = 100, square = TRUE, fu
 #' @importFrom Matrix colSums
 #' 
 #' @export
+#' 
+#' @examples
+#' data("merfish_mousePOA")
+#' # check assay names for this particular SpatialExperiment object (should be "volnorm")
+#' assayNames(merfish_mousePOA)
+#' # rasterize a single SpatialExperiment object
+#' # make sure to specify the assay_name argument when the input SpatialExperiment object has multiple assay names (assay_name is used here as an example)
+#' out <- rasterizeGeneExpression(merfish_mousePOA, assay_name = "volnorm", resolution = 100, square = TRUE, fun = "mean")
+#' 
+#' # rasterize a list of SpatialExperiment objects (in this case, permutated datasets with 3 different rotations)
+#' spe_list <- permutateByRotation(merfish_mousePOA, n_perm = 3)
+#' out_list <- rasterizeGeneExpression(spe_list, assay_name = "volnorm", resolution = 100, square = TRUE, fun = "mean")
 #' 
 rasterizeGeneExpression <- function(input, assay_name = NULL, resolution = 100, square = TRUE, fun = "mean", n_threads = 1, BPPARAM = NULL, verbose = FALSE) {
   if (is.list(input)) {

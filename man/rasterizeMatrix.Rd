@@ -73,3 +73,23 @@ Function to rasterize a given input matrix (both dense or sparse) based on a giv
 This function assumes that inputs are provided as a \code{dgCmatrix} 
 or \code{matrix} for data and \code{matrix} for position.
 }
+\examples{
+data("merfish_mousePOA")
+# extract features-by-cells matrix, spatial coordinates from the SpatialExperiment object
+data <- assay(merfish_mousePOA)
+pos <- spatialCoords(merfish_mousePOA)
+# compute bounding box
+bbox <- sf::st_bbox(c(
+  xmin = floor(min(pos[,1])-resolution/2), 
+  xmax = ceiling(max(pos[,1])+resolution/2), 
+  ymin = floor(min(pos[,2])-resolution/2), 
+  ymax = ceiling(max(pos[,2])+resolution/2)
+))
+# rasterize with mean as the aggregation function
+out_mean <- rasterizeMatrix(data, pos, bbox, fun = "mean")
+# rasterize with sum as the aggregation function
+out_sum <- rasterizeMatrix(data, pos, bbox, fun = "sum")
+# rasterize with user-defined resolution and hexagonal pixels
+out_hex <- rasterizeMatrix(data, pos, bbox, resolution = 200, square = FALSE, fun = "mean")
+
+}
