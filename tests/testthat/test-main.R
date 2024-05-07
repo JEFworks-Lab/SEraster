@@ -1,13 +1,9 @@
+library(SEraster)
 library(SpatialExperiment)
 library(Matrix)
 library(sf)
 
-setwd("~/Desktop/SEraster")
-devtools::load_all()
-
-
 data("merfish_mousePOA")
-
 resolution <- 100
 
 data <- assay(merfish_mousePOA)
@@ -106,4 +102,3 @@ test_that("Correct structure of plotRaster output (ggplot)", {
   expect_s3_class(out_plotRaster, "ggplot")
 })
 
-devtools::test()
