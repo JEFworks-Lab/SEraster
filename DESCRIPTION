@@ -37,7 +37,10 @@ LazyData: FALSE
 Suggests: 
     CooccurrenceAffinity,
     nnSVG,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),    
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr, rmarkdown
 Config/testthat/edition: 3
 RoxygenNote: 7.3.1
 Depends: 

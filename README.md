@@ -1,5 +1,7 @@
 # Spatial Experiments raster (SEraster)
 
+[![Build Status][bb]][githubactions]
+
 `SEraster` is a rasterization preprocessing framework that aggregates cellular information into spatial pixels to reduce resource requirements for spatial omics data analysis.
 
 <p align="center">
