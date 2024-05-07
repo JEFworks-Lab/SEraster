@@ -1,12 +1,5 @@
 ---
 title: "Getting Started With SEraster"
-output:
-  html_document:
-    self_contained: false
-vignette: >
-  %\VignetteIndexEntry{getting-started-with-SEraster}
-  %\VignetteEngine{knitr::knitr}
-  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE}
