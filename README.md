@@ -1,6 +1,6 @@
 # Spatial Experiments raster (SEraster)
 
-[![Build Status][bb]][githubactions]
+[![R-CMD-check](https://github.com/JEFworks-Lab/SEraster/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/JEFworks-Lab/SEraster/actions/workflows/check-standard.yaml)
 
 `SEraster` is a rasterization preprocessing framework that aggregates cellular information into spatial pixels to reduce resource requirements for spatial omics data analysis.
 
