@@ -60,6 +60,34 @@
 #' 
 #' @export
 #' 
+#' @examples
+#' data("merfish_mousePOA")
+#' # extract features-by-cells matrix, spatial coordinates from the SpatialExperiment object
+#' data <- assay(merfish_mousePOA)
+#' pos <- spatialCoords(merfish_mousePOA)
+#' # compute bounding box
+#' resolution <- 100
+#' bbox <- sf::st_bbox(c(
+#'   xmin = floor(min(pos[,1])-resolution/2), 
+#'   xmax = ceiling(max(pos[,1])+resolution/2), 
+#'   ymin = floor(min(pos[,2])-resolution/2), 
+#'   ymax = ceiling(max(pos[,2])+resolution/2)
+#' ))
+#' # rasterize with mean as the aggregation function
+#' out_mean <- rasterizeMatrix(data, pos, bbox, resolution = resolution, fun = "mean")
+#' # rasterize with sum as the aggregation function
+#' out_sum <- rasterizeMatrix(data, pos, bbox, resolution = resolution, fun = "sum")
+#' # rasterize with user-defined resolution and hexagonal pixels
+#' # in this case, you need to update the bbox as well
+#' resolution <- 200
+#' bbox <- sf::st_bbox(c(
+#'   xmin = floor(min(pos[,1])-resolution/2), 
+#'   xmax = ceiling(max(pos[,1])+resolution/2), 
+#'   ymin = floor(min(pos[,2])-resolution/2), 
+#'   ymax = ceiling(max(pos[,2])+resolution/2)
+#' ))
+#' out_hex <- rasterizeMatrix(data, pos, bbox, resolution = resolution, square = FALSE, fun = "mean")
+#' 
 rasterizeMatrix <- function(data, pos, bbox, resolution = 100, square = TRUE, fun = "mean", n_threads = 1, BPPARAM = NULL, verbose = TRUE) {
   ## set up parallel execution back-end with BiocParallel
   if (is.null(BPPARAM)) {
@@ -230,6 +258,23 @@ rasterizeMatrix <- function(data, pos, bbox, resolution = 100, square = TRUE, fu
 #' 
 #' @export
 #' 
+#' @examples
+#' data("merfish_mousePOA")
+#' 
+#' # check assay names for this particular SpatialExperiment object (should be "volnorm")
+#' assayNames(merfish_mousePOA)
+#' 
+#' # rasterize a single SpatialExperiment object
+#' # make sure to specify the assay_name argument when the input SpatialExperiment object has multiple assay names (assay_name is used here as an example)
+#' out <- rasterizeGeneExpression(merfish_mousePOA, assay_name = "volnorm", fun = "mean")
+#' 
+#' # rasterize a single SpatialExperiment object with user-defined resolution and hexagonal pixels
+#' out <- rasterizeGeneExpression(merfish_mousePOA, assay_name = "volnorm", resolution = 200, square = FALSE, fun = "mean")
+#' 
+#' # rasterize a list of SpatialExperiment objects (in this case, permutated datasets with 3 different rotations)
+#' spe_list <- permutateByRotation(merfish_mousePOA, n_perm = 3)
+#' out_list <- rasterizeGeneExpression(spe_list, assay_name = "volnorm", resolution = 100, square = TRUE, fun = "mean")
+#' 
 rasterizeGeneExpression <- function(input, assay_name = NULL, resolution = 100, square = TRUE, fun = "mean", n_threads = 1, BPPARAM = NULL, verbose = FALSE) {
   if (is.list(input)) {
     ## create a common bbox
@@ -382,6 +427,23 @@ rasterizeGeneExpression <- function(input, assay_name = NULL, resolution = 100, 
 #' 
 #' @export
 #' 
+#' @examples
+#' data("merfish_mousePOA")
+#' 
+#' # check assay names for this particular SpatialExperiment object (you can see that cell-type labels are stored in the "celltype" column)
+#' head(colData(merfish_mousePOA))
+#' 
+#' # rasterize a single SpatialExperiment object
+#' # make sure to specify the col_name argument
+#' out <- rasterizeCellType(merfish_mousePOA, col_name = "celltype", fun = "sum")
+#' 
+#' # rasterize a single SpatialExperiment object with user-defined resolution and hexagonal pixels
+#' out <- rasterizeCellType(merfish_mousePOA, col_name = "celltype", resolution = 200, square = FALSE, fun = "sum")
+#' 
+#' # rasterize a list of SpatialExperiment objects (in this case, permutated datasets with 3 different rotations)
+#' spe_list <- permutateByRotation(merfish_mousePOA, n_perm = 3)
+#' out_list <- rasterizeCellType(spe_list, col_name = "celltype", resolution = 100, square = TRUE, fun = "sum")
+#' 
 rasterizeCellType <- function(input, col_name, resolution = 100, square = TRUE, fun = "sum", n_threads = 1, BPPARAM = NULL, verbose = FALSE) {
   if (is.list(input)) {
     ## create a common bbox
@@ -520,6 +582,16 @@ rasterizeCellType <- function(input, col_name, resolution = 100, square = TRUE, 
 #' @importFrom rearrr rotate_2d midrange
 #' 
 #' @export
+#' 
+#' @examples
+#' data("merfish_mousePOA")
+#' 
+#' # create a list of 3 permutated datasets rotated at 0 (original), 120, and 240 degrees
+#' # this output can directly be fed into rasterizeGeneExpression or rasterizeCellType functions to rasterize all 3 permutations at once with the same pixel coordinates
+#' spe_list <- permutateByRotation(merfish_mousePOA, n_perm = 3)
+#' 
+#' # create a list of 5 permutated datasets rotated at 0 (original), 72, 144, 216, 288 degrees
+#' spe_list <- permutateByRotation(merfish_mousePOA, n_perm = 5)
 #' 
 permutateByRotation <- function(input, n_perm = 1, verbose = FALSE) {
   ## compute rotation degrees based on the required number of permutation
@@ -668,6 +740,28 @@ permutateByRotation <- function(input, n_perm = 1, verbose = FALSE) {
 #' @importFrom ggplot2 ggplot aes coord_fixed geom_sf scale_fill_viridis_c scale_fill_viridis_d theme_bw theme ggtitle element_blank
 #' 
 #' @export
+#' 
+#' @examples
+#' data("merfish_mousePOA")
+#' 
+#' # rasterize gene expression
+#' out <- rasterizeGeneExpression(merfish_mousePOA, assay_name = "volnorm", fun = "mean")
+#' 
+#' # plot total rasterized gene expression per pixel (there is only one assay_name in out and default for feature_name argument is "sum"; therefore, these arguments are not specified)
+#' plotRaster(out, name = "total rasterized gexp")
+#' 
+#' # plot rasterized expression of a specific gene/feature per pixel
+#' plotRaster(out, feature_name = "Esr1", name = "Esr1")
+#' 
+#' # rasterize cell-type labels with user-defined resolution and hexagonal pixels
+#' out <- rasterizeCellType(merfish_mousePOA, col_name = "celltype", resolution = 50, square = FALSE, fun = "sum")
+#' 
+#' # plot total cell counts per pixel (there is only one assay_name in out and default for feature_name argument is "sum"; therefore, these arguments are not specified)
+#' # here, let's use additional parameters for ggplot2::scale_fill_viridis_c so that it would have a different color scheme from gene expression plots
+#' plotRaster(out, name = "total cell counts", option = "inferno")
+#' 
+#' # plot specific cell type's cell counts per pixel
+#' plotRaster(out, feature_name = "Inhibitory", name = "Inhibitory neuron counts", option = "inferno")
 #' 
 plotRaster <- function(input, assay_name = NULL, feature_name = "sum", factor_levels = NULL, showLegend = TRUE, plotTitle = NULL, showAxis = FALSE, ...) {
   ## get the indicated assay slot (features-by-observations matrix)

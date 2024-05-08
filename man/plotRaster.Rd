@@ -63,3 +63,26 @@ per observation (pixel).
 \description{
 Function based on \code{ggplot2::geom_tile} to visualize a rasterized spatial omics dataset represented as a \code{SpatialExperiment} object.
 }
+\examples{
+data("merfish_mousePOA")
+
+# rasterize gene expression
+out <- rasterizeGeneExpression(merfish_mousePOA, assay_name = "volnorm", fun = "mean")
+
+# plot total rasterized gene expression per pixel (there is only one assay_name in out and default for feature_name argument is "sum"; therefore, these arguments are not specified)
+plotRaster(out, name = "total rasterized gexp")
+
+# plot rasterized expression of a specific gene/feature per pixel
+plotRaster(out, feature_name = "Esr1", name = "Esr1")
+
+# rasterize cell-type labels with user-defined resolution and hexagonal pixels
+out <- rasterizeCellType(merfish_mousePOA, col_name = "celltype", resolution = 50, square = FALSE, fun = "sum")
+
+# plot total cell counts per pixel (there is only one assay_name in out and default for feature_name argument is "sum"; therefore, these arguments are not specified)
+# here, let's use additional parameters for ggplot2::scale_fill_viridis_c so that it would have a different color scheme from gene expression plots
+plotRaster(out, name = "total cell counts", option = "inferno")
+
+# plot specific cell type's cell counts per pixel
+plotRaster(out, feature_name = "Inhibitory", name = "Inhibitory neuron counts", option = "inferno")
+
+}

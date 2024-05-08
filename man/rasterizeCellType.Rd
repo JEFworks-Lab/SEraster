@@ -75,3 +75,21 @@ omics data represented as SpatialExperiment class.
 This function assumes that the input is provided as a \code{SpatialExperiment} 
 object or a \code{list} of \code{SpatialExperiment} objects.
 }
+\examples{
+data("merfish_mousePOA")
+
+# check assay names for this particular SpatialExperiment object (you can see that cell-type labels are stored in the "celltype" column)
+head(colData(merfish_mousePOA))
+
+# rasterize a single SpatialExperiment object
+# make sure to specify the col_name argument
+out <- rasterizeCellType(merfish_mousePOA, col_name = "celltype", fun = "sum")
+
+# rasterize a single SpatialExperiment object with user-defined resolution and hexagonal pixels
+out <- rasterizeCellType(merfish_mousePOA, col_name = "celltype", resolution = 200, square = FALSE, fun = "sum")
+
+# rasterize a list of SpatialExperiment objects (in this case, permutated datasets with 3 different rotations)
+spe_list <- permutateByRotation(merfish_mousePOA, n_perm = 3)
+out_list <- rasterizeCellType(spe_list, col_name = "celltype", resolution = 100, square = TRUE, fun = "sum")
+
+}
