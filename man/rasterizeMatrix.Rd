@@ -79,6 +79,7 @@ data("merfish_mousePOA")
 data <- assay(merfish_mousePOA)
 pos <- spatialCoords(merfish_mousePOA)
 # compute bounding box
+resolution <- 100
 bbox <- sf::st_bbox(c(
   xmin = floor(min(pos[,1])-resolution/2), 
   xmax = ceiling(max(pos[,1])+resolution/2), 
@@ -86,10 +87,18 @@ bbox <- sf::st_bbox(c(
   ymax = ceiling(max(pos[,2])+resolution/2)
 ))
 # rasterize with mean as the aggregation function
-out_mean <- rasterizeMatrix(data, pos, bbox, fun = "mean")
+out_mean <- rasterizeMatrix(data, pos, bbox, resolution = resolution, fun = "mean")
 # rasterize with sum as the aggregation function
-out_sum <- rasterizeMatrix(data, pos, bbox, fun = "sum")
+out_sum <- rasterizeMatrix(data, pos, bbox, resolution = resolution, fun = "sum")
 # rasterize with user-defined resolution and hexagonal pixels
-out_hex <- rasterizeMatrix(data, pos, bbox, resolution = 200, square = FALSE, fun = "mean")
+# in this case, you need to update the bbox as well
+resolution <- 200
+bbox <- sf::st_bbox(c(
+  xmin = floor(min(pos[,1])-resolution/2), 
+  xmax = ceiling(max(pos[,1])+resolution/2), 
+  ymin = floor(min(pos[,2])-resolution/2), 
+  ymax = ceiling(max(pos[,2])+resolution/2)
+))
+out_hex <- rasterizeMatrix(data, pos, bbox, resolution = resolution, square = FALSE, fun = "mean")
 
 }
