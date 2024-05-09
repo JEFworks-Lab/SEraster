@@ -79,6 +79,8 @@ This function assumes that the input is provided as a \code{SpatialExperiment}
 object or a \code{list} of \code{SpatialExperiment} objects.
 }
 \examples{
+library(SpatialExperiment)
+
 data("merfish_mousePOA")
 
 # check assay names for this particular SpatialExperiment object (should be "volnorm")
