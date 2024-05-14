@@ -74,13 +74,16 @@ This function assumes that inputs are provided as a \code{dgCmatrix}
 or \code{matrix} for data and \code{matrix} for position.
 }
 \examples{
+library(SpatialExperiment)
+library(sf)
+
 data("merfish_mousePOA")
 # extract features-by-cells matrix, spatial coordinates from the SpatialExperiment object
 data <- assay(merfish_mousePOA)
 pos <- spatialCoords(merfish_mousePOA)
 # compute bounding box
 resolution <- 100
-bbox <- sf::st_bbox(c(
+bbox <- st_bbox(c(
   xmin = floor(min(pos[,1])-resolution/2), 
   xmax = ceiling(max(pos[,1])+resolution/2), 
   ymin = floor(min(pos[,2])-resolution/2), 
@@ -93,7 +96,7 @@ out_sum <- rasterizeMatrix(data, pos, bbox, resolution = resolution, fun = "sum"
 # rasterize with user-defined resolution and hexagonal pixels
 # in this case, you need to update the bbox as well
 resolution <- 200
-bbox <- sf::st_bbox(c(
+bbox <- st_bbox(c(
   xmin = floor(min(pos[,1])-resolution/2), 
   xmax = ceiling(max(pos[,1])+resolution/2), 
   ymin = floor(min(pos[,2])-resolution/2), 

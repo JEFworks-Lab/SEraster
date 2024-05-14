@@ -61,13 +61,16 @@
 #' @export
 #' 
 #' @examples
+#' library(SpatialExperiment)
+#' library(sf)
+#' 
 #' data("merfish_mousePOA")
 #' # extract features-by-cells matrix, spatial coordinates from the SpatialExperiment object
 #' data <- assay(merfish_mousePOA)
 #' pos <- spatialCoords(merfish_mousePOA)
 #' # compute bounding box
 #' resolution <- 100
-#' bbox <- sf::st_bbox(c(
+#' bbox <- st_bbox(c(
 #'   xmin = floor(min(pos[,1])-resolution/2), 
 #'   xmax = ceiling(max(pos[,1])+resolution/2), 
 #'   ymin = floor(min(pos[,2])-resolution/2), 
@@ -80,7 +83,7 @@
 #' # rasterize with user-defined resolution and hexagonal pixels
 #' # in this case, you need to update the bbox as well
 #' resolution <- 200
-#' bbox <- sf::st_bbox(c(
+#' bbox <- st_bbox(c(
 #'   xmin = floor(min(pos[,1])-resolution/2), 
 #'   xmax = ceiling(max(pos[,1])+resolution/2), 
 #'   ymin = floor(min(pos[,2])-resolution/2), 
@@ -259,6 +262,8 @@ rasterizeMatrix <- function(data, pos, bbox, resolution = 100, square = TRUE, fu
 #' @export
 #' 
 #' @examples
+#' library(SpatialExperiment)
+#' 
 #' data("merfish_mousePOA")
 #' 
 #' # check assay names for this particular SpatialExperiment object (should be "volnorm")
@@ -428,6 +433,8 @@ rasterizeGeneExpression <- function(input, assay_name = NULL, resolution = 100, 
 #' @export
 #' 
 #' @examples
+#' library(SpatialExperiment)
+#' 
 #' data("merfish_mousePOA")
 #' 
 #' # check assay names for this particular SpatialExperiment object (you can see that cell-type labels are stored in the "celltype" column)
