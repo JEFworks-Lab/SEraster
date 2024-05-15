@@ -1,5 +1,5 @@
 #' Preprocessed MERFISH dataset of the mouse preoptic area for a bregma -0.29 slice 
-#' from a female naive animal.
+#' from a female naive animal (Animal ID = 1).
 #'
 #' @format \code{SpatialExperiment} object where \code{assay} slot contains genes-by-cells 
 #' matrix with preprocessed gene expression (total RNA counts per cell divided by 
