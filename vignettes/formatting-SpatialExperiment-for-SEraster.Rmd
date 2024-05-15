@@ -32,7 +32,7 @@ library(ggplot2)
 ## Load dataset
 
 ```{r}
-data <- read.csv('~/Downloads/Moffitt_and_Bambah-Mukku_et_al_merfish_all_cells.csv')
+data <- read.csv('/Users/gohtaaihara/Downloads/Moffitt_and_Bambah-Mukku_et_al_merfish_all_cells.csv')
 ```
 
 Subset the dataset to specific female, behavioral condition, and bregma section.
