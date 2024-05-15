@@ -22,13 +22,13 @@ require(remotes)
 remotes::install_github('JEFworks-Lab/SEraster')
 ```
 
-We are currently submitting `SEraster` to Bioconductor.
+We are currently submitting `SEraster` to Bioconductor (this section will be updated after `SEraster` is approved to Bioconductor).
 
-To install `SEraster`, start R (version "4.3") and enter:
+To install `SEraster`, start R (version "4.4") and enter:
 
 ```{r}
-if (!require("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
-
-BiocManager::install("SEraster")
+# if (!require("BiocManager", quietly = TRUE))
+#     install.packages("BiocManager")
+# 
+# BiocManager::install("SEraster")
 ```

@@ -27,7 +27,6 @@ In the original work, [Moffitt J. and Bambah-Mukku D. et al. (2018), "Molecular,
 library(SpatialExperiment)
 library(Matrix)
 library(ggplot2)
-library(gridExtra)
 ```
 
 ## Load dataset
