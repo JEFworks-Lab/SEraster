@@ -5,7 +5,6 @@ library(SpatialExperiment)
 library(Matrix)
 library(ggplot2)
 library(gridExtra)
-library(here)
 
 data <- read.csv('~/Downloads/Moffitt_and_Bambah-Mukku_et_al_merfish_all_cells.csv')
 
@@ -17,7 +16,7 @@ data_sub <- data[(data$Animal_ID == animal & data$Animal_sex == sex & data$Behav
 dim(data_sub)
 
 ## save subsetted data for vignettes
-saveRDS(data_sub, file = here("vignettes/merfish_mousePOA_raw.RDS"))
+saveRDS(data_sub, file = "vignettes/merfish_mousePOA_raw.RDS")
 
 ## genes-by-cells matrix
 # extract the genes-by-cells matrix as a sparse matrix (dgCMatrix)
