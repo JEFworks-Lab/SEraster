@@ -16,6 +16,9 @@ bregma <- "-0.29"
 data_sub <- data[(data$Animal_ID == animal & data$Animal_sex == sex & data$Behavior == behavior & data$Bregma == bregma),]
 dim(data_sub)
 
+## save subsetted data for vignettes
+saveRDS(data_sub, file = here("vignettes/merfish_mousePOA_raw.RDS"))
+
 ## genes-by-cells matrix
 # extract the genes-by-cells matrix as a sparse matrix (dgCMatrix)
 mat <- as(t(data_sub[,10:ncol(data_sub)]), "CsparseMatrix")
