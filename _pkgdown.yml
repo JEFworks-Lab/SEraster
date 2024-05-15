@@ -1,5 +1,21 @@
 url: https://jef.works/SEraster/
-
 template:
   bootstrap: 5
-
+development:
+  mode: auto
+navbar:
+  title: "SEraster"
+  left:
+    - text: "Install"
+      href: articles/install.html
+    - text: "Tutorials"
+      menu:
+        - text: "Introduction"
+        - text: "Formatting a SpatialExperiment Object for SEraster"
+          href: articles/formatting-SpatialExperiment-for-SEraster.html
+        - text: "Getting Started With SEraster"
+          href: articles/getting-started-with-SEraster.html
+    - text: "Functions"
+      href: reference/index.html
+    - text: "Changelog"
+      href: news/index.html
