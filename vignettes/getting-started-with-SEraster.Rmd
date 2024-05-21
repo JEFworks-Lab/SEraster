@@ -41,6 +41,7 @@ library(SpatialExperiment)
 library(nnSVG)
 library(CooccurrenceAffinity)
 library(ggplot2)
+library(ggrastr)
 ```
 
 ## Load example dataset
@@ -63,7 +64,7 @@ df <- data.frame(spatialCoords(merfish_mousePOA), celltype = colData(merfish_mou
 
 ggplot(df, aes(x = x, y = y, col = celltype)) +
   coord_fixed() +
-  geom_point(size = 1.5) +
+  rasterise(geom_point(size = 1.5)) +
   guides(col = guide_legend(override.aes = list(size = 3))) +
   labs(x = "x (μm)",
        y = "y (μm)",
