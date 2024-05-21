@@ -232,7 +232,8 @@ pixel geometry as <code>sfc_POLYGON</code>). If the input was provided as <code>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"merfish_mousePOA"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># check assay names for this particular SpatialExperiment object (you can see that cell-type labels are stored in the "celltype" column)</span></span></span>
+<span class="r-in"><span><span class="co"># check assay names for this particular SpatialExperiment object (you can see </span></span></span>
+<span class="r-in"><span><span class="co"># that cell-type labels are stored in the "celltype" column)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">colData</span><span class="op">(</span><span class="va">merfish_mousePOA</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> DataFrame with 6 rows and 4 columns</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                         bregma      celltype  neurontype</span>
@@ -255,13 +256,17 @@ pixel geometry as <code>sfc_POLYGON</code>). If the input was provided as <code>
 <span class="r-in"><span><span class="co"># rasterize a single SpatialExperiment object</span></span></span>
 <span class="r-in"><span><span class="co"># make sure to specify the col_name argument</span></span></span>
 <span class="r-in"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu">rasterizeCellType</span><span class="op">(</span><span class="va">merfish_mousePOA</span>, col_name <span class="op">=</span> <span class="st">"celltype"</span>, fun <span class="op">=</span> <span class="st">"sum"</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in 0:nx:</span> NA/NaN argument</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># rasterize a single SpatialExperiment object with user-defined resolution and hexagonal pixels</span></span></span>
 <span class="r-in"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu">rasterizeCellType</span><span class="op">(</span><span class="va">merfish_mousePOA</span>, col_name <span class="op">=</span> <span class="st">"celltype"</span>, resolution <span class="op">=</span> <span class="fl">200</span>, square <span class="op">=</span> <span class="cn">FALSE</span>, fun <span class="op">=</span> <span class="st">"sum"</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in seq.default(xlim[1] - dx, xlim[2] + 2 * dx, dx):</span> 'from' must be a finite number</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># rasterize a list of SpatialExperiment objects (in this case, permutated datasets with 3 different rotations)</span></span></span>
+<span class="r-in"><span><span class="co"># rasterize a list of SpatialExperiment objects (in this case, permutated datasets </span></span></span>
+<span class="r-in"><span><span class="co"># with 3 different rotations)</span></span></span>
 <span class="r-in"><span><span class="va">spe_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="permutateByRotation.html">permutateByRotation</a></span><span class="op">(</span><span class="va">merfish_mousePOA</span>, n_perm <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">out_list</span> <span class="op">&lt;-</span> <span class="fu">rasterizeCellType</span><span class="op">(</span><span class="va">spe_list</span>, col_name <span class="op">=</span> <span class="st">"celltype"</span>, resolution <span class="op">=</span> <span class="fl">100</span>, square <span class="op">=</span> <span class="cn">TRUE</span>, fun <span class="op">=</span> <span class="st">"sum"</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in 0:nx:</span> NA/NaN argument</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

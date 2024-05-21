@@ -148,34 +148,32 @@ per observation (pixel).</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># rasterize gene expression</span></span></span>
 <span class="r-in"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="rasterizeGeneExpression.html">rasterizeGeneExpression</a></span><span class="op">(</span><span class="va">merfish_mousePOA</span>, assay_name <span class="op">=</span> <span class="st">"volnorm"</span>, fun <span class="op">=</span> <span class="st">"mean"</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in 0:nx:</span> NA/NaN argument</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># plot total rasterized gene expression per pixel (there is only one assay_name in out and default for feature_name argument is "sum"; therefore, these arguments are not specified)</span></span></span>
+<span class="r-in"><span><span class="co"># plot total rasterized gene expression per pixel (there is only one assay_name </span></span></span>
+<span class="r-in"><span><span class="co"># in out and default for feature_name argument is "sum"; therefore, these arguments </span></span></span>
+<span class="r-in"><span><span class="co"># are not specified)</span></span></span>
 <span class="r-in"><span><span class="fu">plotRaster</span><span class="op">(</span><span class="va">out</span>, name <span class="op">=</span> <span class="st">"total rasterized gexp"</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Coordinate system already present. Adding new coordinate system, which will</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> replace the existing one.</span>
-<span class="r-plt img"><img src="plotRaster-1.png" alt="" width="700" height="433"></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in h(simpleError(msg, call)):</span> error in evaluating the argument 'x' in selecting a method for function 'assay': object 'out' not found</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># plot rasterized expression of a specific gene/feature per pixel</span></span></span>
 <span class="r-in"><span><span class="fu">plotRaster</span><span class="op">(</span><span class="va">out</span>, feature_name <span class="op">=</span> <span class="st">"Esr1"</span>, name <span class="op">=</span> <span class="st">"Esr1"</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Coordinate system already present. Adding new coordinate system, which will</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> replace the existing one.</span>
-<span class="r-plt img"><img src="plotRaster-2.png" alt="" width="700" height="433"></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in h(simpleError(msg, call)):</span> error in evaluating the argument 'x' in selecting a method for function 'assay': object 'out' not found</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># rasterize cell-type labels with user-defined resolution and hexagonal pixels</span></span></span>
 <span class="r-in"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="rasterizeCellType.html">rasterizeCellType</a></span><span class="op">(</span><span class="va">merfish_mousePOA</span>, col_name <span class="op">=</span> <span class="st">"celltype"</span>, resolution <span class="op">=</span> <span class="fl">50</span>, square <span class="op">=</span> <span class="cn">FALSE</span>, fun <span class="op">=</span> <span class="st">"sum"</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in seq.default(xlim[1] - dx, xlim[2] + 2 * dx, dx):</span> 'from' must be a finite number</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># plot total cell counts per pixel (there is only one assay_name in out and default for feature_name argument is "sum"; therefore, these arguments are not specified)</span></span></span>
-<span class="r-in"><span><span class="co"># here, let's use additional parameters for ggplot2::scale_fill_viridis_c so that it would have a different color scheme from gene expression plots</span></span></span>
+<span class="r-in"><span><span class="co"># plot total cell counts per pixel (there is only one assay_name in out and default </span></span></span>
+<span class="r-in"><span><span class="co"># for feature_name argument is "sum"; therefore, these arguments are not specified)</span></span></span>
+<span class="r-in"><span><span class="co"># here, let's use additional parameters for ggplot2::scale_fill_viridis_c so </span></span></span>
+<span class="r-in"><span><span class="co"># that it would have a different color scheme from gene expression plots</span></span></span>
 <span class="r-in"><span><span class="fu">plotRaster</span><span class="op">(</span><span class="va">out</span>, name <span class="op">=</span> <span class="st">"total cell counts"</span>, option <span class="op">=</span> <span class="st">"inferno"</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Coordinate system already present. Adding new coordinate system, which will</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> replace the existing one.</span>
-<span class="r-plt img"><img src="plotRaster-3.png" alt="" width="700" height="433"></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in h(simpleError(msg, call)):</span> error in evaluating the argument 'x' in selecting a method for function 'assay': object 'out' not found</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># plot specific cell type's cell counts per pixel</span></span></span>
 <span class="r-in"><span><span class="fu">plotRaster</span><span class="op">(</span><span class="va">out</span>, feature_name <span class="op">=</span> <span class="st">"Inhibitory"</span>, name <span class="op">=</span> <span class="st">"Inhibitory neuron counts"</span>, option <span class="op">=</span> <span class="st">"inferno"</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Coordinate system already present. Adding new coordinate system, which will</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> replace the existing one.</span>
-<span class="r-plt img"><img src="plotRaster-4.png" alt="" width="700" height="433"></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in h(simpleError(msg, call)):</span> error in evaluating the argument 'x' in selecting a method for function 'assay': object 'out' not found</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
