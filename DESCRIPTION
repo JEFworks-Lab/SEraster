@@ -49,6 +49,7 @@ Imports:
     BiocParallel,
     ggplot2,
     Matrix,
+    methods,
     rearrr,
     sf,
     SpatialExperiment,
