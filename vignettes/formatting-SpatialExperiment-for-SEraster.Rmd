@@ -27,7 +27,6 @@ In the original work, [Moffitt J. and Bambah-Mukku D. et al. (2018), "Molecular,
 library(SpatialExperiment)
 library(Matrix)
 library(ggplot2)
-library(ggrastr)
 ```
 
 ## Load the subsetted dataset
@@ -89,7 +88,7 @@ df_plt <- data.frame(pos, total_gexp = colSums(mat))
 
 ggplot(df_plt, aes(x = x, y = y, color = total_gexp)) +
   coord_fixed() +
-  rasterise(geom_point(size = 1.5, stroke = 0)) +
+  geom_point(size = 1.5, stroke = 0) +
   scale_color_viridis_c(name = "total gene expression") +
   theme_bw() +
   theme(panel.grid = element_blank(),
@@ -105,7 +104,7 @@ df_plt <- data.frame(pos, celltype = meta$celltype)
 
 ggplot(df_plt, aes(x = x, y = y, color = celltype)) +
   coord_fixed() +
-  rasterise(geom_point(size = 1.5, stroke = 0)) +
+  geom_point(size = 1.5, stroke = 0) +
   theme_bw() +
   theme(panel.grid = element_blank(),
         axis.title = element_blank(),
