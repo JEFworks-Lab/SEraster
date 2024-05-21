@@ -48,7 +48,8 @@ point computed based on combined x,y coordinates.
 data("merfish_mousePOA")
 
 # create a list of 3 permutated datasets rotated at 0 (original), 120, and 240 degrees
-# this output can directly be fed into rasterizeGeneExpression or rasterizeCellType functions to rasterize all 3 permutations at once with the same pixel coordinates
+# this output can directly be fed into rasterizeGeneExpression or rasterizeCellType 
+# functions to rasterize all 3 permutations at once with the same pixel coordinates
 spe_list <- permutateByRotation(merfish_mousePOA, n_perm = 3)
 
 # create a list of 5 permutated datasets rotated at 0 (original), 72, 144, 216, 288 degrees
