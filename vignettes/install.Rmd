@@ -1,6 +1,6 @@
 ---
 title: "Installing SEraster"
-output: html_document
+output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{installing-SEraster}
   %\VignetteEngine{knitr::rmarkdown}
@@ -11,7 +11,10 @@ vignette: >
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.width=12, fig.height=8
+  fig.width=6,
+  fig.height=4,
+  dpi = 72,
+  dev = "png"
 )
 ```
 

@@ -1,11 +1,11 @@
 pandoc: 3.1.1
-pkgdown: 2.0.9
+pkgdown: 2.0.7
 pkgdown_sha: ~
 articles:
   formatting-SpatialExperiment-for-SEraster: formatting-SpatialExperiment-for-SEraster.html
   getting-started-with-SEraster: getting-started-with-SEraster.html
   install: install.html
-last_built: 2024-05-16T20:19Z
+last_built: 2024-05-23T18:17Z
 urls:
   reference: https://jef.works/SEraster/reference
   article: https://jef.works/SEraster/articles

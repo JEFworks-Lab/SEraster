@@ -78,7 +78,8 @@ plotRaster(out, name = "total rasterized gexp")
 plotRaster(out, feature_name = "Esr1", name = "Esr1")
 
 # rasterize cell-type labels with user-defined resolution and hexagonal pixels
-out <- rasterizeCellType(merfish_mousePOA, col_name = "celltype", resolution = 50, square = FALSE, fun = "sum")
+out <- rasterizeCellType(merfish_mousePOA, col_name = "celltype", resolution = 50, 
+square = FALSE, fun = "sum")
 
 # plot total cell counts per pixel (there is only one assay_name in out and default 
 # for feature_name argument is "sum"; therefore, these arguments are not specified)

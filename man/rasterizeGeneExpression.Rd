@@ -92,11 +92,13 @@ assayNames(merfish_mousePOA)
 out <- rasterizeGeneExpression(merfish_mousePOA, assay_name = "volnorm", fun = "mean")
 
 # rasterize a single SpatialExperiment object with user-defined resolution and hexagonal pixels
-out <- rasterizeGeneExpression(merfish_mousePOA, assay_name = "volnorm", resolution = 200, square = FALSE, fun = "mean")
+out <- rasterizeGeneExpression(merfish_mousePOA, assay_name = "volnorm", resolution = 200, 
+square = FALSE, fun = "mean")
 
 # rasterize a list of SpatialExperiment objects (in this case, permutated datasets 
 # with 3 different rotations)
 spe_list <- permutateByRotation(merfish_mousePOA, n_perm = 3)
-out_list <- rasterizeGeneExpression(spe_list, assay_name = "volnorm", resolution = 100, square = TRUE, fun = "mean")
+out_list <- rasterizeGeneExpression(spe_list, assay_name = "volnorm", resolution = 100, 
+square = TRUE, fun = "mean")
 
 }
