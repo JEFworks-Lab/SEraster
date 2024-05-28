@@ -58,7 +58,7 @@ dim(merfish_mousePOA)
 length(unique(colData(merfish_mousePOA)$celltype))
 ```
 
-This MERFISH mouse preoptic area dataset contains 6,509 cells and 16 cell-types.
+This MERFISH mouse preoptic area (POA) dataset contains 6,509 cells and 16 cell-types.
 
 ```{r}
 # plot at single-cell resolution
@@ -77,7 +77,15 @@ ggplot(df, aes(x = x, y = y, col = celltype)) +
 
 ## SEraster basic functionalities
 
+`SEraster` reduces the number of spatial points in spatial omics datasets for downstream analysis through a process of rasterization where single cells’ gene expression or cell-type labels are aggregated into equally sized square or hexagonal pixels (can be changed using the `square` argument) based on a user-defined resolution.
+
+Here, we demonstrate the basic functionalities of `SEraster`.
+
 ### Rasterize gene expression
+
+For continuous variables such as gene expression or other molecular information (e.g. protein expression if you are using spatial proteomics datasets), `SEraster` aggregates the observed raw counts or normalized expression values for each molecule within each pixel using means by default (can be changed using the `fun` argument).
+
+Let's try rasterizing the gene expression of the MERFISH mouse POA dataset we loaded.
 
 ```{r}
 rastGexp <- SEraster::rasterizeGeneExpression(merfish_mousePOA, assay_name="volnorm", resolution = 50)
@@ -86,7 +94,7 @@ rastGexp <- SEraster::rasterizeGeneExpression(merfish_mousePOA, assay_name="voln
 dim(rastGexp)
 ```
 
-As you can see, SEraster aggregated 6,509 single cells into 1,301 pixels.
+As you can see, `SEraster` aggregated 6,509 single cells into 1,301 pixels.
 
 ```{r}
 # plot total rasterized gene expression
@@ -98,26 +106,9 @@ SEraster::plotRaster(rastGexp, name = "Total rasterized gene expression")
 SEraster::plotRaster(rastGexp, feature_name = "Esr1", name = "Esr1")
 ```
 
-### Rasterize cell-type
-
-```{r}
-rastCt <- SEraster::rasterizeCellType(merfish_mousePOA, col_name = "celltype", resolution = 50)
-
-# check the dimension of the cell-types-by-cells matrix after rasterizing cell-type labels
-dim(rastGexp)
-```
-
-```{r}
-# plot total cell counts
-SEraster::plotRaster(rastCt, name = "cell counts", option = "inferno")
-```
-
-```{r}
-# plot specific cell-type
-SEraster::plotRaster(rastCt, feature_name = "Inhibitory", name = "Inhibitory neuron counts", option = "inferno")
-```
-
 ### Rasterize gene expression within cell-type
+
+Such rasterization can also be performed in a cell-type-specific manner by restricting to cells of a particular cell-type prior to rasterization. Here, we subset the dataset to Inhibitory cell-type and run `SEraster` on the subsetted dataset.
 
 ```{r}
 ## rasterize cell-type specific gene expression by subsetting to cell-type of interest
@@ -136,6 +127,84 @@ SEraster::plotRaster(rastGexpSubset, name = paste0("Total rast gexp in ", ct_int
 ```{r}
 SEraster::plotRaster(rastGexpSubset, feature_name = "Esr1", name = paste0("Esr1 in ", ct_interest))
 ```
+
+### Rasterize cell-type
+
+For categorical variables such as cell-type or cluster labels, `SEraster` aggregates the number of cells for each label within each pixel using sums by default (can be changed using the `fun` argument).
+
+Let's try rasterizing the cell-type labels of the MERFISH mouse POA dataset.
+
+```{r}
+rastCt <- SEraster::rasterizeCellType(merfish_mousePOA, col_name = "celltype", resolution = 50)
+
+# check the dimension of the cell-types-by-cells matrix after rasterizing cell-type labels
+dim(rastGexp)
+```
+
+```{r}
+# plot total cell counts
+SEraster::plotRaster(rastCt, name = "cell counts", option = "inferno")
+```
+
+```{r}
+# plot specific cell-type
+SEraster::plotRaster(rastCt, feature_name = "Inhibitory", name = "Inhibitory neuron counts", option = "inferno")
+```
+
+### Setting rasterization resolution
+
+Rasterization resolution can be controlled by the `resolution` argument of the `rasterizeGeneExpression` and `rasterizeCellType` functions. Here, we refer to a particular resolution of rasterization by the side length for square pixels and the distance between opposite edges for hexagonal pixels such that finer resolution indicates smaller pixel size and vice versa.
+
+Let's see how the rasterized MERFISH mouse POA dataset look with various resolutions using square pixels.
+
+```{r}
+resolutions <- c(50, 100, 200)
+for (resolution in resolutions) {
+  # rasterize at defined resolution
+  temp <- SEraster::rasterizeGeneExpression(merfish_mousePOA, assay_name="volnorm", resolution = resolution)
+  # plot a specific gene
+  plt <- SEraster::plotRaster(temp, feature_name = "Esr1", name = "Esr1", plotTitle = paste0("resolution: ", resolution))
+  show(plt)
+}
+```
+
+Now, let's see the same resolutions using hexagonal pixels.
+
+```{r}
+for (resolution in resolutions) {
+  # rasterize at defined resolution
+  temp <- SEraster::rasterizeGeneExpression(merfish_mousePOA, assay_name="volnorm", resolution = resolution, square = FALSE)
+  # plot a specific gene
+  plt <- SEraster::plotRaster(temp, feature_name = "Esr1", name = "Esr1", plotTitle = paste0("resolution: ", resolution))
+  show(plt)
+}
+```
+
+### Creating and rasterizing permutations
+
+Since rasterized values may be sensitive to edge effects such as the specific boundaries of grids upon rasterization, `SEraster` enables permutation by rotating the dataset at various angles before rasterization.
+
+For example, let's create 3 permutations of the MERFISH mouse POA dataset, which would output a `list` of 3 `SpatialExperiment` objects with x,y coordinates rotated at 0, 120, and 240 degrees around the midrange point.
+
+In addition to a single `SpatialExperiment` object, `rasterizeGeneExpression` and `rasterizeCellType` functions can both take a `list` of `SpatialExperiment` objects. This essentially allows users to streamline the preprocessing of permutations with `SEraster`; followed by a downstream analysis of choice. For instance, in our manuscript, we have shown that permutations can be used to improve the performance of SVG analysis.
+
+```{r}
+# permutate
+spe_list <- permutateByRotation(merfish_mousePOA, n_perm = 3)
+
+# rasterize permutated datasets at once
+out_list <- rasterizeGeneExpression(spe_list, assay_name = "volnorm", resolution = 50)
+
+for (i in seq_along(out_list)) {
+  # extract rotated angle
+  angle <- gsub("rotated_", "", paste0("rotated ", names(out_list)[[i]], " degrees"))
+  # plot a specific gene
+  plt <- SEraster::plotRaster(out_list[[i]], feature_name = "Esr1", name = "Esr1", plotTitle = angle)
+  show(plt)
+}
+```
+
+As you can see from the plots above, when `SEraster` rasterizes a `list` of `SpatialExperiment` objects, all `SpatialExperiment` objects in the inputted `list` are rasterized with the same pixel coordinate framework (same bounding box, resolution, centroid coordinates). This feature may not be particularly useful for permutations; however, it can potentially be applied to compare two or more datasets, such as structurally aligned tissues as well as healthy vs. disease tissues.
 
 ## Examples of downstream analyses after SEraster preprocessing
 

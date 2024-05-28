@@ -30,7 +30,9 @@ biocViews:
     Software,
     Spatial,
     GeneExpression,
-    Transcriptomics
+    Transcriptomics,
+    SingleCell,
+    Preprocessing
 License: GPL-3
 Encoding: UTF-8
 LazyData: FALSE
@@ -44,7 +46,7 @@ VignetteBuilder: knitr, rmarkdown
 Config/testthat/edition: 3
 RoxygenNote: 7.3.1
 Depends: 
-    R (>= 2.10)
+    R (>= 4.3.0)
 Imports: 
     BiocParallel,
     ggplot2,
