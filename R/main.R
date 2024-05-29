@@ -645,7 +645,7 @@ permutateByRotation <- function(input, n_perm = 1, verbose = FALSE) {
       
       ## get original x,y coordinates
       pos_orig <- data.frame(spatialCoords(spe))
-      stopifnot("Column 1 and 2 of the spatialCoords slot should be named x and y, respectively. Please change column names accordingly."=colnames(pos_orig)[1:2] == c("x", "y"))
+      stopifnot("Column 1 and 2 of the spatialCoords slot should be named x and y, respectively. Please change column names accordingly."=colnames(pos_orig)[seq_along(c("x", "y"))] == c("x", "y"))
       
       output2 <- lapply(angles, function(angle) {
         ## rotate around the midrange point
@@ -679,7 +679,7 @@ permutateByRotation <- function(input, n_perm = 1, verbose = FALSE) {
     
     ## get original x,y coordinates
     pos_orig <- data.frame(spatialCoords(input))
-    stopifnot("Column 1 and 2 of the spatialCoords slot should be named x and y, respectively. Please change column names accordingly."=colnames(pos_orig)[1:2] == c("x", "y"))
+    stopifnot("Column 1 and 2 of the spatialCoords slot should be named x and y, respectively. Please change column names accordingly."=colnames(pos_orig)[seq_along(c("x", "y"))] == c("x", "y"))
     
     output  <- lapply(angles, function(angle) {
       ## rotate around the midrange point
