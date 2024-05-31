@@ -4,8 +4,8 @@
 \name{merfish_mousePOA}
 \alias{merfish_mousePOA}
 \title{Preprocessed MERFISH dataset of the mouse preoptic area for a bregma -0.29 slice 
-from a female naive animal (Animal ID = 1, Animal Sex = "Female", 
-# Behavior = "Naive", Bregma = "-0.29").}
+from a female naive animal (Animal ID = 1, Animal Sex = "Female", Behavior = 
+"Naive", Bregma = "-0.29").}
 \format{
 \code{SpatialExperiment} object where \code{assay} slot contains genes-by-cells 
 matrix with preprocessed gene expression (total RNA counts per cell divided by 
@@ -19,9 +19,14 @@ cell type, and neuron type meta data.
 \usage{
 data("merfish_mousePOA")
 }
+\value{
+\code{SpatialExperiment} object for the preprocessed MERFISH dataset 
+of the mouse preoptic area for a bregma -0.29 slice from a female naive animal 
+(Animal ID = 1, Animal Sex = "Female", Behavior = "Naive", Bregma = "-0.29").
+}
 \description{
 Preprocessed MERFISH dataset of the mouse preoptic area for a bregma -0.29 slice 
-from a female naive animal (Animal ID = 1, Animal Sex = "Female", 
-# Behavior = "Naive", Bregma = "-0.29").
+from a female naive animal (Animal ID = 1, Animal Sex = "Female", Behavior = 
+"Naive", Bregma = "-0.29").
 }
 \keyword{datasets}
