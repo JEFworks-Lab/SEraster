@@ -4,7 +4,11 @@
 
 `SEraster` is a rasterization preprocessing framework that aggregates cellular information into spatial pixels to reduce resource requirements for spatial omics data analysis. This is the `SEraster` R documentation website. Questions, suggestions, or problems should be submitted as [GitHub issues](https://github.com/JEFworks-Lab/SEraster/issues).
 
-<p><img src="https://github.com/JEFworks/SEraster/blob/main/images/seraster_logo_hex.png?raw=true" align="center" height="300" style="float: center; height:300px;"/></p>
+<p>
+
+<img src="https://github.com/JEFworks/SEraster/blob/main/images/seraster_logo_hex.png?raw=true" align="center" height="300" style="float: center; height:300px;"/>
+
+</p>
 
 ## Overview
 

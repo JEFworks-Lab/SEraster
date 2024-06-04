@@ -131,7 +131,6 @@ errors in traditional indices”, <em>bioRxiv</em></a></li>
 <span><span class="co">#&gt; Loading required package: SummarizedExperiment</span></span>
 <span><span class="co">#&gt; Loading required package: MatrixGenerics</span></span>
 <span><span class="co">#&gt; Loading required package: matrixStats</span></span>
-<span><span class="co">#&gt; Warning: package 'matrixStats' was built under R version 4.3.2</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Attaching package: 'MatrixGenerics'</span></span>
 <span><span class="co">#&gt; The following objects are masked from 'package:matrixStats':</span></span>
@@ -195,8 +194,7 @@ errors in traditional indices”, <em>bioRxiv</em></a></li>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/lmweber/nnSVG" class="external-link">nnSVG</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/kpmainali/CooccurrenceAffinity" class="external-link">CooccurrenceAffinity</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; Loading required package: BiasedUrn</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: package 'ggplot2' was built under R version 4.3.2</span></span></code></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="load-example-dataset">Load example dataset<a class="anchor" aria-label="anchor" href="#load-example-dataset"></a>
@@ -211,93 +209,183 @@ errors in traditional indices”, <em>bioRxiv</em></a></li>
 <span><span class="co"># check the number of cell-types</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="fu">colData</span><span class="op">(</span><span class="va">merfish_mousePOA</span><span class="op">)</span><span class="op">$</span><span class="va">celltype</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 16</span></span></code></pre></div>
-<p>This MERFISH mouse preoptic area dataset contains 6,509 cells and 16
-cell-types.</p>
+<p>This MERFISH mouse preoptic area (POA) dataset contains 6,509 cells
+and 16 cell-types.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># plot at single-cell resolution</span></span>
 <span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SpatialExperiment/man/SpatialExperiment-methods.html" class="external-link">spatialCoords</a></span><span class="op">(</span><span class="va">merfish_mousePOA</span><span class="op">)</span>, celltype <span class="op">=</span> <span class="fu">colData</span><span class="op">(</span><span class="va">merfish_mousePOA</span><span class="op">)</span><span class="op">$</span><span class="va">celltype</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">df</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, y <span class="op">=</span> <span class="va">y</span>, col <span class="op">=</span> <span class="va">celltype</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_fixed.html" class="external-link">coord_fixed</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">1.5</span>, stroke <span class="op">=</span> <span class="fl">0</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guides.html" class="external-link">guides</a></span><span class="op">(</span>col <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guide_legend.html" class="external-link">guide_legend</a></span><span class="op">(</span>override.aes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"x (μm)"</span>,</span>
 <span>       y <span class="op">=</span> <span class="st">"y (μm)"</span>,</span>
 <span>       col <span class="op">=</span> <span class="st">"Cell-types"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>panel.grid <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_blank</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="getting-started-with-SEraster_files/figure-html/unnamed-chunk-4-1.png" width="1152"></p>
+<p><img src="getting-started-with-SEraster_files/figure-html/unnamed-chunk-4-1.png" width="432"></p>
 </div>
 <div class="section level3">
 <h3 id="seraster-basic-functionalities">SEraster basic functionalities<a class="anchor" aria-label="anchor" href="#seraster-basic-functionalities"></a>
 </h3>
+<p><code>SEraster</code> reduces the number of spatial points in spatial
+omics datasets for downstream analysis through a process of
+rasterization where single cells’ gene expression or cell-type labels
+are aggregated into equally sized square or hexagonal pixels (can be
+changed using the <code>square</code> argument) based on a user-defined
+resolution.</p>
+<p>Here, we demonstrate the basic functionalities of
+<code>SEraster</code>.</p>
 <div class="section level4">
 <h4 id="rasterize-gene-expression">Rasterize gene expression<a class="anchor" aria-label="anchor" href="#rasterize-gene-expression"></a>
 </h4>
+<p>For continuous variables such as gene expression or other molecular
+information (e.g. protein expression if you are using spatial proteomics
+datasets), <code>SEraster</code> aggregates the observed raw counts or
+normalized expression values for each molecule within each pixel using
+means by default (can be changed using the <code>fun</code>
+argument).</p>
+<p>Let’s try rasterizing the gene expression of the MERFISH mouse POA
+dataset we loaded.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">rastGexp</span> <span class="op">&lt;-</span> <span class="fu">SEraster</span><span class="fu">::</span><span class="fu"><a href="../reference/rasterizeGeneExpression.html">rasterizeGeneExpression</a></span><span class="op">(</span><span class="va">merfish_mousePOA</span>, assay_name<span class="op">=</span><span class="st">"volnorm"</span>, resolution <span class="op">=</span> <span class="fl">50</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># check the dimension of the genes-by-cells matrix after rasterizing gene expression</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">rastGexp</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1]  155 1301</span></span></code></pre></div>
-<p>As you can see, SEraster aggregated 6,509 single cells into 1,301
-pixels.</p>
+<p>As you can see, <code>SEraster</code> aggregated 6,509 single cells
+into 1,301 pixels.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># plot total rasterized gene expression</span></span>
-<span><span class="fu">SEraster</span><span class="fu">::</span><span class="fu"><a href="../reference/plotRaster.html">plotRaster</a></span><span class="op">(</span><span class="va">rastGexp</span>, name <span class="op">=</span> <span class="st">"Total rasterized gene expression"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Coordinate system already present. Adding new coordinate system, which will</span></span>
-<span><span class="co">#&gt; replace the existing one.</span></span></code></pre></div>
-<p><img src="getting-started-with-SEraster_files/figure-html/unnamed-chunk-6-1.png" width="1152"></p>
+<span><span class="fu">SEraster</span><span class="fu">::</span><span class="fu"><a href="../reference/plotRaster.html">plotRaster</a></span><span class="op">(</span><span class="va">rastGexp</span>, name <span class="op">=</span> <span class="st">"Total rasterized gene expression"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="getting-started-with-SEraster_files/figure-html/unnamed-chunk-6-1.png" width="432"></p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># plot a specific gene</span></span>
-<span><span class="fu">SEraster</span><span class="fu">::</span><span class="fu"><a href="../reference/plotRaster.html">plotRaster</a></span><span class="op">(</span><span class="va">rastGexp</span>, feature_name <span class="op">=</span> <span class="st">"Esr1"</span>, name <span class="op">=</span> <span class="st">"Esr1"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Coordinate system already present. Adding new coordinate system, which will</span></span>
-<span><span class="co">#&gt; replace the existing one.</span></span></code></pre></div>
-<p><img src="getting-started-with-SEraster_files/figure-html/unnamed-chunk-7-1.png" width="1152"></p>
-</div>
-<div class="section level4">
-<h4 id="rasterize-cell-type">Rasterize cell-type<a class="anchor" aria-label="anchor" href="#rasterize-cell-type"></a>
-</h4>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">rastCt</span> <span class="op">&lt;-</span> <span class="fu">SEraster</span><span class="fu">::</span><span class="fu"><a href="../reference/rasterizeCellType.html">rasterizeCellType</a></span><span class="op">(</span><span class="va">merfish_mousePOA</span>, col_name <span class="op">=</span> <span class="st">"celltype"</span>, resolution <span class="op">=</span> <span class="fl">50</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># check the dimension of the cell-types-by-cells matrix after rasterizing cell-type labels</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">rastGexp</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1]  155 1301</span></span></code></pre></div>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># plot total cell counts</span></span>
-<span><span class="fu">SEraster</span><span class="fu">::</span><span class="fu"><a href="../reference/plotRaster.html">plotRaster</a></span><span class="op">(</span><span class="va">rastCt</span>, name <span class="op">=</span> <span class="st">"cell counts"</span>, option <span class="op">=</span> <span class="st">"inferno"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Coordinate system already present. Adding new coordinate system, which will</span></span>
-<span><span class="co">#&gt; replace the existing one.</span></span></code></pre></div>
-<p><img src="getting-started-with-SEraster_files/figure-html/unnamed-chunk-9-1.png" width="1152"></p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># plot specific cell-type</span></span>
-<span><span class="fu">SEraster</span><span class="fu">::</span><span class="fu"><a href="../reference/plotRaster.html">plotRaster</a></span><span class="op">(</span><span class="va">rastCt</span>, feature_name <span class="op">=</span> <span class="st">"Inhibitory"</span>, name <span class="op">=</span> <span class="st">"Inhibitory neuron counts"</span>, option <span class="op">=</span> <span class="st">"inferno"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Coordinate system already present. Adding new coordinate system, which will</span></span>
-<span><span class="co">#&gt; replace the existing one.</span></span></code></pre></div>
-<p><img src="getting-started-with-SEraster_files/figure-html/unnamed-chunk-10-1.png" width="1152"></p>
+<span><span class="fu">SEraster</span><span class="fu">::</span><span class="fu"><a href="../reference/plotRaster.html">plotRaster</a></span><span class="op">(</span><span class="va">rastGexp</span>, feature_name <span class="op">=</span> <span class="st">"Esr1"</span>, name <span class="op">=</span> <span class="st">"Esr1"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="getting-started-with-SEraster_files/figure-html/unnamed-chunk-7-1.png" width="432"></p>
 </div>
 <div class="section level4">
 <h4 id="rasterize-gene-expression-within-cell-type">Rasterize gene expression within cell-type<a class="anchor" aria-label="anchor" href="#rasterize-gene-expression-within-cell-type"></a>
 </h4>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<p>Such rasterization can also be performed in a cell-type-specific
+manner by restricting to cells of a particular cell-type prior to
+rasterization. Here, we subset the dataset to Inhibitory cell-type and
+run <code>SEraster</code> on the subsetted dataset.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## rasterize cell-type specific gene expression by subsetting to cell-type of interest</span></span>
 <span><span class="va">ct_interest</span> <span class="op">&lt;-</span> <span class="st">"Inhibitory"</span></span>
 <span><span class="va">spe_subset</span> <span class="op">&lt;-</span> <span class="va">merfish_mousePOA</span><span class="op">[</span>,<span class="va">merfish_mousePOA</span><span class="op">$</span><span class="va">celltype</span> <span class="op">==</span> <span class="va">ct_interest</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co">## rasterize gene expression</span></span>
 <span><span class="va">rastGexpSubset</span> <span class="op">&lt;-</span> <span class="fu">SEraster</span><span class="fu">::</span><span class="fu"><a href="../reference/rasterizeGeneExpression.html">rasterizeGeneExpression</a></span><span class="op">(</span><span class="va">spe_subset</span>, assay_name<span class="op">=</span><span class="st">"volnorm"</span>, resolution <span class="op">=</span> <span class="fl">50</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## plot</span></span>
-<span><span class="fu">SEraster</span><span class="fu">::</span><span class="fu"><a href="../reference/plotRaster.html">plotRaster</a></span><span class="op">(</span><span class="va">rastGexpSubset</span>, name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Total rast gexp in "</span>, <span class="va">ct_interest</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Coordinate system already present. Adding new coordinate system, which will</span></span>
-<span><span class="co">#&gt; replace the existing one.</span></span></code></pre></div>
-<p><img src="getting-started-with-SEraster_files/figure-html/unnamed-chunk-12-1.png" width="1152"></p>
+<span><span class="fu">SEraster</span><span class="fu">::</span><span class="fu"><a href="../reference/plotRaster.html">plotRaster</a></span><span class="op">(</span><span class="va">rastGexpSubset</span>, name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Total rast gexp in "</span>, <span class="va">ct_interest</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><img src="getting-started-with-SEraster_files/figure-html/unnamed-chunk-9-1.png" width="432"></p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">SEraster</span><span class="fu">::</span><span class="fu"><a href="../reference/plotRaster.html">plotRaster</a></span><span class="op">(</span><span class="va">rastGexpSubset</span>, feature_name <span class="op">=</span> <span class="st">"Esr1"</span>, name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Esr1 in "</span>, <span class="va">ct_interest</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><img src="getting-started-with-SEraster_files/figure-html/unnamed-chunk-10-1.png" width="432"></p>
+</div>
+<div class="section level4">
+<h4 id="rasterize-cell-type">Rasterize cell-type<a class="anchor" aria-label="anchor" href="#rasterize-cell-type"></a>
+</h4>
+<p>For categorical variables such as cell-type or cluster labels,
+<code>SEraster</code> aggregates the number of cells for each label
+within each pixel using sums by default (can be changed using the
+<code>fun</code> argument).</p>
+<p>Let’s try rasterizing the cell-type labels of the MERFISH mouse POA
+dataset.</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">rastCt</span> <span class="op">&lt;-</span> <span class="fu">SEraster</span><span class="fu">::</span><span class="fu"><a href="../reference/rasterizeCellType.html">rasterizeCellType</a></span><span class="op">(</span><span class="va">merfish_mousePOA</span>, col_name <span class="op">=</span> <span class="st">"celltype"</span>, resolution <span class="op">=</span> <span class="fl">50</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># check the dimension of the cell-types-by-cells matrix after rasterizing cell-type labels</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">rastGexp</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1]  155 1301</span></span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># plot total cell counts</span></span>
+<span><span class="fu">SEraster</span><span class="fu">::</span><span class="fu"><a href="../reference/plotRaster.html">plotRaster</a></span><span class="op">(</span><span class="va">rastCt</span>, name <span class="op">=</span> <span class="st">"cell counts"</span>, option <span class="op">=</span> <span class="st">"inferno"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="getting-started-with-SEraster_files/figure-html/unnamed-chunk-12-1.png" width="432"></p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">SEraster</span><span class="fu">::</span><span class="fu"><a href="../reference/plotRaster.html">plotRaster</a></span><span class="op">(</span><span class="va">rastGexpSubset</span>, feature_name <span class="op">=</span> <span class="st">"Esr1"</span>, name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Esr1 in "</span>, <span class="va">ct_interest</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Coordinate system already present. Adding new coordinate system, which will</span></span>
-<span><span class="co">#&gt; replace the existing one.</span></span></code></pre></div>
-<p><img src="getting-started-with-SEraster_files/figure-html/unnamed-chunk-13-1.png" width="1152"></p>
+<code class="sourceCode R"><span><span class="co"># plot specific cell-type</span></span>
+<span><span class="fu">SEraster</span><span class="fu">::</span><span class="fu"><a href="../reference/plotRaster.html">plotRaster</a></span><span class="op">(</span><span class="va">rastCt</span>, feature_name <span class="op">=</span> <span class="st">"Inhibitory"</span>, name <span class="op">=</span> <span class="st">"Inhibitory neuron counts"</span>, option <span class="op">=</span> <span class="st">"inferno"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="getting-started-with-SEraster_files/figure-html/unnamed-chunk-13-1.png" width="432"></p>
+</div>
+<div class="section level4">
+<h4 id="setting-rasterization-resolution">Setting rasterization resolution<a class="anchor" aria-label="anchor" href="#setting-rasterization-resolution"></a>
+</h4>
+<p>Rasterization resolution can be controlled by the
+<code>resolution</code> argument of the
+<code>rasterizeGeneExpression</code> and <code>rasterizeCellType</code>
+functions. Here, we refer to a particular resolution of rasterization by
+the side length for square pixels and the distance between opposite
+edges for hexagonal pixels such that finer resolution indicates smaller
+pixel size and vice versa.</p>
+<p>Let’s see how the rasterized MERFISH mouse POA dataset look with
+various resolutions using square pixels.</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">resolutions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">50</span>, <span class="fl">100</span>, <span class="fl">200</span><span class="op">)</span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">resolution</span> <span class="kw">in</span> <span class="va">resolutions</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="co"># rasterize at defined resolution</span></span>
+<span>  <span class="va">temp</span> <span class="op">&lt;-</span> <span class="fu">SEraster</span><span class="fu">::</span><span class="fu"><a href="../reference/rasterizeGeneExpression.html">rasterizeGeneExpression</a></span><span class="op">(</span><span class="va">merfish_mousePOA</span>, assay_name<span class="op">=</span><span class="st">"volnorm"</span>, resolution <span class="op">=</span> <span class="va">resolution</span><span class="op">)</span></span>
+<span>  <span class="co"># plot a specific gene</span></span>
+<span>  <span class="va">plt</span> <span class="op">&lt;-</span> <span class="fu">SEraster</span><span class="fu">::</span><span class="fu"><a href="../reference/plotRaster.html">plotRaster</a></span><span class="op">(</span><span class="va">temp</span>, feature_name <span class="op">=</span> <span class="st">"Esr1"</span>, name <span class="op">=</span> <span class="st">"Esr1"</span>, plotTitle <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"resolution: "</span>, <span class="va">resolution</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/methods/show.html" class="external-link">show</a></span><span class="op">(</span><span class="va">plt</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<p><img src="getting-started-with-SEraster_files/figure-html/unnamed-chunk-14-1.png" width="432"><img src="getting-started-with-SEraster_files/figure-html/unnamed-chunk-14-2.png" width="432"><img src="getting-started-with-SEraster_files/figure-html/unnamed-chunk-14-3.png" width="432"></p>
+<p>Now, let’s see the same resolutions using hexagonal pixels.</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw">for</span> <span class="op">(</span><span class="va">resolution</span> <span class="kw">in</span> <span class="va">resolutions</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="co"># rasterize at defined resolution</span></span>
+<span>  <span class="va">temp</span> <span class="op">&lt;-</span> <span class="fu">SEraster</span><span class="fu">::</span><span class="fu"><a href="../reference/rasterizeGeneExpression.html">rasterizeGeneExpression</a></span><span class="op">(</span><span class="va">merfish_mousePOA</span>, assay_name<span class="op">=</span><span class="st">"volnorm"</span>, resolution <span class="op">=</span> <span class="va">resolution</span>, square <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span>  <span class="co"># plot a specific gene</span></span>
+<span>  <span class="va">plt</span> <span class="op">&lt;-</span> <span class="fu">SEraster</span><span class="fu">::</span><span class="fu"><a href="../reference/plotRaster.html">plotRaster</a></span><span class="op">(</span><span class="va">temp</span>, feature_name <span class="op">=</span> <span class="st">"Esr1"</span>, name <span class="op">=</span> <span class="st">"Esr1"</span>, plotTitle <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"resolution: "</span>, <span class="va">resolution</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/methods/show.html" class="external-link">show</a></span><span class="op">(</span><span class="va">plt</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<p><img src="getting-started-with-SEraster_files/figure-html/unnamed-chunk-15-1.png" width="432"><img src="getting-started-with-SEraster_files/figure-html/unnamed-chunk-15-2.png" width="432"><img src="getting-started-with-SEraster_files/figure-html/unnamed-chunk-15-3.png" width="432"></p>
+</div>
+<div class="section level4">
+<h4 id="creating-and-rasterizing-permutations">Creating and rasterizing permutations<a class="anchor" aria-label="anchor" href="#creating-and-rasterizing-permutations"></a>
+</h4>
+<p>Since rasterized values may be sensitive to edge effects such as the
+specific boundaries of grids upon rasterization, <code>SEraster</code>
+enables permutation by rotating the dataset at various angles before
+rasterization.</p>
+<p>For example, let’s create 3 permutations of the MERFISH mouse POA
+dataset, which would output a <code>list</code> of 3
+<code>SpatialExperiment</code> objects with x,y coordinates rotated at
+0, 120, and 240 degrees around the midrange point.</p>
+<p>In addition to a single <code>SpatialExperiment</code> object,
+<code>rasterizeGeneExpression</code> and <code>rasterizeCellType</code>
+functions can both take a <code>list</code> of
+<code>SpatialExperiment</code> objects. This essentially allows users to
+streamline the preprocessing of permutations with <code>SEraster</code>;
+followed by a downstream analysis of choice. For instance, in our
+manuscript, we have shown that permutations can be used to improve the
+performance of SVG analysis.</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># permutate</span></span>
+<span><span class="va">spe_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/permutateByRotation.html">permutateByRotation</a></span><span class="op">(</span><span class="va">merfish_mousePOA</span>, n_perm <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># rasterize permutated datasets at once</span></span>
+<span><span class="va">out_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/rasterizeGeneExpression.html">rasterizeGeneExpression</a></span><span class="op">(</span><span class="va">spe_list</span>, assay_name <span class="op">=</span> <span class="st">"volnorm"</span>, resolution <span class="op">=</span> <span class="fl">50</span><span class="op">)</span></span>
+<span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">out_list</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="co"># extract rotated angle</span></span>
+<span>  <span class="va">angle</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"rotated_"</span>, <span class="st">""</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"rotated "</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">out_list</span><span class="op">)</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>, <span class="st">" degrees"</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="co"># plot a specific gene</span></span>
+<span>  <span class="va">plt</span> <span class="op">&lt;-</span> <span class="fu">SEraster</span><span class="fu">::</span><span class="fu"><a href="../reference/plotRaster.html">plotRaster</a></span><span class="op">(</span><span class="va">out_list</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>, feature_name <span class="op">=</span> <span class="st">"Esr1"</span>, name <span class="op">=</span> <span class="st">"Esr1"</span>, plotTitle <span class="op">=</span> <span class="va">angle</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/methods/show.html" class="external-link">show</a></span><span class="op">(</span><span class="va">plt</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<p><img src="getting-started-with-SEraster_files/figure-html/unnamed-chunk-16-1.png" width="432"><img src="getting-started-with-SEraster_files/figure-html/unnamed-chunk-16-2.png" width="432"><img src="getting-started-with-SEraster_files/figure-html/unnamed-chunk-16-3.png" width="432"></p>
+<p>As you can see from the plots above, when <code>SEraster</code>
+rasterizes a <code>list</code> of <code>SpatialExperiment</code>
+objects, all <code>SpatialExperiment</code> objects in the inputted
+<code>list</code> are rasterized with the same pixel coordinate
+framework (same bounding box, resolution, centroid coordinates). This
+feature may not be particularly useful for permutations; however, it can
+potentially be applied to compare two or more datasets, such as
+structurally aligned tissues as well as healthy vs. disease tissues.</p>
 </div>
 </div>
 <div class="section level3">
@@ -311,27 +399,25 @@ Please refer to <a href="https://bioconductor.org/packages/nnSVG" class="externa
 details about the package. We can directly input rasterized gene
 expression <code>SpatialExperiment</code> object from
 <code>SEraster</code> into <code>nnSVG</code>.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># run nnSVG</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
 <span><span class="va">rastGexp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/nnSVG/man/nnSVG.html" class="external-link">nnSVG</a></span><span class="op">(</span><span class="va">rastGexp</span>, assay_name <span class="op">=</span> <span class="st">"pixelval"</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># number of significant SVGs based on the selected adjusted p-value threshold</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu">rowData</span><span class="op">(</span><span class="va">rastGexp</span><span class="op">)</span><span class="op">$</span><span class="va">padj</span> <span class="op">&lt;=</span> <span class="fl">0.05</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; FALSE  TRUE </span></span>
 <span><span class="co">#&gt;    17   138</span></span></code></pre></div>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># plot rasterized gene expression of top-ranked SVG</span></span>
 <span><span class="va">top_svg</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="fu">rowData</span><span class="op">(</span><span class="va">rastGexp</span><span class="op">)</span><span class="op">$</span><span class="va">rank</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="va">top_svg_name</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="fu">rowData</span><span class="op">(</span><span class="va">rastGexp</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="va">top_svg</span><span class="op">]</span></span>
-<span><span class="fu">SEraster</span><span class="fu">::</span><span class="fu"><a href="../reference/plotRaster.html">plotRaster</a></span><span class="op">(</span><span class="va">rastGexp</span>, feature_name <span class="op">=</span> <span class="va">top_svg_name</span>, name <span class="op">=</span> <span class="va">top_svg_name</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Coordinate system already present. Adding new coordinate system, which will</span></span>
-<span><span class="co">#&gt; replace the existing one.</span></span></code></pre></div>
-<p><img src="getting-started-with-SEraster_files/figure-html/unnamed-chunk-16-1.png" width="1152"></p>
+<span><span class="fu">SEraster</span><span class="fu">::</span><span class="fu"><a href="../reference/plotRaster.html">plotRaster</a></span><span class="op">(</span><span class="va">rastGexp</span>, feature_name <span class="op">=</span> <span class="va">top_svg_name</span>, name <span class="op">=</span> <span class="va">top_svg_name</span><span class="op">)</span></span></code></pre></div>
+<p><img src="getting-started-with-SEraster_files/figure-html/unnamed-chunk-19-1.png" width="432"></p>
 <p>We can also perform cell-type specific SVG analysis by subsetting the
 dataset prior to applying <code>SEraster</code>.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># subset data</span></span>
 <span><span class="va">ct_interest</span> <span class="op">&lt;-</span> <span class="st">"Excitatory"</span></span>
 <span><span class="va">spe_sub</span> <span class="op">&lt;-</span> <span class="va">merfish_mousePOA</span><span class="op">[</span>,<span class="va">merfish_mousePOA</span><span class="op">$</span><span class="va">celltype</span> <span class="op">==</span> <span class="va">ct_interest</span><span class="op">]</span></span>
@@ -342,20 +428,18 @@ dataset prior to applying <code>SEraster</code>.</p>
 <span><span class="co"># run nnSVG</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
 <span><span class="va">rastGexp_sub</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/nnSVG/man/nnSVG.html" class="external-link">nnSVG</a></span><span class="op">(</span><span class="va">rastGexp_sub</span>, assay_name <span class="op">=</span> <span class="st">"pixelval"</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># number of significant SVGs</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu">rowData</span><span class="op">(</span><span class="va">rastGexp_sub</span><span class="op">)</span><span class="op">$</span><span class="va">padj</span> <span class="op">&lt;=</span> <span class="fl">0.05</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; FALSE  TRUE </span></span>
 <span><span class="co">#&gt;    45   110</span></span></code></pre></div>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># plot rasterized gene expression of top-ranked SVG</span></span>
 <span><span class="va">top_svg</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="fu">rowData</span><span class="op">(</span><span class="va">rastGexp_sub</span><span class="op">)</span><span class="op">$</span><span class="va">rank</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="va">top_svg_name</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="fu">rowData</span><span class="op">(</span><span class="va">rastGexp_sub</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="va">top_svg</span><span class="op">]</span></span>
-<span><span class="fu">SEraster</span><span class="fu">::</span><span class="fu"><a href="../reference/plotRaster.html">plotRaster</a></span><span class="op">(</span><span class="va">rastGexp_sub</span>, feature_name <span class="op">=</span> <span class="va">top_svg_name</span>, name <span class="op">=</span> <span class="va">top_svg_name</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Coordinate system already present. Adding new coordinate system, which will</span></span>
-<span><span class="co">#&gt; replace the existing one.</span></span></code></pre></div>
-<p><img src="getting-started-with-SEraster_files/figure-html/unnamed-chunk-19-1.png" width="1152"></p>
+<span><span class="fu">SEraster</span><span class="fu">::</span><span class="fu"><a href="../reference/plotRaster.html">plotRaster</a></span><span class="op">(</span><span class="va">rastGexp_sub</span>, feature_name <span class="op">=</span> <span class="va">top_svg_name</span>, name <span class="op">=</span> <span class="va">top_svg_name</span><span class="op">)</span></span></code></pre></div>
+<p><img src="getting-started-with-SEraster_files/figure-html/unnamed-chunk-22-1.png" width="432"></p>
 </div>
 <div class="section level4">
 <h4 id="cell-type-co-enrichment-analysis">Cell-type co-enrichment analysis<a class="anchor" aria-label="anchor" href="#cell-type-co-enrichment-analysis"></a>
@@ -366,7 +450,7 @@ labels using a relative enrichment metric and a previously developed
 tool called <code>CooccurrenceAffinity</code>. Please refer to our paper
 for more details about the methodology and <a href="https://CRAN.R-project.org/package=CooccurrenceAffinity" class="external-link">CooccurrenceAffinity</a>
 for more details about the package.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># extract cell-type labels</span></span>
 <span><span class="va">ct_labels</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="fu">colData</span><span class="op">(</span><span class="va">merfish_mousePOA</span><span class="op">)</span><span class="op">$</span><span class="va">celltype</span><span class="op">)</span></span>
 <span></span>
@@ -382,27 +466,21 @@ for more details about the package.</p>
 <span></span>
 <span><span class="co"># add RE and binarized layers to SpatialExperiment object</span></span>
 <span><span class="fu">assays</span><span class="op">(</span><span class="va">rastCt</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>pixelval <span class="op">=</span> <span class="fu">assay</span><span class="op">(</span><span class="va">rastCt</span>, <span class="st">"pixelval"</span><span class="op">)</span>, re <span class="op">=</span> <span class="va">mat_re</span>, bin <span class="op">=</span> <span class="va">mat_bin</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ct_interest</span> <span class="op">&lt;-</span> <span class="st">"Ependymal"</span></span>
 <span></span>
 <span><span class="co"># plot pixel value for a cell-type of interest</span></span>
-<span><span class="fu"><a href="../reference/plotRaster.html">plotRaster</a></span><span class="op">(</span><span class="va">rastCt</span>, assay_name <span class="op">=</span> <span class="st">"pixelval"</span>, feature_name <span class="op">=</span> <span class="va">ct_interest</span>, name <span class="op">=</span> <span class="st">"cell-type counts"</span>, option <span class="op">=</span> <span class="st">"inferno"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Coordinate system already present. Adding new coordinate system, which will</span></span>
-<span><span class="co">#&gt; replace the existing one.</span></span></code></pre></div>
-<p><img src="getting-started-with-SEraster_files/figure-html/unnamed-chunk-21-1.png" width="1152"></p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<span><span class="fu"><a href="../reference/plotRaster.html">plotRaster</a></span><span class="op">(</span><span class="va">rastCt</span>, assay_name <span class="op">=</span> <span class="st">"pixelval"</span>, feature_name <span class="op">=</span> <span class="va">ct_interest</span>, name <span class="op">=</span> <span class="st">"cell-type counts"</span>, option <span class="op">=</span> <span class="st">"inferno"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="getting-started-with-SEraster_files/figure-html/unnamed-chunk-24-1.png" width="432"></p>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># plot RE value for a cell-type of interest</span></span>
-<span><span class="fu"><a href="../reference/plotRaster.html">plotRaster</a></span><span class="op">(</span><span class="va">rastCt</span>, assay_name <span class="op">=</span> <span class="st">"re"</span>, feature_name <span class="op">=</span> <span class="va">ct_interest</span>, name <span class="op">=</span> <span class="st">"RE"</span>, option <span class="op">=</span> <span class="st">"inferno"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Coordinate system already present. Adding new coordinate system, which will</span></span>
-<span><span class="co">#&gt; replace the existing one.</span></span></code></pre></div>
-<p><img src="getting-started-with-SEraster_files/figure-html/unnamed-chunk-22-1.png" width="1152"></p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<span><span class="fu"><a href="../reference/plotRaster.html">plotRaster</a></span><span class="op">(</span><span class="va">rastCt</span>, assay_name <span class="op">=</span> <span class="st">"re"</span>, feature_name <span class="op">=</span> <span class="va">ct_interest</span>, name <span class="op">=</span> <span class="st">"RE"</span>, option <span class="op">=</span> <span class="st">"inferno"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="getting-started-with-SEraster_files/figure-html/unnamed-chunk-25-1.png" width="432"></p>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># plot binarized value for a cell-type of interest</span></span>
-<span><span class="fu"><a href="../reference/plotRaster.html">plotRaster</a></span><span class="op">(</span><span class="va">rastCt</span>, assay_name <span class="op">=</span> <span class="st">"bin"</span>, feature_name <span class="op">=</span> <span class="va">ct_interest</span>, factor_levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span>, name <span class="op">=</span> <span class="st">"binarized"</span>, option <span class="op">=</span> <span class="st">"inferno"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Coordinate system already present. Adding new coordinate system, which will</span></span>
-<span><span class="co">#&gt; replace the existing one.</span></span></code></pre></div>
-<p><img src="getting-started-with-SEraster_files/figure-html/unnamed-chunk-23-1.png" width="1152"></p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<span><span class="fu"><a href="../reference/plotRaster.html">plotRaster</a></span><span class="op">(</span><span class="va">rastCt</span>, assay_name <span class="op">=</span> <span class="st">"bin"</span>, feature_name <span class="op">=</span> <span class="va">ct_interest</span>, factor_levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span>, name <span class="op">=</span> <span class="st">"binarized"</span>, option <span class="op">=</span> <span class="st">"inferno"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="getting-started-with-SEraster_files/figure-html/unnamed-chunk-26-1.png" width="432"></p>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># run CooccurrenceAffinity</span></span>
 <span><span class="va">ct_coocc</span> <span class="op">&lt;-</span> <span class="fu">CooccurrenceAffinity</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/CooccurrenceAffinity/man/affinity.html" class="external-link">affinity</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">mat_bin</span>, row.or.col <span class="op">=</span> <span class="st">"row"</span>, squarematrix <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"all"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -927,17 +1005,17 @@ for more details about the package.</p>
 <span><span class="fu">CooccurrenceAffinity</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/CooccurrenceAffinity/man/plotgg.html" class="external-link">plotgg</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">ct_coocc</span>, variable <span class="op">=</span> <span class="st">"alpha_mle"</span>, legendlimit <span class="op">=</span> <span class="st">"datarange"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; you can hide the printed values with show.value=F</span></span>
 <span><span class="co">#&gt; use the argument value.digit to change number of digits and text.size to adjust the text size</span></span></code></pre></div>
-<p><img src="getting-started-with-SEraster_files/figure-html/unnamed-chunk-24-1.png" width="1152"></p>
+<p><img src="getting-started-with-SEraster_files/figure-html/unnamed-chunk-27-1.png" width="432"></p>
 <details><summary><strong>Session Info</strong>
-</summary><div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+</summary><div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; R version 4.3.1 (2023-06-16)</span></span>
-<span><span class="co">#&gt; Platform: x86_64-apple-darwin20 (64-bit)</span></span>
-<span><span class="co">#&gt; Running under: macOS Monterey 12.1</span></span>
+<span><span class="co">#&gt; Platform: aarch64-apple-darwin20 (64-bit)</span></span>
+<span><span class="co">#&gt; Running under: macOS Ventura 13.4</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Matrix products: default</span></span>
-<span><span class="co">#&gt; BLAS:   /Library/Frameworks/R.framework/Versions/4.3-x86_64/Resources/lib/libRblas.0.dylib </span></span>
-<span><span class="co">#&gt; LAPACK: /Library/Frameworks/R.framework/Versions/4.3-x86_64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0</span></span>
+<span><span class="co">#&gt; BLAS:   /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRblas.0.dylib </span></span>
+<span><span class="co">#&gt; LAPACK: /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; locale:</span></span>
 <span><span class="co">#&gt; [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8</span></span>
@@ -960,56 +1038,57 @@ for more details about the package.</p>
 <span><span class="co">#&gt; [15] matrixStats_1.3.0           SEraster_0.99.0            </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span><span class="co">#&gt;  [1] DBI_1.2.2                 bitops_1.0-7             </span></span>
-<span><span class="co">#&gt;  [3] pbapply_1.7-2             rlang_1.1.3              </span></span>
-<span><span class="co">#&gt;  [5] magrittr_2.0.3            e1071_1.7-14             </span></span>
-<span><span class="co">#&gt;  [7] compiler_4.3.1            DelayedMatrixStats_1.22.6</span></span>
-<span><span class="co">#&gt;  [9] systemfonts_1.0.6         vctrs_0.6.5              </span></span>
-<span><span class="co">#&gt; [11] pkgconfig_2.0.3           crayon_1.5.2             </span></span>
-<span><span class="co">#&gt; [13] rdist_0.0.5               fastmap_1.1.1            </span></span>
-<span><span class="co">#&gt; [15] magick_2.8.3              XVector_0.40.0           </span></span>
-<span><span class="co">#&gt; [17] labeling_0.4.3            scuttle_1.10.3           </span></span>
-<span><span class="co">#&gt; [19] utf8_1.2.4                BRISC_1.0.5              </span></span>
-<span><span class="co">#&gt; [21] rmarkdown_2.26            ragg_1.3.1               </span></span>
-<span><span class="co">#&gt; [23] purrr_1.0.2               xfun_0.43                </span></span>
-<span><span class="co">#&gt; [25] zlibbioc_1.46.0           cachem_1.0.8             </span></span>
-<span><span class="co">#&gt; [27] beachmat_2.16.0           jsonlite_1.8.8           </span></span>
-<span><span class="co">#&gt; [29] highr_0.10                reshape_0.8.9            </span></span>
-<span><span class="co">#&gt; [31] rhdf5filters_1.12.1       DelayedArray_0.26.7      </span></span>
-<span><span class="co">#&gt; [33] Rhdf5lib_1.22.1           BiocParallel_1.36.0      </span></span>
-<span><span class="co">#&gt; [35] parallel_4.3.1            R6_2.5.1                 </span></span>
-<span><span class="co">#&gt; [37] bslib_0.7.0               limma_3.56.2             </span></span>
-<span><span class="co">#&gt; [39] jquerylib_0.1.4           Rcpp_1.0.12              </span></span>
-<span><span class="co">#&gt; [41] knitr_1.45                R.utils_2.12.3           </span></span>
-<span><span class="co">#&gt; [43] Matrix_1.6-5              tidyselect_1.2.1         </span></span>
-<span><span class="co">#&gt; [45] rstudioapi_0.16.0         abind_1.4-5              </span></span>
-<span><span class="co">#&gt; [47] yaml_2.3.8                codetools_0.2-20         </span></span>
-<span><span class="co">#&gt; [49] plyr_1.8.9                lattice_0.22-6           </span></span>
-<span><span class="co">#&gt; [51] tibble_3.2.1              withr_3.0.0              </span></span>
-<span><span class="co">#&gt; [53] evaluate_0.23             desc_1.4.3               </span></span>
-<span><span class="co">#&gt; [55] sf_1.0-16                 units_0.8-5              </span></span>
-<span><span class="co">#&gt; [57] proxy_0.4-27              rearrr_0.3.4             </span></span>
-<span><span class="co">#&gt; [59] pillar_1.9.0              KernSmooth_2.23-22       </span></span>
-<span><span class="co">#&gt; [61] generics_0.1.3            RCurl_1.98-1.14          </span></span>
-<span><span class="co">#&gt; [63] sparseMatrixStats_1.12.2  munsell_0.5.1            </span></span>
-<span><span class="co">#&gt; [65] scales_1.3.0              class_7.3-22             </span></span>
-<span><span class="co">#&gt; [67] glue_1.7.0                tools_4.3.1              </span></span>
-<span><span class="co">#&gt; [69] locfit_1.5-9.9            RANN_2.6.1               </span></span>
-<span><span class="co">#&gt; [71] fs_1.6.4                  cowplot_1.1.3            </span></span>
-<span><span class="co">#&gt; [73] rhdf5_2.44.0              grid_4.3.1               </span></span>
-<span><span class="co">#&gt; [75] DropletUtils_1.20.0       edgeR_3.42.4             </span></span>
-<span><span class="co">#&gt; [77] colorspace_2.1-0          GenomeInfoDbData_1.2.10  </span></span>
-<span><span class="co">#&gt; [79] HDF5Array_1.28.1          cli_3.6.2                </span></span>
-<span><span class="co">#&gt; [81] textshaping_0.3.7         fansi_1.0.6              </span></span>
-<span><span class="co">#&gt; [83] viridisLite_0.4.2         S4Arrays_1.0.6           </span></span>
-<span><span class="co">#&gt; [85] dplyr_1.1.4               gtable_0.3.5             </span></span>
-<span><span class="co">#&gt; [87] R.methodsS3_1.8.2         sass_0.4.9               </span></span>
-<span><span class="co">#&gt; [89] digest_0.6.35             classInt_0.4-10          </span></span>
-<span><span class="co">#&gt; [91] dqrng_0.3.2               farver_2.1.2             </span></span>
-<span><span class="co">#&gt; [93] rjson_0.2.21              htmlwidgets_1.6.4        </span></span>
-<span><span class="co">#&gt; [95] memoise_2.0.1             htmltools_0.5.8.1        </span></span>
-<span><span class="co">#&gt; [97] pkgdown_2.0.9             R.oo_1.26.0              </span></span>
-<span><span class="co">#&gt; [99] lifecycle_1.0.4</span></span></code></pre></div>
+<span><span class="co">#&gt;   [1] DBI_1.2.2                 bitops_1.0-7             </span></span>
+<span><span class="co">#&gt;   [3] pbapply_1.7-2             rlang_1.1.3              </span></span>
+<span><span class="co">#&gt;   [5] magrittr_2.0.3            e1071_1.7-14             </span></span>
+<span><span class="co">#&gt;   [7] compiler_4.3.1            DelayedMatrixStats_1.22.6</span></span>
+<span><span class="co">#&gt;   [9] systemfonts_1.1.0         vctrs_0.6.5              </span></span>
+<span><span class="co">#&gt;  [11] pkgconfig_2.0.3           crayon_1.5.2             </span></span>
+<span><span class="co">#&gt;  [13] rdist_0.0.5               fastmap_1.2.0            </span></span>
+<span><span class="co">#&gt;  [15] backports_1.5.0           magick_2.8.3             </span></span>
+<span><span class="co">#&gt;  [17] XVector_0.40.0            labeling_0.4.3           </span></span>
+<span><span class="co">#&gt;  [19] scuttle_1.10.3            utf8_1.2.4               </span></span>
+<span><span class="co">#&gt;  [21] BRISC_1.0.5               rmarkdown_2.27           </span></span>
+<span><span class="co">#&gt;  [23] ragg_1.3.2                purrr_1.0.2              </span></span>
+<span><span class="co">#&gt;  [25] xfun_0.44                 zlibbioc_1.46.0          </span></span>
+<span><span class="co">#&gt;  [27] cachem_1.1.0              beachmat_2.16.0          </span></span>
+<span><span class="co">#&gt;  [29] jsonlite_1.8.8            highr_0.11               </span></span>
+<span><span class="co">#&gt;  [31] reshape_0.8.9             rhdf5filters_1.12.1      </span></span>
+<span><span class="co">#&gt;  [33] DelayedArray_0.26.7       Rhdf5lib_1.22.1          </span></span>
+<span><span class="co">#&gt;  [35] BiocParallel_1.36.0       parallel_4.3.1           </span></span>
+<span><span class="co">#&gt;  [37] R6_2.5.1                  bslib_0.7.0              </span></span>
+<span><span class="co">#&gt;  [39] limma_3.56.2              jquerylib_0.1.4          </span></span>
+<span><span class="co">#&gt;  [41] Rcpp_1.0.12               knitr_1.45               </span></span>
+<span><span class="co">#&gt;  [43] R.utils_2.12.3            Matrix_1.6-5             </span></span>
+<span><span class="co">#&gt;  [45] tidyselect_1.2.1          rstudioapi_0.16.0        </span></span>
+<span><span class="co">#&gt;  [47] abind_1.4-5               yaml_2.3.8               </span></span>
+<span><span class="co">#&gt;  [49] codetools_0.2-20          plyr_1.8.9               </span></span>
+<span><span class="co">#&gt;  [51] lattice_0.22-6            tibble_3.2.1             </span></span>
+<span><span class="co">#&gt;  [53] withr_3.0.0               evaluate_0.23            </span></span>
+<span><span class="co">#&gt;  [55] desc_1.4.3                sf_1.0-16                </span></span>
+<span><span class="co">#&gt;  [57] units_0.8-5               proxy_0.4-27             </span></span>
+<span><span class="co">#&gt;  [59] rearrr_0.3.4              pillar_1.9.0             </span></span>
+<span><span class="co">#&gt;  [61] KernSmooth_2.23-24        checkmate_2.3.1          </span></span>
+<span><span class="co">#&gt;  [63] generics_0.1.3            RCurl_1.98-1.14          </span></span>
+<span><span class="co">#&gt;  [65] sparseMatrixStats_1.12.2  munsell_0.5.1            </span></span>
+<span><span class="co">#&gt;  [67] scales_1.3.0              class_7.3-22             </span></span>
+<span><span class="co">#&gt;  [69] glue_1.7.0                tools_4.3.1              </span></span>
+<span><span class="co">#&gt;  [71] locfit_1.5-9.9            RANN_2.6.1               </span></span>
+<span><span class="co">#&gt;  [73] fs_1.6.4                  cowplot_1.1.3            </span></span>
+<span><span class="co">#&gt;  [75] rhdf5_2.44.0              grid_4.3.1               </span></span>
+<span><span class="co">#&gt;  [77] DropletUtils_1.20.0       edgeR_3.42.4             </span></span>
+<span><span class="co">#&gt;  [79] colorspace_2.1-0          GenomeInfoDbData_1.2.10  </span></span>
+<span><span class="co">#&gt;  [81] HDF5Array_1.28.1          cli_3.6.2                </span></span>
+<span><span class="co">#&gt;  [83] textshaping_0.4.0         fansi_1.0.6              </span></span>
+<span><span class="co">#&gt;  [85] viridisLite_0.4.2         S4Arrays_1.0.6           </span></span>
+<span><span class="co">#&gt;  [87] dplyr_1.1.4               gtable_0.3.5             </span></span>
+<span><span class="co">#&gt;  [89] R.methodsS3_1.8.2         sass_0.4.9               </span></span>
+<span><span class="co">#&gt;  [91] digest_0.6.35             classInt_0.4-10          </span></span>
+<span><span class="co">#&gt;  [93] dqrng_0.4.0               farver_2.1.2             </span></span>
+<span><span class="co">#&gt;  [95] rjson_0.2.21              htmlwidgets_1.6.4        </span></span>
+<span><span class="co">#&gt;  [97] memoise_2.0.1             htmltools_0.5.8.1        </span></span>
+<span><span class="co">#&gt;  [99] pkgdown_2.0.9             R.oo_1.26.0              </span></span>
+<span><span class="co">#&gt; [101] lifecycle_1.0.4</span></span></code></pre></div>
 </details>
 </div>
 </div>

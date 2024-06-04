@@ -177,15 +177,19 @@ pixel geometry as <code>sfc_POLYGON</code>). If the input was provided as <code>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "volnorm"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># rasterize a single SpatialExperiment object</span></span></span>
-<span class="r-in"><span><span class="co"># make sure to specify the assay_name argument when the input SpatialExperiment object has multiple assay names (assay_name is used here as an example)</span></span></span>
+<span class="r-in"><span><span class="co"># make sure to specify the assay_name argument when the input SpatialExperiment </span></span></span>
+<span class="r-in"><span><span class="co"># object has multiple assay names (assay_name is used here as an example)</span></span></span>
 <span class="r-in"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu">rasterizeGeneExpression</span><span class="op">(</span><span class="va">merfish_mousePOA</span>, assay_name <span class="op">=</span> <span class="st">"volnorm"</span>, fun <span class="op">=</span> <span class="st">"mean"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># rasterize a single SpatialExperiment object with user-defined resolution and hexagonal pixels</span></span></span>
-<span class="r-in"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu">rasterizeGeneExpression</span><span class="op">(</span><span class="va">merfish_mousePOA</span>, assay_name <span class="op">=</span> <span class="st">"volnorm"</span>, resolution <span class="op">=</span> <span class="fl">200</span>, square <span class="op">=</span> <span class="cn">FALSE</span>, fun <span class="op">=</span> <span class="st">"mean"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu">rasterizeGeneExpression</span><span class="op">(</span><span class="va">merfish_mousePOA</span>, assay_name <span class="op">=</span> <span class="st">"volnorm"</span>, resolution <span class="op">=</span> <span class="fl">200</span>, </span></span>
+<span class="r-in"><span>square <span class="op">=</span> <span class="cn">FALSE</span>, fun <span class="op">=</span> <span class="st">"mean"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># rasterize a list of SpatialExperiment objects (in this case, permutated datasets with 3 different rotations)</span></span></span>
+<span class="r-in"><span><span class="co"># rasterize a list of SpatialExperiment objects (in this case, permutated datasets </span></span></span>
+<span class="r-in"><span><span class="co"># with 3 different rotations)</span></span></span>
 <span class="r-in"><span><span class="va">spe_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="permutateByRotation.html">permutateByRotation</a></span><span class="op">(</span><span class="va">merfish_mousePOA</span>, n_perm <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">out_list</span> <span class="op">&lt;-</span> <span class="fu">rasterizeGeneExpression</span><span class="op">(</span><span class="va">spe_list</span>, assay_name <span class="op">=</span> <span class="st">"volnorm"</span>, resolution <span class="op">=</span> <span class="fl">100</span>, square <span class="op">=</span> <span class="cn">TRUE</span>, fun <span class="op">=</span> <span class="st">"mean"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">out_list</span> <span class="op">&lt;-</span> <span class="fu">rasterizeGeneExpression</span><span class="op">(</span><span class="va">spe_list</span>, assay_name <span class="op">=</span> <span class="st">"volnorm"</span>, resolution <span class="op">=</span> <span class="fl">100</span>, </span></span>
+<span class="r-in"><span>square <span class="op">=</span> <span class="cn">TRUE</span>, fun <span class="op">=</span> <span class="st">"mean"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

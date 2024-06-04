@@ -5,3 +5,6 @@
 ^pkgdown$
 ^images
 ^data-raw$
+^.github$
+^vignettes/merfish_mousePOA_raw.RDS$
+^vignettes/formatting-SpatialExperiment-for-SEraster.Rmd$

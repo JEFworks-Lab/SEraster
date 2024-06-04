@@ -168,7 +168,6 @@ pixel geometry as <code>sfc_POLYGON</code>). If the input was provided as <code>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: SummarizedExperiment</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: MatrixGenerics</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: matrixStats</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>package ‘matrixStats’ was built under R version 4.3.2</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Attaching package: ‘MatrixGenerics’</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> The following objects are masked from ‘package:matrixStats’:</span>
@@ -232,7 +231,8 @@ pixel geometry as <code>sfc_POLYGON</code>). If the input was provided as <code>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"merfish_mousePOA"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># check assay names for this particular SpatialExperiment object (you can see that cell-type labels are stored in the "celltype" column)</span></span></span>
+<span class="r-in"><span><span class="co"># check assay names for this particular SpatialExperiment object (you can see </span></span></span>
+<span class="r-in"><span><span class="co"># that cell-type labels are stored in the "celltype" column)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">colData</span><span class="op">(</span><span class="va">merfish_mousePOA</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> DataFrame with 6 rows and 4 columns</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                         bregma      celltype  neurontype</span>
@@ -257,11 +257,14 @@ pixel geometry as <code>sfc_POLYGON</code>). If the input was provided as <code>
 <span class="r-in"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu">rasterizeCellType</span><span class="op">(</span><span class="va">merfish_mousePOA</span>, col_name <span class="op">=</span> <span class="st">"celltype"</span>, fun <span class="op">=</span> <span class="st">"sum"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># rasterize a single SpatialExperiment object with user-defined resolution and hexagonal pixels</span></span></span>
-<span class="r-in"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu">rasterizeCellType</span><span class="op">(</span><span class="va">merfish_mousePOA</span>, col_name <span class="op">=</span> <span class="st">"celltype"</span>, resolution <span class="op">=</span> <span class="fl">200</span>, square <span class="op">=</span> <span class="cn">FALSE</span>, fun <span class="op">=</span> <span class="st">"sum"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu">rasterizeCellType</span><span class="op">(</span><span class="va">merfish_mousePOA</span>, col_name <span class="op">=</span> <span class="st">"celltype"</span>, resolution <span class="op">=</span> <span class="fl">200</span>, </span></span>
+<span class="r-in"><span>square <span class="op">=</span> <span class="cn">FALSE</span>, fun <span class="op">=</span> <span class="st">"sum"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># rasterize a list of SpatialExperiment objects (in this case, permutated datasets with 3 different rotations)</span></span></span>
+<span class="r-in"><span><span class="co"># rasterize a list of SpatialExperiment objects (in this case, permutated datasets </span></span></span>
+<span class="r-in"><span><span class="co"># with 3 different rotations)</span></span></span>
 <span class="r-in"><span><span class="va">spe_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="permutateByRotation.html">permutateByRotation</a></span><span class="op">(</span><span class="va">merfish_mousePOA</span>, n_perm <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">out_list</span> <span class="op">&lt;-</span> <span class="fu">rasterizeCellType</span><span class="op">(</span><span class="va">spe_list</span>, col_name <span class="op">=</span> <span class="st">"celltype"</span>, resolution <span class="op">=</span> <span class="fl">100</span>, square <span class="op">=</span> <span class="cn">TRUE</span>, fun <span class="op">=</span> <span class="st">"sum"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">out_list</span> <span class="op">&lt;-</span> <span class="fu">rasterizeCellType</span><span class="op">(</span><span class="va">spe_list</span>, col_name <span class="op">=</span> <span class="st">"celltype"</span>, resolution <span class="op">=</span> <span class="fl">100</span>, </span></span>
+<span class="r-in"><span>square <span class="op">=</span> <span class="cn">TRUE</span>, fun <span class="op">=</span> <span class="st">"sum"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
