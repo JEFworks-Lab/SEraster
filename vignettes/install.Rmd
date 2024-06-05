@@ -35,3 +35,12 @@ To install `SEraster`, start R (version "4.4") and enter:
 # 
 # BiocManager::install("SEraster")
 ```
+
+In addition, `SEraster` is also compatible with `SeuratObject` through `SeuratWrappers`. `SeuratWrappers` implementation can be installed using `remotes`:
+
+``` r
+require(remotes)
+remotes::install_github('satijalab/seurat-wrappers@SEraster')
+```
+
+Documentation and tutorial for the `SeuratWrappers` implementation can be found in the `SEraster` branch of the [`SeuratWrappers` GitHub repository](https://github.com/satijalab/seurat-wrappers/tree/SEraster).
