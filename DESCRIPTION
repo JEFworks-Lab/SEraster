@@ -1,7 +1,7 @@
 Package: SEraster
 Type: Package
 Title: Rasterization Preprocessing Framework for Scalable Spatial Omics Data Analysis
-Version: 0.99.0
+Version: 0.99.1
 Authors@R: 
     c(person("Gohta", "Aihara", email = "gaihara1@jh.edu", 
     role = c("aut", "cre"), 
