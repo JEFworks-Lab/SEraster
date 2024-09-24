@@ -2,7 +2,7 @@
 title: "Installing SEraster"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{installing-SEraster}
+  %\VignetteIndexEntry{Installing SEraster}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

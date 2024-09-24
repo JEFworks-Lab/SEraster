@@ -1,8 +1,8 @@
 ---
-title: "Characterizing mPOA cell-type heterogeneity"
+title: "Characterizing mPOA cell-type heterogeneity with spatial bootstrapping"
 output: rmarkdown::html_document
 vignette: >
-  %\VignetteIndexEntry{Characterizing mPOA cell-type heterogeneity}
+  %\VignetteIndexEntry{Characterizing mPOA cell-type heterogeneity with spatial bootstrapping}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -24,7 +24,6 @@ suppressMessages(library(SpatialExperiment))
 suppressMessages(library(SEraster))
 suppressMessages(library(Matrix))
 suppressMessages(library(ggplot2))
-suppressMessages(library(rhdf5))
 ```
 
 One tissue sample of the MERFISH mPOA (bregma -0.29 slice from a female naive animal) dataset is already formatted as a `SpatialExperiment` object and is available in the `SEraster` package. We will use this preprocessed dataset in this tutorial (https://jef.works/`SEraster`/reference/merfish_mousePOA.html).

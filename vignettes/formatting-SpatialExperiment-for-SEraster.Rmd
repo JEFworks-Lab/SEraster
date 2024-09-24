@@ -2,7 +2,7 @@
 title: "Formatting a SpatialExperiment Object for SEraster"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{formatting-SpatialExperiment-for-SEraster}
+  %\VignetteIndexEntry{Formatting a SpatialExperiment Object for SEraster}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

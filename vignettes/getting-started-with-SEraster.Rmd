@@ -2,7 +2,7 @@
 title: "Getting Started With SEraster"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{getting-started-with-SEraster}
+  %\VignetteIndexEntry{Getting Started With SEraster}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

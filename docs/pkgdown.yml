@@ -1,12 +1,13 @@
-pandoc: 3.1.1
-pkgdown: 2.0.9
+pandoc: 3.1.11
+pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
+  characterizing-mPOA-cell-type-heterogeneity: characterizing-mPOA-cell-type-heterogeneity.html
   formatting-SpatialExperiment-for-SEraster: formatting-SpatialExperiment-for-SEraster.html
   getting-started-with-SEraster: getting-started-with-SEraster.html
   install: install.html
-last_built: 2024-06-05T16:09Z
+  SEraster-for-SVG-analysis: SEraster-for-SVG-analysis.html
+last_built: 2024-09-24T19:21Z
 urls:
   reference: https://jef.works/SEraster/reference
   article: https://jef.works/SEraster/articles
-

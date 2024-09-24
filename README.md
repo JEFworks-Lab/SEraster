@@ -35,9 +35,11 @@ Introduction:
 
 -   [Formatting a SpatialExperiment Object for SEraster](https://jef.works/SEraster/articles/formatting-SpatialExperiment-for-SEraster.html)
 -   [Getting Started With SEraster](https://jef.works/SEraster/articles/getting-started-with-SEraster.html)
+- [SEraster for Spatial Variable Genes Analysis](https://jef.works/SEraster/articles/SEraster-for-SVG-analysis.html)
+- [Characterizing mPOA cell-type heterogeneity with spatial bootstrapping](https://jef.works/SEraster/articles/characterizing-mPOA-cell-type-heterogeneity.html)
 
 ## Citation
 
-Our preprint describing `SEraster` is available on *bioRxiv*:
+Our manuscript describing `SEraster` is available on *Bioinformatics*:
 
-[Aihara G. et al. (2024), "SEraster: a rasterization preprocessing framework for scalable spatial omics data analysis", *bioRxiv*](https://doi.org/10.1101/2024.02.01.578436)
+[Gohta Aihara, Kalen Clifton, Mayling Chen, Zhuoyan Li, Lyla Atta, Brendan F Miller, Rahul Satija, John W Hickey, Jean Fan, SEraster: a rasterization preprocessing framework for scalable spatial omics data analysis, Bioinformatics, Volume 40, Issue 7, July 2024, btae412, https://doi.org/10.1093/bioinformatics/btae412](https://academic.oup.com/bioinformatics/article/40/7/btae412/7696710)

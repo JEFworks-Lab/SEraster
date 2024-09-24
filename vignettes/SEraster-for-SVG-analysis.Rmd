@@ -21,7 +21,6 @@ suppressMessages(library(SpatialExperiment))
 suppressMessages(library(SEraster))
 suppressMessages(library(Matrix))
 suppressMessages(library(ggplot2))
-suppressMessages(library(rhdf5))
 ```
 
 ## Load dataset
