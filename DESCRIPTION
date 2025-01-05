@@ -1,13 +1,13 @@
 Package: SEraster
 Type: Package
 Title: Rasterization Preprocessing Framework for Scalable Spatial Omics Data Analysis
-Version: 0.99.1
+Version: 0.99.2
 Authors@R: 
     c(person("Gohta", "Aihara", email = "gaihara1@jh.edu", 
     role = c("aut", "cre"), 
     comment = c(ORCID = "0000-0002-2492-9610")), 
     person("Mayling", "Chen", email = "mchen161@jhu.edu",
-    role = c("aut"),
+    role = c("aut", "cre"),
     comment = c(ORCID = "0009-0009-0961-6665")),
     person("Lyla", "Atta", email = "lylaatta@jhmi.edu", 
     role = c("aut"), 
@@ -44,9 +44,9 @@ Suggests:
     rmarkdown
 VignetteBuilder: knitr
 Config/testthat/edition: 3
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 Depends: 
-    R (>= 4.3.0)
+    R (>= 4.4.0)
 Imports: 
     BiocParallel,
     ggplot2,

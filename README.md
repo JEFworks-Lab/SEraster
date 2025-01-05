@@ -29,6 +29,14 @@ require(remotes)
 remotes::install_github('JEFworks-Lab/SEraster')
 ```
 
+To install this package using Bioconductor, start R (version "4.4.0") and enter:
+``` r
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("SEraster")
+```
+
 ## Tutorials
 
 Introduction:

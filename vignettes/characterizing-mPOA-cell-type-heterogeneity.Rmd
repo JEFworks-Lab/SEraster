@@ -15,7 +15,25 @@ opts_chunk$set(
 )
 ```
 
+## Introduction 
 In this tutorial, we will use `SEraster` to rasterize the mouse medial preoptic region dataset assayed by MERFISH to demonstrate how tissue section size affects cell-type proportions estimates.
+
+## Installation
+
+To install `SEraster`, we currently recommend using `remotes`:
+
+```{r}
+require(remotes)
+remotes::install_github('JEFworks-Lab/SEraster')
+```
+
+To install this package using Bioconductor, start R (version "4.4.0") and enter:
+```{r}
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("SEraster")
+```
 
 ## Load libraries
 
@@ -155,6 +173,17 @@ ctprop <- do.call(rbind, lapply(cellidsPerBiopsy, function(i) {
 rownames(ctprop) <- names(cellidsPerBiopsy)
 head(ctprop)
 ```
+
+<details>
+
+<summary>**Session Info**</summary>
+
+```{r}
+sessionInfo()
+```
+
+</details>
+
 
 ```{r}
 ## divide by total cells per pixel

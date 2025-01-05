@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# Getting Started with SEraster
+## Introduction
 
 This tutorial walks you through the basic functionalities of `SEraster` and two examples of downstream analysis that can be performed with the rasterized spatial omics data.
 
@@ -35,6 +35,23 @@ References for nnSVG and CooccurrenceAffinity can be found below:
 -   [Weber, L. et al. (2023), "nnSVG for the scalable identification of spatially variable genes using nearest-neighbor Gaussian processes", *Nature Communications*](https://doi.org/10.1038/s41467-023-39748-z)
 -   [Mainali, K. et al. (2021), "A better index for analysis of co-occurrence and similarity", *Science Advances*](https://doi.org/10.1126/sciadv.abj9204)
 -   [Mainali,K. et al. (2022), "CooccurrenceAffinity: An R package for computing a novel metric of affinity in co-occurrence data that corrects for pervasive errors in traditional indices", *bioRxiv*](https://doi.org/10.1101/2022.11.01.514801)
+
+## Installation
+
+To install `SEraster`, we currently recommend using `remotes`:
+
+```{r}
+require(remotes)
+remotes::install_github('JEFworks-Lab/SEraster')
+```
+
+To install this package using Bioconductor, start R (version "4.4.0") and enter:
+```{r}
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("SEraster")
+```
 
 ## Load libraries
 

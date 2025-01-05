@@ -14,8 +14,28 @@ opts_chunk$set(
     results = "hold"
 )
 ```
+
+## Introduction
 In this tutorial, we will demonstrate how to use `SEraster` as a preprocessing step prior to spatial variable gene analysis with `MERINGUE`.
 
+## Installation
+
+To install `SEraster`, we currently recommend using `remotes`:
+
+```{r}
+require(remotes)
+remotes::install_github('JEFworks-Lab/SEraster')
+```
+
+To install this package using Bioconductor, start R (version "4.4.0") and enter:
+```{r}
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("SEraster")
+```
+
+## Load libraries
 ```{r}
 suppressMessages(library(SpatialExperiment))
 suppressMessages(library(SEraster))
@@ -117,7 +137,7 @@ We can sort these spatially auto-correlated genes based their Moran's I statisti
 sortedResults <- results.filter[order(results.filter$observed, decreasing = TRUE), ]
 ## select 3 SVGs with the highest Moran's I
 sgenes <- rownames(sortedResults)
-for (sg in head(sgenes, 4)) {
+for (sg in head(sgenes, 3)) {
   ## plot gene expression pattern
   plt <- SEraster::plotRaster(rastGexp, 
                               feature_name = sg,
@@ -154,3 +174,14 @@ ggroup <- MERINGUE::groupSigSpatialPatterns(pos = rastPos,
                                             deepSplit = 2,
                                             zlim=c(-1.5,1.5))
 ```
+
+<details>
+
+<summary>**Session Info**</summary>
+
+```{r}
+sessionInfo()
+```
+
+</details>
+
