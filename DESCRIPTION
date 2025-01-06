@@ -41,7 +41,11 @@ Suggests:
     nnSVG,
     testthat (>= 3.0.0),    
     knitr,
-    rmarkdown
+    rmarkdown,
+    BiocManager,
+    MERINGUE,
+    remotes,
+    reshape2
 VignetteBuilder: knitr
 Config/testthat/edition: 3
 RoxygenNote: 7.3.2

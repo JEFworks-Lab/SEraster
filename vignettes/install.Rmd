@@ -30,10 +30,10 @@ We are currently submitting `SEraster` to Bioconductor (this section will be upd
 To install this package using Bioconductor, start R (version "4.4.0") and enter:
 
 ```{r}
-# if (!require("BiocManager", quietly = TRUE))
-#     install.packages("BiocManager")
-# 
-# BiocManager::install("SEraster")
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("SEraster")
 ```
 
 In addition, `SEraster` is also compatible with `SeuratObject` through `SeuratWrappers`. `SeuratWrappers` implementation can be installed using `remotes`:
