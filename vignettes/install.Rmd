@@ -2,7 +2,7 @@
 title: "Installing SEraster"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{installing-SEraster}
+  %\VignetteIndexEntry{Installing SEraster}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -27,13 +27,13 @@ remotes::install_github('JEFworks-Lab/SEraster')
 
 We are currently submitting `SEraster` to Bioconductor (this section will be updated after `SEraster` is approved to Bioconductor).
 
-To install `SEraster`, start R (version "4.4") and enter:
+To install this package using Bioconductor, start R (version "4.4.0") and enter:
 
 ```{r}
-# if (!require("BiocManager", quietly = TRUE))
-#     install.packages("BiocManager")
-# 
-# BiocManager::install("SEraster")
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("SEraster")
 ```
 
 In addition, `SEraster` is also compatible with `SeuratObject` through `SeuratWrappers`. `SeuratWrappers` implementation can be installed using `remotes`:

@@ -1,0 +1,354 @@
+---
+title: "Characterizing mPOA cell-type heterogeneity with spatial bootstrapping"
+output: rmarkdown::html_document
+vignette: >
+  %\VignetteIndexEntry{Characterizing mPOA cell-type heterogeneity with spatial bootstrapping}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, options, include = FALSE}
+library(knitr)
+opts_chunk$set(
+    cache = FALSE, 
+    results = "hold"
+)
+```
+
+## Introduction 
+In this tutorial, we will use `SEraster` to rasterize the mouse medial preoptic region dataset assayed by MERFISH to demonstrate how tissue section size affects cell-type proportions estimates.
+
+## Installation
+
+To install `SEraster`, we currently recommend using `remotes`:
+
+```{r}
+require(remotes)
+remotes::install_github('JEFworks-Lab/SEraster')
+```
+
+To install this package using Bioconductor, start R (version "4.4.0") and enter:
+```{r}
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("SEraster")
+```
+
+## Load libraries
+
+```{r}
+suppressMessages(library(SpatialExperiment))
+suppressMessages(library(SEraster))
+suppressMessages(library(Matrix))
+suppressMessages(library(ggplot2))
+```
+
+One tissue sample of the MERFISH mPOA (bregma -0.29 slice from a female naive animal) dataset is already formatted as a `SpatialExperiment` object and is available in the `SEraster` package. We will use this preprocessed dataset in this tutorial (https://jef.works/`SEraster`/reference/merfish_mousePOA.html).
+
+## Load dataset
+
+```{r}
+data("merfish_mousePOA")
+class(merfish_mousePOA)
+```
+
+## Visualize cell-type annotations
+
+First, let's grab the cell-type annotations from the `SpatialExperiment` object.
+
+```{r}
+ct <- merfish_mousePOA$celltype; names(ct) <- colnames(merfish_mousePOA)
+ct <- as.factor(ct)
+head(ct)
+length(ct)
+length(levels(ct))
+```
+
+Next, we can use ggplot2 to visualize the cell-type annotations in this tissue section of around 6500 cells comprising 16 cell-types.
+
+```{r}
+## plot
+suppressMessages(library(ggplot2))
+pos <- spatialCoords(merfish_mousePOA)
+df <- data.frame(pos, ct = ct)
+ggplot(df, aes(x = x, y = y, color = ct)) +
+  coord_fixed() +
+  geom_point(size = 0.01) +
+  theme_bw()
+```
+
+To estimate the cell-type proportions in the whole tissue, we can count the number of each cell-type, divide by the total number of cells and multiply by 100. From this estimation, we see that approximately 30.9% of the cells are Inhibitory, 20.3% are Excitatory, 15.2% are Ambigious, and so forth.
+
+```{r}
+globalEstimate <- table(ct)/length(ct)*100
+sort(globalEstimate, decreasing = TRUE)
+```
+
+## Use `SEraster` to create spatial bootstrap samples
+To investigate a smaller section of the tissue, we can use `SEraster` to aggregate cellular information into square or hexagonal pixels at a resolution of your choosing and investigate the cell-type proportions of each pixel.
+
+```{r}
+suppressMessages(library(SEraster))
+## rasterize at 200um resolution with hexagons
+rastCt <- SEraster::rasterizeCellType(merfish_mousePOA,
+                                      col_name = "celltype",
+                                      resolution = 200,
+                                      fun = "sum",
+                                      square = FALSE)
+## plot
+SEraster::plotRaster(rastCt, name = "Total cells")
+```
+
+`SEraster` keeps track of the number of cells in each of these hexagonal pixels and the names of the cells per pixel.
+
+```{r}
+head(colData(rastCt))
+```
+
+```{r}
+## check how many pixels were generated
+length(colData(rastCt)$cellID_list)
+```
+
+```{r}
+## find the hexagonal pixel with the most number of cells
+maxCells <- max(rastCt$num_cell) ## 102
+pixel <- colnames(rastCt)[colData(rastCt)$num_cell == maxCells]
+pixelIdx <- which(colnames(rastCt) == pixel)
+print(paste(pixel, " at index ", pixelIdx, " has ", maxCells, " cells."))
+```
+
+```{r}
+## double check
+colData(rastCt)[pixelIdx,]
+```
+
+Now, let's grab the cell-type annotations from the pixel with the highest number of cells and plot the cell-types
+
+```{r}
+## 54th pixel
+cells <- colData(rastCt)$cellID_list[[pixelIdx]]
+## double check if the number of cells in this pixel matches maxCell
+length(cells) == maxCells
+## visualize the cells in the 54th pixel
+dfsub <- data.frame(pos[cells,], ct = ct[cells])
+ggplot(dfsub, aes(x = x, y = y, color = ct)) +
+  coord_fixed() +
+  geom_point(size = 1.5) +
+  theme_bw()
+```
+
+Once again, we can estimate the cell-type proportions. But this time, in pixel 54. 
+
+```{r}
+pixelEstimate <- table(ct[cells])/length(ct[cells])*100
+sort(pixelEstimate, decreasing = TRUE)
+```
+We see that approximately 33.3% of the cells in this pixel are Ependymal, 26.5% are Inhibitory, 21.6% are Excitatory, and so forth. This section of the tissue has a relatively high proportion of Ependymal cells compared to the whole tissue. Cell-type proportions for Inhibitory, Excitatory, and Ambiguous are pretty high, consistent with the whole tissue analysis we've done earlier. 
+
+Now let's visualize where this pixel is located within the whole tissue by isolating cells not contained in the hexagonal pixel 54.
+
+```{r}
+ctsub <- ct
+ctsub[!(names(ctsub) %in% cells)] <- NA
+df <- data.frame(pos, ctsub = ctsub)
+ggplot(df, aes(x = x, y = y, color = ctsub)) +
+  coord_fixed() +
+  geom_point(size = 0.1) +
+  theme_bw()
+```
+
+## Evaluate stability of cell-type proportions
+Let's assess how good this pixel-based cell-type proportion estimation is in each hexagonal pixel.
+
+```{r}
+## grab list cell IDs for each hexagonal pixel
+cellidsPerBiopsy <- colData(rastCt)$cellID_list
+names(cellidsPerBiopsy) <- colnames(rastCt)
+## loop through and count number of each cell-type
+ctprop <- do.call(rbind, lapply(cellidsPerBiopsy, function(i) {
+  table(ct[i])
+}))
+rownames(ctprop) <- names(cellidsPerBiopsy)
+head(ctprop)
+```
+
+<details>
+
+<summary>**Session Info**</summary>
+
+```{r}
+sessionInfo()
+```
+
+</details>
+
+
+```{r}
+## divide by total cells per pixel
+## and multiple by 100 to make into percents
+ctpropNorm <- ctprop/rowSums(ctprop)*100
+head(rowSums(ctpropNorm)) ## confirm sum is 100
+```
+
+```{r}
+head(ctpropNorm)
+```
+
+Let's visualize the resulting cell-type proportions per hexagonal pixel as a stacked barplot
+```{r}
+suppressMessages(library(reshape2))
+# Melt the data frame to long format
+df <- data.frame(ctpropNorm)
+df$Sample <- rownames(df)
+dfLong <- melt(df, id.vars = "Sample", variable.name = "CellType", value.name = "Proportion")
+head(dfLong)
+
+```
+```{r}
+## create the stacked barplot using ggplot2
+ggplot(dfLong, aes(x = Sample, y = Proportion, fill = CellType)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Stacked Barplot of Cell Type Proportions",
+       x = "Sample",
+       y = "Proportion") +
+  theme_minimal() + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, size=5))
+```
+
+
+
+
+
+
+Based on this visualization, we can observe that there is quite a lot of variability in cell-type proportions across each pixel. Let's find which pixels are the most different from our global cell-type proportion estimate.
+
+```{r}
+diff <- sapply(1:nrow(ctpropNorm), function(i) {
+  sum((ctpropNorm[i,]-globalEstimate)^2)
+})
+names(diff) <- rownames(ctpropNorm)
+head(sort(diff, decreasing=TRUE))
+```
+
+```{r}
+ctpropNorm['pixel11',]
+colData(rastCt)['pixel11',]$num_cell
+```
+Notice there is only one cell contained in this pixel, and 100% of the pixel of OD Mature 2 cell-type.
+```{r}
+pixelIdx <- which(colnames(rastCt) == 'pixel11')
+cells <- colData(rastCt)$cellID_list[[pixelIdx]]
+## visualize the cells in the 54th pixel
+df <- t(data.frame(pos[cells,]))
+rownames(df) <- cells
+ggplot(df, aes(x = x, y = y, color = ct[cells])) +
+  coord_fixed() +
+  geom_point(size = 2) +
+  theme_bw()
+```
+```{r}
+## in whole tissue by setting cells not in hexagonal to NA
+ctsub <- ct
+ctsub[!(names(ctsub) %in% cells)] <- NA
+df <- data.frame(pos, ctsub = ctsub)
+ggplot(df, aes(x = x, y = y, color = ctsub)) +
+  coord_fixed() +
+  geom_point(size = 0.5) +
+  theme_bw()
+```
+
+
+
+
+Visually, this pixel is located at the edge of tissue and thus not representative of the whole tissue.
+
+Let's see the distribution of the number of cells in each hexagonal pixel.
+```{r}
+## histogram of number of cells per pixel
+hist(colData(rastCt)$num_cell)
+## we can set a threshold of only caring about pixels with more than 40 cells
+abline(v = 40, col='red')
+```
+
+```{r}
+## get pixels with more than 40 cells
+goodPixels <- colnames(rastCt)[colData(rastCt)$num_cell > 40]
+length(goodPixels)
+```
+```{r}
+head(goodPixels)
+goodPixelIdx <- sapply(goodPixels, function(pixel) {
+  which(colnames(rastCt) == pixel)
+})
+head(goodPixelIdx)
+## double check
+colnames(rastCt)[8] == "pixel21" 
+`SEraster`::plotRaster(rastCt[, goodPixelIdx], name = "Total Cells")
+```
+
+Now, let's look at the cell-type proportions for the good pixels we selected.
+```{r}
+## just look at ctpropNorm for good pixels
+df <- data.frame(ctpropNorm[goodPixelIdx,])
+df$Sample <- rownames(df)
+dfLong <- melt(df, id.vars = "Sample", variable.name = "CellType", value.name = "Proportion")
+ggplot(dfLong, aes(x = Sample, y = Proportion, fill = CellType)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Stacked Barplot of Cell Type Proportions",
+       x = "Sample",
+       y = "Proportion") +
+  theme_minimal() + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, size=5))
+
+```
+
+
+
+Although better than the previous stacked barplot, there is still some variability, mostly from the Ependymal, OD Mature 2, and Pericytes cell-types. Let's visualize them based on increasing proportion of each cell-type.
+```{r}
+ct.list <- c("Ependymal", "OD.Mature.2", "Pericytes")
+for (ct in ct.list) {
+  df <- data.frame(ctpropNorm[goodPixelIdx,])
+  df$Sample <- rownames(df)
+  ## let's create a separate data frame to visualize based on increasing proportion of cell type
+  dfLong_ct <- melt(df, id.vars = "Sample", variable.name = "CellType", value.name = "Proportion")
+  ## filter dfLong for based on cell type
+  df_ct <- dfLong_ct[dfLong_ct$CellType == ct, ]
+  ## order the pixels by increasing cell type proportions
+  ordered_pixels <- df_ct$Sample[order(df_ct$Proportion)]
+  ## convert the sample column to a factor in the with 
+  dfLong_ct$Sample <- factor(dfLong_ct$Sample, levels = ordered_pixels)
+  show(ggplot(dfLong_ct, aes(x = Sample, y = Proportion, fill = CellType)) +
+    geom_bar(stat = "identity") +
+    labs(title = paste0("Stacked Barplot Based on Increasing ", ct, " Proportion"),
+         x = "Sample",
+         y = "Proportion") +
+    theme_minimal() + 
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, size=5)))
+}
+```
+
+
+
+
+
+## Visualize cell-type specific patterns
+
+The `plotRaster` function in `SEraster` allows us to visualize the cell counts by specific cell-types. Let's try and visualize the spatial distribution of cell counts in these variable cell-types.
+```{r}
+ct.list <- c("Ependymal", "OD Mature 2", "Pericytes")
+for (ct in ct.list) {
+  show(plotRaster(rastCt, plotTitle = ct, feature_name = ct, name = "counts"))
+}
+
+```
+
+
+
+Indeed, we can see that these cell-types are expressed in a spatially variable manner, meaning the pixels containing most of these cell-types are generally not representative of the entire tissue. 
+
+This tutorial is adapted from the blog post "Characterizing spatial heterogeneity using spatial bootstrapping with SEraster". Find it here: (https://jef.works/blog/2024/07/23/spatial-bootstrapping-with-seraster/)
+
+

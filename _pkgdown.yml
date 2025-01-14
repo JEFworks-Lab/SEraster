@@ -10,11 +10,14 @@ navbar:
       href: articles/install.html
     - text: "Tutorials"
       menu:
-        - text: "Introduction"
         - text: "Formatting a SpatialExperiment Object for SEraster"
           href: articles/formatting-SpatialExperiment-for-SEraster.html
         - text: "Getting Started With SEraster"
           href: articles/getting-started-with-SEraster.html
+        - text: "SEraster for Spatial Variable Genes Analysis"
+          href: articles/SEraster-for-SVG-analysis.html
+        - text: "Characterizing mPOA cell-type heterogeneity with spatial bootstrapping"
+          href: articles/characterizing-mPOA-cell-type-heterogeneity.html
     - text: "Functions"
       href: reference/index.html
     - text: "Changelog"
