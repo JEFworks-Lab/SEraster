@@ -47,8 +47,6 @@ remotes::install_github('satijalab/seurat-wrappers@SEraster')
 
 Documentation and tutorial for the `SeuratWrappers` implementation can be found in the `SEraster` branch of the [`SeuratWrappers` GitHub repository](https://github.com/satijalab/seurat-wrappers/tree/SEraster).
 
-```
-
 ## Tutorials
 
 Introduction:
