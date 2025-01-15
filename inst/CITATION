@@ -18,6 +18,5 @@ bibentry(
   volume = "40",
   issue = "7",
   year = "2024",
-  doi = "10.1093/bioinformatics/btae412",
-  textVersion = "Gohta Aihara, Kalen Clifton, Mayling Chen, Zhuoyan Li, Lyla Atta, Brendan F Miller, Rahul Satija, John W Hickey, Jean Fan, SEraster: a rasterization preprocessing framework for scalable spatial omics data analysis, Bioinformatics, Volume 40, Issue 7, July 2024, btae412."
+  doi = "10.1093/bioinformatics/btae412"
 )

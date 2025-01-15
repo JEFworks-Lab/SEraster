@@ -3,7 +3,7 @@ Type: Package
 Title: Rasterization Preprocessing Framework for Scalable Spatial Omics Data Analysis
 Version: 0.99.2
 Authors@R: 
-    c(person("Gohta", "Aihara", email = "gaihara1@jh.edu", 
+    c(person("Gohta", "Aihara", email = "gohta.aihara@gmail.com", 
     role = c("aut", "cre"), 
     comment = c(ORCID = "0000-0002-2492-9610")), 
     person("Mayling", "Chen", email = "mchen161@jhu.edu",

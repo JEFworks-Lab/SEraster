@@ -22,19 +22,31 @@
 
 ## Installation
 
-To install `SEraster`, we currently recommend using `remotes`:
+To install `SEraster` using Bioconductor, start R (version "4.4.0") and enter:
 
-``` r
-require(remotes)
-remotes::install_github('JEFworks-Lab/SEraster')
-```
-
-To install this package using Bioconductor, start R (version "4.4.0") and enter:
-``` r
+```r
 if (!require("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 
 BiocManager::install("SEraster")
+```
+
+The latest development version can also be installed from [GitHub](https://github.com/JEFworks-Lab/SEraster) using `remotes`:
+
+```r
+require(remotes)
+remotes::install_github('JEFworks-Lab/SEraster')
+```
+
+In addition, `SEraster` is also compatible with `SeuratObject` through `SeuratWrappers`. `SeuratWrappers` implementation can be installed using `remotes`:
+
+```r
+require(remotes)
+remotes::install_github('satijalab/seurat-wrappers@SEraster')
+```
+
+Documentation and tutorial for the `SeuratWrappers` implementation can be found in the `SEraster` branch of the [`SeuratWrappers` GitHub repository](https://github.com/satijalab/seurat-wrappers/tree/SEraster).
+
 ```
 
 ## Tutorials
@@ -43,8 +55,8 @@ Introduction:
 
 -   [Formatting a SpatialExperiment Object for SEraster](https://jef.works/SEraster/articles/formatting-SpatialExperiment-for-SEraster.html)
 -   [Getting Started With SEraster](https://jef.works/SEraster/articles/getting-started-with-SEraster.html)
-- [SEraster for Spatial Variable Genes Analysis](https://jef.works/SEraster/articles/SEraster-for-SVG-analysis.html)
-- [Characterizing mPOA cell-type heterogeneity with spatial bootstrapping](https://jef.works/SEraster/articles/characterizing-mPOA-cell-type-heterogeneity.html)
+-   [SEraster for Spatial Variable Genes Analysis](https://jef.works/SEraster/articles/SEraster-for-SVG-analysis.html)
+-   [Characterizing mPOA cell-type heterogeneity with spatial bootstrapping](https://jef.works/SEraster/articles/characterizing-mPOA-cell-type-heterogeneity.html)
 
 ## Citation
 

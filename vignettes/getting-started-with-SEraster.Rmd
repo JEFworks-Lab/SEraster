@@ -18,15 +18,15 @@ knitr::opts_chunk$set(
 )
 ```
 
-## Introduction
+# Introduction
 
-This tutorial walks you through the basic functionalities of `SEraster` and two examples of downstream analysis that can be performed with the rasterized spatial omics data.
+`SEraster` is a rasterization preprocessing framework that aggregates cellular information into spatial pixels to reduce resource requirements for spatial omics data analysis.
 
-In the examples below, we assume the input data is provided as a `SpatialExperiment` Bioconductor object. Please refer to the following documentations to see how you would format your data into a `SpatialExperiment` object:
+`SEraster` reduces the number of spatial points in spatial omics datasets for downstream analysis through a process of rasterization where single cells' gene expression or cell-type labels are aggregated into equally sized pixels based on a user-defined `resolution`. Here, we refer to a particular `resolution` of rasterization by the side length of the pixel such that finer `resolution` indicates smaller pixel size and coarser `resolution` indicates larger pixel size.
 
--   [SpatialExperiment](https://bioconductor.org/packages/SpatialExperiment) package
--   [Formatting a SpatialExperiment Object for SEraster](https://jef.works/SEraster/articles/formatting-SpatialExperiment-for-SEraster.html)
--   [`merfish_mousePOA` dataset](https://jef.works/SEraster/reference/merfish_mousePOA.html)
+More details describing `SEraster` are available in [our paper](https://doi.org/10.1093/bioinformatics/btae412).
+
+This tutorial walks you through the basic functionalities of `SEraster` and two examples of downstream analysis that can be performed with the rasterized spatial omics data. Additional vignettes are available on [our documentation website](jef.works/SEraster/).
 
 For downstream analyses, we will be using [`nnSVG`](https://bioconductor.org/packages/nnSVG) for spatially variable gene (SVG) analysis and [`CooccurrenceAffinity`](https://cran.r-project.org/package=CooccurrenceAffinity) for cell-type co-enrichment analysis.
 
@@ -36,26 +36,47 @@ References for nnSVG and CooccurrenceAffinity can be found below:
 -   [Mainali, K. et al. (2021), "A better index for analysis of co-occurrence and similarity", *Science Advances*](https://doi.org/10.1126/sciadv.abj9204)
 -   [Mainali,K. et al. (2022), "CooccurrenceAffinity: An R package for computing a novel metric of affinity in co-occurrence data that corrects for pervasive errors in traditional indices", *bioRxiv*](https://doi.org/10.1101/2022.11.01.514801)
 
-## Installation
-
-To install `SEraster`, we currently recommend using `remotes`:
-
-```{r}
-require(remotes)
-remotes::install_github('JEFworks-Lab/SEraster')
-```
+# Installation
 
 To install this package using Bioconductor, start R (version "4.4.0") and enter:
-```{r}
+
+```{r, eval=FALSE}
 if (!require("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 
 BiocManager::install("SEraster")
 ```
 
+The latest development version can also be installed from [GitHub](https://github.com/JEFworks-Lab/SEraster) using `remotes`:
+
+```{r, eval=FALSE}
+require(remotes)
+remotes::install_github('JEFworks-Lab/SEraster')
+```
+
+In addition, `SEraster` is also compatible with `SeuratObject` through `SeuratWrappers`. `SeuratWrappers` implementation can be installed using `remotes`:
+
+```{r, eval=FALSE}
+require(remotes)
+remotes::install_github('satijalab/seurat-wrappers@SEraster')
+```
+
+Documentation and tutorial for the `SeuratWrappers` implementation can be found in the `SEraster` branch of the [`SeuratWrappers` GitHub repository](https://github.com/satijalab/seurat-wrappers/tree/SEraster).
+
+# Dataset
+
+In the examples below, we will use the MERFISH mouse preoptic area (mPOA) dataset available in the `SEraster` package. The dataset is taken from [Moffitt, J. et al. (2018), "Molecular, spatial, and functional single-cell profiling of the hypothalamic preoptic region", *Science*](https://doi.org/10.1126/science.aau5324) and formatted as a `SpatialExperiment` object as shown [here](https://jef.works/SEraster/reference/merfish_mousePOA.html).
+
+Please refer to the following documentations to see how you can format your data into a `SpatialExperiment` object:
+
+-   [SpatialExperiment](https://bioconductor.org/packages/SpatialExperiment) package
+-   [Formatting a SpatialExperiment Object for SEraster](https://jef.works/SEraster/articles/formatting-SpatialExperiment-for-SEraster.html)
+
+# Tutorial
+
 ## Load libraries
 
-```{r}
+```{r, message=FALSE}
 library(SEraster)
 library(SpatialExperiment)
 library(nnSVG)
@@ -75,7 +96,7 @@ dim(merfish_mousePOA)
 length(unique(colData(merfish_mousePOA)$celltype))
 ```
 
-This MERFISH mouse preoptic area (POA) dataset contains 6,509 cells and 16 cell-types.
+This MERFISH mPOA dataset contains 6,509 cells and 16 cell-types.
 
 ```{r}
 # plot at single-cell resolution
@@ -128,16 +149,16 @@ SEraster::plotRaster(rastGexp, feature_name = "Esr1", name = "Esr1")
 Such rasterization can also be performed in a cell-type-specific manner by restricting to cells of a particular cell-type prior to rasterization. Here, we subset the dataset to Inhibitory cell-type and run `SEraster` on the subsetted dataset.
 
 ```{r}
-## rasterize cell-type specific gene expression by subsetting to cell-type of interest
+# rasterize cell-type specific gene expression by subsetting to cell-type of interest
 ct_interest <- "Inhibitory"
 spe_subset <- merfish_mousePOA[,merfish_mousePOA$celltype == ct_interest]
 
-## rasterize gene expression
+# rasterize gene expression
 rastGexpSubset <- SEraster::rasterizeGeneExpression(spe_subset, assay_name="volnorm", resolution = 50)
 ```
 
 ```{r}
-## plot
+# plot
 SEraster::plotRaster(rastGexpSubset, name = paste0("Total rast gexp in ", ct_interest))
 ```
 
@@ -312,6 +333,7 @@ plotRaster(rastCt, assay_name = "re", feature_name = ct_interest, name = "RE", o
 # plot binarized value for a cell-type of interest
 plotRaster(rastCt, assay_name = "bin", feature_name = ct_interest, factor_levels = c(0,1), name = "binarized", option = "inferno")
 ```
+
 ```{r}
 # run CooccurrenceAffinity
 ct_coocc <- CooccurrenceAffinity::affinity(data = mat_bin, row.or.col = "row", squarematrix = c("all"))
@@ -320,12 +342,8 @@ ct_coocc <- CooccurrenceAffinity::affinity(data = mat_bin, row.or.col = "row", s
 CooccurrenceAffinity::plotgg(data = ct_coocc, variable = "alpha_mle", legendlimit = "datarange")
 ```
 
-<details>
-
-<summary>**Session Info**</summary>
+# Session Information
 
 ```{r}
 sessionInfo()
 ```
-
-</details>
