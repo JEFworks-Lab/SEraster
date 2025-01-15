@@ -1,7 +1,7 @@
 Package: SEraster
 Type: Package
 Title: Rasterization Preprocessing Framework for Scalable Spatial Omics Data Analysis
-Version: 0.99.3
+Version: 0.99.4
 Authors@R: 
     c(person("Gohta", "Aihara", email = "gohta.aihara@gmail.com", 
     role = c("aut", "cre"), 
@@ -43,9 +43,7 @@ Suggests:
     knitr,
     rmarkdown,
     BiocManager,
-    MERINGUE,
-    remotes,
-    reshape2
+    remotes
 VignetteBuilder: knitr
 Config/testthat/edition: 3
 RoxygenNote: 7.3.2
