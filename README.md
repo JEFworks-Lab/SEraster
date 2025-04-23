@@ -1,7 +1,5 @@
 # Spatial Experiments raster (SEraster)
 
-[![R-CMD-check](https://github.com/JEFworks-Lab/SEraster/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/JEFworks-Lab/SEraster/actions/workflows/check-standard.yaml)
-
 `SEraster` is a rasterization preprocessing framework that aggregates cellular information into spatial pixels to reduce resource requirements for spatial omics data analysis. This is the `SEraster` R documentation website. Questions, suggestions, or problems should be submitted as [GitHub issues](https://github.com/JEFworks-Lab/SEraster/issues).
 
 <p>
@@ -22,7 +20,7 @@
 
 ## Installation
 
-To install `SEraster` using Bioconductor, start R (version "4.4.0") and enter:
+To install `SEraster` using Bioconductor, start R (version "4.5.0") and run:
 
 ```r
 if (!require("BiocManager", quietly = TRUE))
@@ -30,6 +28,8 @@ if (!require("BiocManager", quietly = TRUE))
 
 BiocManager::install("SEraster")
 ```
+
+[See Bioconductor for more details](https://bioconductor.org/packages/release/bioc/html/SEraster.html).
 
 The latest development version can also be installed from [GitHub](https://github.com/JEFworks-Lab/SEraster) using `remotes`:
 
