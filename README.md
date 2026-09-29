@@ -20,7 +20,7 @@
 
 ## Installation
 
-Since we released `SEraster` with [Bioconductor version 3.21](https://bioconductor.org/news/bioc_3_21_release/), `SEraster` required R (version "4.5.0") and above.
+Since we released `SEraster` with [Bioconductor version 3.21](https://bioconductor.org/news/bioc_3_21_release/), Default `SEraster` in the `main` branch requires R (version "4.5.0") and above.
 
 This `R4.4` branch allows you to install `SEraster` with R (version "4.4.0") using `remotes`:
 
@@ -29,7 +29,7 @@ if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocMana
 require(remotes)
 remotes::install_github("JEFworks-Lab/SEraster", 
                         ref = "R4.4", 
-                        repos   = BiocManager::repositories())
+                        repos = BiocManager::repositories())
 ```
 
 ## Tutorials
