@@ -79,9 +79,18 @@ Please refer to the following documentations to see how you can format your data
 ```{r, message=FALSE}
 library(SEraster)
 library(SpatialExperiment)
-library(nnSVG)
-library(CooccurrenceAffinity)
 library(ggplot2)
+
+has_nnSVG <- requireNamespace("nnSVG", quietly = TRUE)
+has_CooccurrenceAffinity <- requireNamespace("CooccurrenceAffinity", quietly = TRUE)
+```
+
+```{r, eval=has_nnSVG, message=FALSE}
+library(nnSVG)
+```
+
+```{r, eval=has_CooccurrenceAffinity, message=FALSE}
+library(CooccurrenceAffinity)
 ```
 
 ## Load example dataset
@@ -250,18 +259,18 @@ As you can see from the plots above, when `SEraster` rasterizes a `list` of `Spa
 
 Here, we use a previously developed tool called `nnSVG`. Please refer to [nnSVG](https://bioconductor.org/packages/nnSVG) for more details about the package. We can directly input rasterized gene expression `SpatialExperiment` object from `SEraster` into `nnSVG`.
 
-```{r}
+```{r, eval=has_nnSVG}
 # run nnSVG
 set.seed(0)
 rastGexp <- nnSVG(rastGexp, assay_name = "pixelval")
 ```
 
-```{r}
+```{r, eval=has_nnSVG}
 # number of significant SVGs based on the selected adjusted p-value threshold
 table(rowData(rastGexp)$padj <= 0.05)
 ```
 
-```{r}
+```{r, eval=has_nnSVG}
 # plot rasterized gene expression of top-ranked SVG
 top_svg <- which(rowData(rastGexp)$rank == 1)
 top_svg_name <- rownames(rowData(rastGexp))[top_svg]
@@ -270,7 +279,7 @@ SEraster::plotRaster(rastGexp, feature_name = top_svg_name, name = top_svg_name)
 
 We can also perform cell-type specific SVG analysis by subsetting the dataset prior to applying `SEraster`.
 
-```{r}
+```{r, eval=has_nnSVG}
 # subset data
 ct_interest <- "Excitatory"
 spe_sub <- merfish_mousePOA[,merfish_mousePOA$celltype == ct_interest]
@@ -283,12 +292,12 @@ set.seed(0)
 rastGexp_sub <- nnSVG(rastGexp_sub, assay_name = "pixelval")
 ```
 
-```{r}
+```{r, eval=has_nnSVG}
 # number of significant SVGs
 table(rowData(rastGexp_sub)$padj <= 0.05)
 ```
 
-```{r}
+```{r, eval=has_nnSVG}
 # plot rasterized gene expression of top-ranked SVG
 top_svg <- which(rowData(rastGexp_sub)$rank == 1)
 top_svg_name <- rownames(rowData(rastGexp_sub))[top_svg]
@@ -299,7 +308,7 @@ SEraster::plotRaster(rastGexp_sub, feature_name = top_svg_name, name = top_svg_n
 
 Rasterized cell-type labels can be used to analyze pair-wise cell-type co-enrichment To do so, we binarize the rasterized cell-type labels using a relative enrichment metric and a previously developed tool called `CooccurrenceAffinity`. Please refer to our paper for more details about the methodology and [CooccurrenceAffinity](https://CRAN.R-project.org/package=CooccurrenceAffinity) for more details about the package.
 
-```{r}
+```{r, eval=has_CooccurrenceAffinity}
 # extract cell-type labels
 ct_labels <- as.factor(colData(merfish_mousePOA)$celltype)
 
@@ -317,24 +326,24 @@ mat_bin <- ifelse(mat_re >= 1, 1, 0)
 assays(rastCt) <- list(pixelval = assay(rastCt, "pixelval"), re = mat_re, bin = mat_bin)
 ```
 
-```{r}
+```{r, eval=has_CooccurrenceAffinity}
 ct_interest <- "Ependymal"
 
 # plot pixel value for a cell-type of interest
 plotRaster(rastCt, assay_name = "pixelval", feature_name = ct_interest, name = "cell-type counts", option = "inferno")
 ```
 
-```{r}
+```{r, eval=has_CooccurrenceAffinity}
 # plot RE value for a cell-type of interest
 plotRaster(rastCt, assay_name = "re", feature_name = ct_interest, name = "RE", option = "inferno")
 ```
 
-```{r}
+```{r, eval=has_CooccurrenceAffinity}
 # plot binarized value for a cell-type of interest
 plotRaster(rastCt, assay_name = "bin", feature_name = ct_interest, factor_levels = c(0,1), name = "binarized", option = "inferno")
 ```
 
-```{r}
+```{r, eval=has_CooccurrenceAffinity}
 # run CooccurrenceAffinity
 ct_coocc <- CooccurrenceAffinity::affinity(data = mat_bin, row.or.col = "row", squarematrix = c("all"))
 
