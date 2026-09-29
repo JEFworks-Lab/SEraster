@@ -48,7 +48,7 @@ VignetteBuilder: knitr
 Config/testthat/edition: 3
 RoxygenNote: 7.3.2
 Depends: 
-    R (>= 4.5.0)
+    R (>= 4.4.0)
 Imports: 
     BiocParallel,
     ggplot2,

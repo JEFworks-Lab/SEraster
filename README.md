@@ -20,32 +20,17 @@
 
 ## Installation
 
-To install `SEraster` using Bioconductor, start R (version "4.5.0") and run:
+Since we released `SEraster` with [Bioconductor version 3.21](https://bioconductor.org/news/bioc_3_21_release/), `SEraster` required R (version "4.5.0") and above.
+
+This `R4.4` branch allows you to install `SEraster` with R (version "4.4.0") using `remotes`:
 
 ```r
-if (!require("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
-
-BiocManager::install("SEraster")
-```
-
-[See Bioconductor for more details](https://bioconductor.org/packages/release/bioc/html/SEraster.html).
-
-The latest development version can also be installed from [GitHub](https://github.com/JEFworks-Lab/SEraster) using `remotes`:
-
-```r
+if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager")
 require(remotes)
-remotes::install_github('JEFworks-Lab/SEraster')
+remotes::install_github("JEFworks-Lab/SEraster", 
+                        ref = "R4.4", 
+                        repos   = BiocManager::repositories())
 ```
-
-In addition, `SEraster` is also compatible with `SeuratObject` through `SeuratWrappers`. `SeuratWrappers` implementation can be installed using `remotes`:
-
-```r
-require(remotes)
-remotes::install_github('satijalab/seurat-wrappers@SEraster')
-```
-
-Documentation and tutorial for the `SeuratWrappers` implementation can be found in the `SEraster` branch of the [`SeuratWrappers` GitHub repository](https://github.com/satijalab/seurat-wrappers/tree/SEraster).
 
 ## Tutorials
 
